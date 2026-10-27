@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus & Study Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Zen Maru Gothic for cute aesthetic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pastel: {
+                            bg: '#F8FAF8',
+                            darkBg: '#1A1C1E',
+                            card: '#FFFFFF',
+                            darkCard: '#2A2D32',
+                            primary: '#A8DADC',
+                            accent: '#F4A261',
+                            pink: '#FFB5A7',
+                            lavender: '#E2ECE9',
+                            text: '#2B2D42',
+                            darkText: '#EAEAEA'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Zen Maru Gothic', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        /* Glassmorphism effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .dark .glass {
+            background: rgba(42, 45, 50, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-pastel-bg text-pastel-text dark:bg-pastel-darkBg dark:text-pastel-darkText min-h-screen transition-colors duration-300">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-30 glass border-b border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-8 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">🌱</span>
+                <h1 class="text-xl font-bold tracking-tight text-emerald-800 dark:text-emerald-300">
+                    Focus Portal <span class="text-xs font-normal text-gray-500 dark:text-gray-400 hidden sm:inline">(ノイズレス勉強部屋)</span>
+                </h1>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-3">
+                <button id="add-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>追加する</span>
+                </button>
+
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-8">
+        
+        <!-- Welcome Banner & Tab Navigation -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h2 class="text-2xl font-bold">おかえりなさい！(✿︎´ ꒳ ` )</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">余計な雑音やコメントを遮断して、モチベーションを高めましょう✨</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex bg-gray-200/60 dark:bg-gray-800 p-1.5 rounded-2xl w-fit">
+                <button id="tab-yt" class="px-5 py-2 rounded-xl text-sm font-bold transition-all bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-300 shadow-sm">
+                    <i class="fa-brands fa-youtube text-red-500 mr-1.5"></i>YouTube 動画
+                </button>
+                <button id="tab-sns" class="px-5 py-2 rounded-xl text-sm font-bold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900">
+                    <i class="fa-solid fa-bookmark text-pink-500 mr-1.5"></i>SNSショートカット
+                </button>
+            </div>
+        </div>
+
+        <!-- YouTube Grid View (Default) -->
+        <section id="section-yt">
+            <!-- 3x3 Responsive Grid -->
+            <div id="video-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards will be dynamically inserted here via JS -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="yt-empty" class="hidden text-center py-16 bg-white/50 dark:bg-gray-800/50 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
+                <div class="text-5xl mb-3">🍃</div>
+                <p class="text-gray-500 dark:text-gray-400 font-medium">登録された動画がありません。</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">右上「追加する」から好きな勉強動画を追加してください！</p>
+            </div>
+        </section>
+
+        <!-- SNS Shortcuts Grid View (Hidden by default) -->
+        <section id="section-sns" class="hidden">
+            <div id="sns-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- SNS Cards will be dynamically inserted here via JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="sns-empty" class="hidden text-center py-16 bg-white/50 dark:bg-gray-800/50 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
+                <div class="text-5xl mb-3">📌</div>
+                <p class="text-gray-500 dark:text-gray-400 font-medium">ショートカットが追加されていません。</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">InstagramやTikTokなどの勉強垢リンクを追加してみましょう！</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div id="add-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-pastel-darkCard w-full max-w-md rounded-3xl p-6 shadow-2xl transform transition-all scale-95 opacity-0 modal-content">
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">コンテンツの追加 🌟</h3>
+                <button id="close-add-modal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Type Selector -->
+            <div class="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl mb-4">
+                <button id="modal-type-yt" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-gray-700 shadow-sm text-emerald-600 dark:text-emerald-300">
+                    YouTube動画
+                </button>
+                <button id="modal-type-sns" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-500 dark:text-gray-400">
+                    SNSリンク
+                </button>
+            </div>
+
+            <!-- Add Form -->
+            <form id="add-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-600 dark:text-gray-300">タイトル / アカウント名</label>
+                    <input type="text" id="input-title" required placeholder="例: 1時間タイマー動画 / ○○ちゃんの勉強垢" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm">
+                </div>
+
+                <div>
+                    <label id="input-url-label" class="block text-xs font-bold mb-1 text-gray-600 dark:text-gray-300">YouTube URL</label>
+                    <input type="url" id="input-url" required placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold mb-1 text-gray-600 dark:text-gray-300">カテゴリ・タグ</label>
+                    <select id="input-tag" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-sm">
+                        <option value="Study with me">📖 Study with me</option>
+                        <option value="Focus Music">🎧 Focus Music / BGM</option>
+                        <option value="Desk Setup">💻 Desk Setup / モチベ</option>
+                        <option value="Instagram">📷 Instagram</option>
+                        <option value="TikTok">🎵 TikTok</option>
+                        <option value="その他">✨ その他</option>
+                    </select>
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-3">
+                    <button type="button" id="cancel-add-modal" class="px-4 py-2 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">キャンセル</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-600 text-white shadow-md">追加する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Player Overlay Modal (Distraction-Free Embed) -->
+    <div id="player-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl relative">
+            <!-- Modal Top Bar -->
+            <div class="bg-gray-900 px-4 py-3 flex items-center justify-between text-white border-b border-gray-800">
+                <span id="player-title" class="font-bold text-sm truncate max-w-md">YouTube Player</span>
+                <button id="close-player-modal" class="text-gray-400 hover:text-white transition-colors text-xl px-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Responsive Video Embed Container -->
+            <div class="relative w-full pt-[56.25%] bg-black">
+                <iframe id="youtube-iframe" class="absolute top-0 left-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification System -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-800 text-white px-5 py-3 rounded-2xl shadow-xl transition-all transform translate-y-20 opacity-0 flex items-center space-x-2 z-50 text-sm font-bold">
+        <i class="fa-solid fa-circle-check text-emerald-300"></i>
+        <span id="toast-msg">メッセージ</span>
+    </div>
+
+    <!-- Application JavaScript Logic -->
+    <script>
+        // Sample Pre-populated Data
+        const initialVideos = [
+            { id: 'v1', title: '2-Hour Study With Me (Pomodoro 25/5)', url: 'https://www.youtube.com/watch?v=1fueZCTYkpA', videoId: '1fueZCTYkpA', tag: 'Study with me' },
+            { id: 'v2', title: 'Lofi Hip Hop Radio - Beats to Relax/Study to', url: 'https://www.youtube.com/watch?v=jfKfPfyJRdk', videoId: 'jfKfPfyJRdk', tag: 'Focus Music' },
+            { id: 'v3', title: 'Cozy Desk Setup & Clean Routine', url: 'https://www.youtube.com/watch?v=2OEL4P1Rz0U', videoId: '2OEL4P1Rz0U', tag: 'Desk Setup' }
+        ];
+
+        const initialSns = [
+            { id: 's1', title: 'お気に入り勉強垢 (Instagram)', url: 'https://www.instagram.com', platform: 'Instagram', tag: 'Instagram' },
+            { id: 's2', title: 'モチベーションTikTok', url: 'https://www.tiktok.com', platform: 'TikTok', tag: 'TikTok' }
+        ];
+
+        // State Management
+        let videos = JSON.parse(localStorage.getItem('study_portal_videos')) || initialVideos;
+        let snsLinks = JSON.parse(localStorage.getItem('study_portal_sns')) || initialSns;
+        let activeTab = 'yt'; // 'yt' or 'sns'
+        let modalType = 'yt'; // 'yt' or 'sns'
+
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const tabYt = document.getElementById('tab-yt');
+        const tabSns = document.getElementById('tab-sns');
+        const sectionYt = document.getElementById('section-yt');
+        const sectionSns = document.getElementById('section-sns');
+        const videoGrid = document.getElementById('video-grid');
+        const snsGrid = document.getElementById('sns-grid');
+        const ytEmpty = document.getElementById('yt-empty');
+        const snsEmpty = document.getElementById('sns-empty');
+
+        // Modal Elements
+        const addBtn = document.getElementById('add-btn');
+        const addModal = document.getElementById('add-modal');
+        const closeAddModal = document.getElementById('close-add-modal');
+        const cancelAddModal = document.getElementById('cancel-add-modal');
+        const addForm = document.getElementById('add-form');
+        const modalTypeYt = document.getElementById('modal-type-yt');
+        const modalTypeSns = document.getElementById('modal-type-sns');
+        const inputUrlLabel = document.getElementById('input-url-label');
+
+        // Player Elements
+        const playerModal = document.getElementById('player-modal');
+        const closePlayerModal = document.getElementById('close-player-modal');
+        const youtubeIframe = document.getElementById('youtube-iframe');
+        const playerTitle = document.getElementById('player-title');
+
+        // --- Theme Handler ---
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun text-yellow-400';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon text-gray-600';
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon text-gray-600';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun text-yellow-400';
+            }
+        });
+
+        // --- Helper: Extract YouTube Video ID ---
+        function extractYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // --- Render Functions ---
+        function renderVideos() {
+            videoGrid.innerHTML = '';
+            if (videos.length === 0) {
+                ytEmpty.classList.remove('hidden');
+            } else {
+                ytEmpty.classList.add('hidden');
+                videos.forEach(video => {
+                    const thumbUrl = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
+                    const card = document.createElement('div');
+                    card.className = 'bg-white dark:bg-pastel-darkCard rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 flex flex-col group';
+                    
+                    card.innerHTML = `
+                        <div class="relative cursor-pointer overflow-hidden" onclick="playVideo('${video.videoId}', '${escapeHtml(video.title)}')">
+                            <img src="${thumbUrl}" alt="${escapeHtml(video.title)}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/600x400/e2ece9/2b2d42?text=YouTube+Video'">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <div class="w-12 h-12 bg-white/90 text-red-600 rounded-full flex items-center justify-center text-lg shadow-lg">
+                                    <i class="fa-solid fa-play ml-0.5"></i>
+                                </div>
+                            </div>
+                            <span class="absolute top-3 left-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md text-emerald-800 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                ${escapeHtml(video.tag || 'Study')}
+                            </span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <h3 class="font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 leading-relaxed mb-3 cursor-pointer hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors" onclick="playVideo('${video.videoId}', '${escapeHtml(video.title)}')">
+                                ${escapeHtml(video.title)}
+                            </h3>
+                            <div class="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-800 text-xs text-gray-400">
+                                <span><i class="fa-brands fa-youtube text-red-500 mr-1"></i>YouTube</span>
+                                <button onclick="deleteVideo('${video.id}')" class="text-gray-400 hover:text-red-500 transition-colors p-1" title="削除">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    videoGrid.appendChild(card);
+                });
+            }
+        }
+
+        function renderSns() {
+            snsGrid.innerHTML = '';
+            if (snsLinks.length === 0) {
+                snsEmpty.classList.remove('hidden');
+            } else {
+                snsEmpty.classList.add('hidden');
+                snsLinks.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white dark:bg-pastel-darkCard rounded-3xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-800 flex items-center justify-between group';
+                    
+                    let iconClass = 'fa-solid fa-globe text-gray-400';
+                    if (item.tag === 'Instagram') iconClass = 'fa-brands fa-instagram text-pink-500';
+                    else if (item.tag === 'TikTok') iconClass = 'fa-brands fa-tiktok text-black dark:text-white';
+
+                    card.innerHTML = `
+                        <div class="flex items-center space-x-4 overflow-hidden">
+                            <div class="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl shrink-0">
+                                <i class="${iconClass}"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">${escapeHtml(item.tag)}</span>
+                                <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="font-bold text-sm text-gray-800 dark:text-gray-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors truncate block">
+                                    ${escapeHtml(item.title)}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" class="p-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-gray-700 transition-colors" title="開く">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                            </a>
+                            <button onclick="deleteSns('${item.id}')" class="p-2 text-gray-300 hover:text-red-500 transition-colors" title="削除">
+                                <i class="fa-regular fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                    snsGrid.appendChild(card);
+                });
+            }
+        }
+
+        // Utility: HTML Sanitizer
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // --- Video Player Overlay ---
+        window.playVideo = function(videoId, title) {
+            youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+            playerTitle.textContent = title;
+            playerModal.classList.remove('hidden');
+        };
+
+        closePlayerModal.addEventListener('click', () => {
+            youtubeIframe.src = '';
+            playerModal.classList.add('hidden');
+        });
+
+        playerModal.addEventListener('click', (e) => {
+            if (e.target === playerModal) {
+                youtubeIframe.src = '';
+                playerModal.classList.add('hidden');
+            }
+        });
+
+        // --- Data Deletion ---
+        window.deleteVideo = function(id) {
+            videos = videos.filter(v => v.id !== id);
+            localStorage.setItem('study_portal_videos', JSON.stringify(videos));
+            renderVideos();
+            showToast('動画を削除しました');
+        };
+
+        window.deleteSns = function(id) {
+            snsLinks = snsLinks.filter(s => s.id !== id);
+            localStorage.setItem('study_portal_sns', JSON.stringify(snsLinks));
+            renderSns();
+            showToast('ショートカットを削除しました');
+        };
+
+        // --- Toast Notification ---
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- Tab Navigation ---
+        tabYt.addEventListener('click', () => {
+            activeTab = 'yt';
+            tabYt.className = 'px-5 py-2 rounded-xl text-sm font-bold transition-all bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-300 shadow-sm';
+            tabSns.className = 'px-5 py-2 rounded-xl text-sm font-bold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900';
+            sectionYt.classList.remove('hidden');
+            sectionSns.classList.add('hidden');
+        });
+
+        tabSns.addEventListener('click', () => {
+            activeTab = 'sns';
+            tabSns.className = 'px-5 py-2 rounded-xl text-sm font-bold transition-all bg-white dark:bg-gray-700 text-emerald-600 dark:text-emerald-300 shadow-sm';
+            tabYt.className = 'px-5 py-2 rounded-xl text-sm font-bold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900';
+            sectionSns.classList.remove('hidden');
+            sectionYt.classList.add('hidden');
+        });
+
+        // --- Modal Interactions ---
+        function openModal() {
+            addModal.classList.remove('hidden');
+            setTimeout(() => {
+                addModal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+            }, 10);
+        }
+
+        function closeModal() {
+            addModal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                addModal.classList.add('hidden');
+                addForm.reset();
+            }, 200);
+        }
+
+        addBtn.addEventListener('click', openModal);
+        closeAddModal.addEventListener('click', closeModal);
+        cancelAddModal.addEventListener('click', closeModal);
+
+        // Switch Modal Input Mode
+        modalTypeYt.addEventListener('click', () => {
+            modalType = 'yt';
+            modalTypeYt.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-gray-700 shadow-sm text-emerald-600 dark:text-emerald-300';
+            modalTypeSns.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-500 dark:text-gray-400';
+            inputUrlLabel.textContent = 'YouTube URL';
+            document.getElementById('input-url').placeholder = 'https://www.youtube.com/watch?v=...';
+        });
+
+        modalTypeSns.addEventListener('click', () => {
+            modalType = 'sns';
+            modalTypeSns.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-gray-700 shadow-sm text-emerald-600 dark:text-emerald-300';
+            modalTypeYt.className = 'flex-1 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-500 dark:text-gray-400';
+            inputUrlLabel.textContent = 'プロフィール / 投稿 URL';
+            document.getElementById('input-url').placeholder = 'https://www.instagram.com/...';
+        });
+
+        // Add Content Form Submission
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('input-title').value.trim();
+            const url = document.getElementById('input-url').value.trim();
+            const tag = document.getElementById('input-tag').value;
+
+            if (modalType === 'yt') {
+                const videoId = extractYouTubeId(url);
+                if (!videoId) {
+                    alert('有効なYouTube動画URLを入力してください。');
+                    return;
+                }
+                const newVideo = {
+                    id: 'v_' + Date.now(),
+                    title,
+                    url,
+                    videoId,
+                    tag
+                };
+                videos.unshift(newVideo);
+                localStorage.setItem('study_portal_videos', JSON.stringify(videos));
+                renderVideos();
+                showToast('新しい動画を追加しました！✨');
+            } else {
+                const newSns = {
+                    id: 's_' + Date.now(),
+                    title,
+                    url,
+                    tag
+                };
+                snsLinks.unshift(newSns);
+                localStorage.setItem('study_portal_sns', JSON.stringify(snsLinks));
+                renderSns();
+                showToast('SNSショートカットを追加しました！📌');
+            }
+
+            closeModal();
+        });
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderVideos();
+            renderSns();
+        });
+    </script>
+</body>
+</html>
