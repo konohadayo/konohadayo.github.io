@@ -83,20 +83,39 @@
             </div>
         </section>
 
-        <!-- Pomodoro Timer View -->
-        <section id="section-timer" class="hidden flex flex-col items-center justify-center py-6">
+        <!-- Time Timer Style View -->
+        <section id="section-timer" class="hidden flex flex-col items-center justify-center py-4">
             <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-sm border border-[#EFECE6] text-center space-y-6">
+                <!-- Mode Selector Buttons -->
                 <div class="flex justify-center space-x-3">
                     <button id="mode-focus" class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition">集中 (25分)</button>
                     <button id="mode-break" class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition">休憩 (5分)</button>
                 </div>
-                <div id="timer-display" class="text-6xl font-light tracking-tight text-[#4A4543] py-4">25:00</div>
-                <div class="flex justify-center space-x-3">
+
+                <!-- Time Timer Visual Circle -->
+                <div class="relative w-56 h-56 mx-auto flex items-center justify-center">
+                    <div class="w-full h-full rounded-full border-4 border-[#EFECE6] bg-[#F5F2EC] relative flex items-center justify-center shadow-inner overflow-hidden">
+                        <!-- Conic Gradient Disk representing remaining time -->
+                        <div id="timer-disk" class="absolute inset-0 transition-all duration-300" style="background: conic-gradient(#8C7A6B 360deg, transparent 360deg);"></div>
+                        
+                        <!-- 👇 ここが「内側の白い円（太さ調整場所）」です！ -->
+                        <div class="w-0 h-0 bg-white rounded-full flex flex-col items-center justify-center relative z-10 shadow-sm border border-[#EFECE6]/50">
+                            <span class="text-[10px] text-[#A39990] tracking-widest uppercase mb-0.5" id="timer-mode-label">FOCUS</span>
+                        </div>
+
+                        <!-- Digital Time subtly on the bottom right inside the disk area -->
+                        <div id="timer-display" class="absolute bottom-6 right-8 text-xs font-semibold tracking-wider text-[#4A4543] opacity-40 z-20">25:00</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-center space-x-3 pt-2">
                     <button id="timer-start-btn" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white px-8 py-3 rounded-2xl text-xs font-medium shadow-sm transition">スタート</button>
                     <button id="timer-reset-btn" class="bg-[#F5F2EC] hover:bg-[#EFECE6] text-[#8C827A] px-6 py-3 rounded-2xl text-xs font-medium transition">リセット</button>
                 </div>
             </div>
         </section>
+
 
         <!-- ToDo Memo View -->
         <section id="section-todo" class="hidden space-y-6 max-w-xl mx-auto">
