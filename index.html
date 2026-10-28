@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Portal 🤍</title>
+    <title>🤍 Focus Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="apple-touch-icon" href="https://i.pinimg.com/736x/fb/ab/a4/fbaba44873eef937ec1aa8dff476429f.jpg">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -98,8 +99,6 @@
                         <!-- Inner Circle Mask -->
                         <div class="w-20 h-20 bg-white rounded-full flex flex-col items-center justify-center relative p-4 shadow-sm">
                             <span class="text-xs text-[#A39990] tracking-widest uppercase mb-1" id="timer-mode-label">FOCUS</span>
-                            <!-- Digital Time subtly on the bottom right -->
-                            <div id="timer-display" class="text-sm font-semibold tracking-wider text-[#4A4543] opacity-40 absolute bottom-6 right-6">25:00</div>
                         </div>
                     </div>
                 </div>
@@ -109,6 +108,8 @@
                     <button id="timer-start-btn" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white px-8 py-3 rounded-2xl text-xs font-medium shadow-sm transition">スタート</button>
                     <button id="timer-reset-btn" class="bg-[#F5F2EC] hover:bg-[#EFECE6] text-[#8C827A] px-6 py-3 rounded-2xl text-xs font-medium transition">リセット</button>
                 </div>
+                <!-- Digital Time subtly on the bottom right -->
+                <div id="timer-display" class="text-sm font-semibold tracking-wider text-[#4A4543] opacity-40 absolute bottom-6 right-6">25:00</div>
             </div>
         </section>
 
@@ -116,7 +117,7 @@
         <section id="section-todo" class="hidden space-y-6 max-w-xl mx-auto">
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#EFECE6] space-y-4">
                 <form id="todo-form" class="flex gap-2">
-                    <input type="text" id="todo-input" required placeholder="今日やることを追加する 🤍" class="w-full min-w-0 border border-[#E2DBD0] rounded-2xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-[#FAF8F5] text-[#4A4543]">
+                    <input type="text" id="todo-input" required placeholder="今日やることを追加する" class="w-full min-w-0 border border-[#E2DBD0] rounded-2xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-[#FAF8F5] text-[#4A4543]">
                     <button type="submit" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white text-xs font-medium px-4 py-2.5 rounded-2xl shadow-sm transition whitespace-nowrap flex-shrink-0">追加</button>
                 </form>
                 <div id="todo-list" class="space-y-2.5 pt-2"></div>
@@ -208,10 +209,10 @@
             { id: '1', title: '【Study with me】集中ルーティン 🤍', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
         ];
         const defaultSns = [
-            { id: '1', title: 'お気に入り勉強垢 🤍', url: 'https://instagram.com' }
+            { id: '1', title: 'お気に入🤍', url: 'https://instagram.com' }
         ];
         const defaultTodos = [
-            { id: '1', text: '部活のドット絵を描く 🎨', completed: false }
+            { id: '1', text: 'ドット絵を描く', completed: false }
         ];
 
         let youtubeList = JSON.parse(localStorage.getItem('focus_youtube')) || defaultYoutube;
@@ -537,7 +538,7 @@
                     } else {
                         clearInterval(timerInterval);
                         timerInterval = null;
-                        alert(isFocusMode ? 'お疲れ様でした！5分間の休憩に入りましょう 🤍' : '休憩終了です！集中モードに入りましょう 🤍');
+                        alert(isFocusMode ? 'お疲れ様でした！5分間の休憩に入りましょう' : '休憩終了です！集中モードに入りましょう');
                         setTimerMode(isFocusMode ? 5 * 60 : 25 * 60, !isFocusMode);
                     }
                 }, 1000);
@@ -575,7 +576,7 @@
                         localStorage.setItem('focus_todos', JSON.stringify(todoList));
                         render();
                         settingsModal.classList.add('hidden');
-                        alert('データを正常に読み込みました 🤍');
+                        alert('データを正常に読み込みました');
                     } else {
                         alert('データ形式が正しくないようです。');
                     }
