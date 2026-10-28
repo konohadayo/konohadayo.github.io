@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Portal 🤍</title>
+    <title>🤍 Focus Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -41,8 +41,8 @@
     <!-- Main Content -->
     <main class="max-w-5xl mx-auto px-6 py-8 flex-grow w-full">
         <div class="mb-8">
-            <h2 class="text-2xl font-bold text-[#4A4543] tracking-wide">おかえりなさい ฅʕ•·̫•ʔʕ•·̫•ʔฅ</h2>
-            <p class="text-xs text-[#8C827A] mt-1.5 tracking-wider">The future depends on what you do today. 🤍</p>
+            <h2 class="text-2xl font-bold text-[#4A4543] tracking-wide">おかえりなさい ฅ^・ω・^ฅ</h2>
+            <p class="text-xs text-[#8C827A] mt-1.5 tracking-wider">The future depends on what you do today.</p>
         </div>
 
         <!-- Navigation Tabs -->
@@ -57,11 +57,11 @@
             </button>
             <button id="tab-timer" class="pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
                 <i class="fa-solid fa-clock text-[#8C7A6B]"></i>
-                <span>タイマー ⏱️</span>
+                <span>タイマー</span>
             </button>
             <button id="tab-todo" class="pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
                 <i class="fa-solid fa-check-double text-[#A39990]"></i>
-                <span>ToDo メモ 📝</span>
+                <span>ToDo メモ</span>
             </button>
         </div>
 
@@ -69,7 +69,7 @@
         <section id="section-youtube" class="space-y-4">
             <div id="youtube-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
             <div id="youtube-empty" class="hidden text-center py-16 bg-white/60 rounded-3xl border border-dashed border-[#E2DBD0] p-8">
-                <p class="text-[#A39990] text-sm mb-1">登録された動画がありません 🤍</p>
+                <p class="text-[#A39990] text-sm mb-1">登録された動画がありません</p>
                 <p class="text-xs text-[#B3A9A0]">右上「追加する」から好きな勉強動画を追加してください</p>
             </div>
         </section>
@@ -78,12 +78,12 @@
         <section id="section-sns" class="hidden space-y-4">
             <div id="sns-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
             <div id="sns-empty" class="hidden text-center py-16 bg-white/60 rounded-3xl border border-dashed border-[#E2DBD0] p-8">
-                <p class="text-[#A39990] text-sm mb-1">ショートカットが追加されていません 🤍</p>
+                <p class="text-[#A39990] text-sm mb-1">ショートカットが追加されていません</p>
                 <p class="text-xs text-[#B3A9A0]">InstagramやTikTokなどの勉強垢リンクを追加してみましょう</p>
             </div>
         </section>
 
-        <!-- Circular Pomodoro Timer View -->
+        <!-- Time Timer Style View -->
         <section id="section-timer" class="hidden flex flex-col items-center justify-center py-4">
             <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-sm border border-[#EFECE6] text-center space-y-6">
                 <!-- Mode Selector Buttons -->
@@ -92,15 +92,17 @@
                     <button id="mode-break" class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition">休憩 (5分)</button>
                 </div>
 
-                <!-- Circular Timer Display -->
+                <!-- Time Timer Visual Circle -->
                 <div class="relative w-56 h-56 mx-auto flex items-center justify-center">
-                    <div id="timer-circle-bg" class="w-full h-full rounded-full shadow-inner relative flex items-center justify-center transition-all duration-300" style="background: conic-gradient(#8C7A6B 360deg, #F5F2EC 0deg);">
-                        <!-- Inner Circle Mask -->
-                        <div class="w-48 h-48 bg-white rounded-full flex flex-col items-center justify-center relative p-4 shadow-sm">
-                            <span class="text-xs text-[#A39990] tracking-widest uppercase mb-1" id="timer-mode-label">FOCUS</span>
-                            <!-- Digital Time subtly on the bottom right -->
-                            <div id="timer-display" class="text-sm font-semibold tracking-wider text-[#4A4543] opacity-40 absolute bottom-6 right-6">25:00</div>
+                    <div class="w-full h-full rounded-full border-4 border-[#EFECE6] bg-[#F5F2EC] relative flex items-center justify-center shadow-inner overflow-hidden">
+                        <!-- Conic Gradient Disk representing remaining time -->
+                        <div id="timer-disk" class="absolute inset-0 transition-all duration-300" style="background: conic-gradient(#8C7A6B 360deg, transparent 360deg);"></div>
+                        <!-- Inner White Circle for the clean minimalist look -->
+                        <div class="w-36 h-36 bg-white rounded-full flex flex-col items-center justify-center relative z-10 shadow-sm border border-[#EFECE6]/50">
+                            <span class="text-[10px] text-[#A39990] tracking-widest uppercase mb-0.5" id="timer-mode-label">FOCUS</span>
                         </div>
+                        <!-- Digital Time subtly on the bottom right inside the disk area -->
+                        <div id="timer-display" class="absolute bottom-6 right-8 text-xs font-semibold tracking-wider text-[#4A4543] opacity-40 z-20">25:00</div>
                     </div>
                 </div>
 
@@ -116,7 +118,7 @@
         <section id="section-todo" class="hidden space-y-6 max-w-xl mx-auto">
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#EFECE6] space-y-4">
                 <form id="todo-form" class="flex gap-2">
-                    <input type="text" id="todo-input" required placeholder="今日やることを追加する 🤍" class="w-full min-w-0 border border-[#E2DBD0] rounded-2xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-[#FAF8F5] text-[#4A4543]">
+                    <input type="text" id="todo-input" required placeholder="今日やることを追加する" class="w-full min-w-0 border border-[#E2DBD0] rounded-2xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-[#FAF8F5] text-[#4A4543]">
                     <button type="submit" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white text-xs font-medium px-4 py-2.5 rounded-2xl shadow-sm transition whitespace-nowrap flex-shrink-0">追加</button>
                 </form>
                 <div id="todo-list" class="space-y-2.5 pt-2"></div>
@@ -208,10 +210,10 @@
             { id: '1', title: '【Study with me】集中ルーティン 🤍', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
         ];
         const defaultSns = [
-            { id: '1', title: 'お気に入り勉強垢 🤍', url: 'https://instagram.com' }
+            { id: '1', title: 'お気に入り', url: 'https://instagram.com' }
         ];
         const defaultTodos = [
-            { id: '1', text: '部活のドット絵を描く 🎨', completed: false }
+            { id: '1', text: 'ドット絵を描く 🎨', completed: false }
         ];
 
         let youtubeList = JSON.parse(localStorage.getItem('focus_youtube')) || defaultYoutube;
@@ -379,7 +381,7 @@
                         document.getElementById('item-type').value = type;
                         document.getElementById('item-title').value = item.title;
                         document.getElementById('item-url').value = item.url;
-                        modalTitle.textContent = 'お気に入り編集 🤍';
+                        modalTitle.textContent = 'お気に入り編集';
                         submitBtn.textContent = '変更を保存する';
                         addModal.classList.remove('hidden');
                     }
@@ -425,7 +427,7 @@
         document.getElementById('open-add-modal').addEventListener('click', () => {
             document.getElementById('add-form').reset();
             document.getElementById('edit-id').value = '';
-            modalTitle.textContent = 'お気に入り追加 🤍';
+            modalTitle.textContent = 'お気に入り追加';
             submitBtn.textContent = '追加する';
             addModal.classList.remove('hidden');
         });
@@ -475,14 +477,14 @@
             render();
         });
 
-        // Circular Timer Logic
+        // Time Timer Style Logic
         let timerDuration = 25 * 60;
         let timerRemaining = timerDuration;
         let timerInterval = null;
         let isFocusMode = true;
 
         const timerDisplay = document.getElementById('timer-display');
-        const timerCircleBg = document.getElementById('timer-circle-bg');
+        const timerDisk = document.getElementById('timer-disk');
         const timerModeLabel = document.getElementById('timer-mode-label');
         const timerStartBtn = document.getElementById('timer-start-btn');
         const timerResetBtn = document.getElementById('timer-reset-btn');
@@ -494,11 +496,11 @@
             const s = (timerRemaining % 60).toString().padStart(2, '0');
             timerDisplay.textContent = `${m}:${s}`;
 
-            // Calculate clockwise progress degree
+            // Time Timer style: Clockwise reduction of the brown disk
             const progressRatio = timerRemaining / timerDuration;
             const degrees = progressRatio * 360;
-            const activeColor = isFocusMode ? '#8C7A6B' : '#7A8B79';
-            timerCircleBg.style.background = `conic-gradient(${activeColor} ${degrees}deg, #F5F2EC ${degrees}deg)`;
+            // #8C7A6B for the remaining time, transparent for the elapsed part
+            timerDisk.style.background = `conic-gradient(#8C7A6B ${degrees}deg, transparent${degrees}deg)`;
         }
 
         function setTimerMode(duration, focus) {
@@ -515,7 +517,7 @@
                 modeFocus.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition";
                 modeBreak.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition";
             } else {
-                modeBreak.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#7A8B79] text-white transition";
+                modeBreak.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition";
                 modeFocus.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition";
             }
         }
@@ -537,7 +539,7 @@
                     } else {
                         clearInterval(timerInterval);
                         timerInterval = null;
-                        alert(isFocusMode ? 'お疲れ様でした！5分間の休憩に入りましょう 🤍' : '休憩終了です！集中モードに入りましょう 🤍');
+                        alert(isFocusMode ? 'お疲れ様でした！5分間の休憩に入りましょう' : '休憩終了です！集中モードに入りましょう');
                         setTimerMode(isFocusMode ? 5 * 60 : 25 * 60, !isFocusMode);
                     }
                 }, 1000);
@@ -575,7 +577,7 @@
                         localStorage.setItem('focus_todos', JSON.stringify(todoList));
                         render();
                         settingsModal.classList.add('hidden');
-                        alert('データを正常に読み込みました 🤍');
+                        alert('データを正常に読み込みました');
                     } else {
                         alert('データ形式が正しくないようです。');
                     }
@@ -604,3 +606,4 @@
     </script>
 </body>
 </html>
+
