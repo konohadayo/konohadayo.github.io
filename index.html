@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤍 Focus Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #FBF9F6;
+            color: #4A4543;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-[#E8E2D5]">
+    <!-- Header -->
+    <header class="bg-[#FBF9F6]/80 backdrop-blur-md border-b border-[#EFECE6] sticky top-0 z-30 transition-all">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2.5">
+                <span class="text-xl">🤍</span>
+                <h1 class="text-lg font-bold tracking-tight text-[#5C534E]">Focus Portal</h1>
+            </div>
+            <div class="flex items-center space-x-2.5">
+                <button id="open-add-modal" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white text-xs font-medium px-4 py-2 rounded-full shadow-sm transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>追加する</span>
+                </button>
+                <button id="open-settings-modal" class="text-[#8C7A6B] hover:text-[#5C534E] p-2 rounded-full transition" title="データ管理">
+                    <i class="fa-solid fa-gear text-base"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-6 py-8 flex-grow w-full">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-[#4A4543] tracking-wide">おかえりなさい ฅ^•ω•^ฅ</h2>
+            <p class="text-xs text-[#8C827A] mt-1.5 tracking-wider">The future depends on what you do today.</p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex border-b border-[#EFECE6] mb-8 space-x-6 overflow-x-auto">
+            <button id="tab-youtube" class="pb-3 text-sm font-medium text-[#8C7A6B] border-b-2 border-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-brands fa-youtube text-[#D97768]"></i>
+                <span>YouTube 動画</span>
+            </button>
+            <button id="tab-sns" class="pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-compass text-[#7A8B79]"></i>
+                <span>SNS ショートカット</span>
+            </button>
+            <button id="tab-timer" class="pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-[#8C7A6B] fa-clock text-[#8C7A6B]"></i>
+                <span>タイマー</span>
+            </button>
+            <button id="tab-todo" class="pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-check-double text-[#A39990]"></i>
+                <span>ToDo / メモ</span>
+            </button>
+        </div>
+
+        <!-- YouTube Grid View -->
+        <section id="section-youtube" class="space-y-4">
+            <div id="youtube-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+            <div id="youtube-empty" class="hidden text-center py-16 bg-white/60 rounded-3xl border border-dashed border-[#E2DBD0] p-8">
+                <p class="text-[#A39990] text-sm mb-1">登録された動画がありません</p>
+                <p class="text-xs text-[#B3A9A0]">右上「追加する」から好きな動画を追加してください</p>
+            </div>
+        </section>
+
+        <!-- SNS Shortcuts View -->
+        <section id="section-sns" class="hidden space-y-4">
+            <div id="sns-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+            <div id="sns-empty" class="hidden text-center py-16 bg-white/60 rounded-3xl border border-dashed border-[#E2DBD0] p-8">
+                <p class="text-[#A39990] text-sm mb-1">ショートカットが追加されていません</p>
+                <p class="text-xs text-[#B3A9A0]">InstagramやTikTokなどの勉強垢リンクを追加してみましょう</p>
+            </div>
+        </section>
+
+        <!-- Pomodoro Timer View -->
+        <section id="section-timer" class="hidden flex flex-col items-center justify-center py-6">
+            <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-sm border border-[#EFECE6] text-center space-y-6">
+                <div class="flex justify-center space-x-3">
+                    <button id="mode-focus" class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition">集中 (25分)</button>
+                    <button id="mode-break" class="px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition">休憩 (5分)</button>
+                </div>
+                <div id="timer-display" class="text-6xl font-light tracking-tight text-[#4A4543] py-4">25:00</div>
+                <div class="flex justify-center space-x-3">
+                    <button id="timer-start-btn" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white px-8 py-3 rounded-2xl text-xs font-medium shadow-sm transition">スタート</button>
+                    <button id="timer-reset-btn" class="bg-[#F5F2EC] hover:bg-[#EFECE6] text-[#8C827A] px-6 py-3 rounded-2xl text-xs font-medium transition">リセット</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ToDo Memo View -->
+        <section id="section-todo" class="hidden space-y-6 max-w-xl mx-auto">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-[#EFECE6] space-y-4">
+                <form id="todo-form" class="flex space-x-2">
+                    <input type="text" id="todo-input" required placeholder="今日やることを追加する 🤍" class="flex-grow border border-[#E2DBD0] rounded-2xl px-4 py-2.5 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-[#FAF8F5] text-[#4A4543]">
+                    <button type="submit" class="bg-[#8C7A6B] hover:bg-[#7A695B] text-white text-xs font-medium px-5 py-2.5 rounded-2xl shadow-sm transition flex-shrink-0">追加</button>
+                </form>
+                <div id="todo-list" class="space-y-2.5 pt-2"></div>
+                <div id="todo-empty" class="hidden text-center py-8 text-xs text-[#B3A9A0]">
+                    タスクはありません 🤍 ゆっくり過ごしましょう
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-[11px] text-[#A39990] border-t border-[#EFECE6] tracking-wider">
+        Focus Portal 🤍 Cozy Study Space
+    </footer>
+
+    <!-- Add/Edit Modal -->
+    <div id="add-modal" class="fixed inset-0 bg-[#4A4543]/30 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#FAF8F5] rounded-3xl max-w-md w-full p-8 shadow-xl space-y-5 border border-[#EFECE6]">
+            <div class="flex justify-between items-center">
+                <h3 id="modal-title" class="font-bold text-base text-[#4A4543]">お気に入り追加</h3>
+                <button id="close-add-modal" class="text-[#A39990] hover:text-[#4A4543] transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="add-form" class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block text-xs font-medium text-[#8C827A] mb-1.5">種類</label>
+                    <select id="item-type" class="w-full border border-[#E2DBD0] rounded-2xl p-3 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-white text-[#4A4543]">
+                        <option value="youtube">YouTube動画</option>
+                        <option value="sns">SNSリンク (Instagram / TikTok / その他)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-[#8C827A] mb-1.5">タイトル</label>
+                    <input type="text" id="item-title" required class="w-full border border-[#E2DBD0] rounded-2xl p-3 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-white text-[#4A4543]" placeholder="例: 集中Vlog 🤍">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-[#8C827A] mb-1.5">URL</label>
+                    <input type="url" id="item-url" required class="w-full border border-[#E2DBD0] rounded-2xl p-3 text-xs focus:ring-2 focus:ring-[#8C7A6B] focus:outline-none bg-white text-[#4A4543]" placeholder="https://...">
+                </div>
+                <button type="submit" id="submit-btn" class="w-full bg-[#8C7A6B] hover:bg-[#7A695B] text-white font-medium py-3 rounded-2xl transition shadow-sm text-xs tracking-wider">
+                    追加する
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div id="player-modal" class="fixed inset-0 bg-[#4A4543]/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-black rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative flex flex-col aspect-video border border-white/10">
+            <button id="close-player-modal" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white w-9 h-9 rounded-full flex items-center justify-center transition z-10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="player-container" class="w-full h-full flex items-center justify-center"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-[#4A4543]/30 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#FAF8F5] rounded-3xl max-w-sm w-full p-8 shadow-xl space-y-4 border border-[#EFECE6]">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-[#4A4543]">データ管理</h3>
+                <button id="close-settings-modal" class="text-[#A39990] hover:text-[#4A4543] transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-2.5">
+                <button id="export-data" class="w-full bg-white hover:bg-[#F2ECE4] text-[#5C534E] font-medium py-2.5 rounded-2xl transition text-xs border border-[#E2DBD0] flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download text-[#8C7A6B]"></i>
+                    <span>データをバックアップ保存</span>
+                </button>
+                <label class="w-full bg-white hover:bg-[#F2ECE4] text-[#5C534E] font-medium py-2.5 rounded-2xl transition text-xs border border-[#E2DBD0] flex items-center justify-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-upload text-[#8C7A6B]"></i>
+                    <span>データをファイルから復元</span>
+                    <input type="file" id="import-file" accept=".json" class="hidden">
+                </label>
+                <hr class="border-[#EFECE6] my-2">
+                <button id="reset-data" class="w-full bg-[#FAF2F2] hover:bg-[#F4E6E6] text-[#C27878] font-medium py-2.5 rounded-2xl transition text-xs border border-[#EAD4D4]">
+                    初期データに戻す
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const defaultYoutube = [
+            { id: '1', title: '【Study with me】集中ルーティン', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
+        ];
+        const defaultSns = [
+            { id: '1', title: 'お気に入り', url: 'https://instagram.com' }
+        ];
+        const defaultTodos = [
+            { id: '1', text: 'ドット絵を描く', completed: false }
+        ];
+
+        let youtubeList = JSON.parse(localStorage.getItem('focus_youtube')) || defaultYoutube;
+        let snsList = JSON.parse(localStorage.getItem('focus_sns')) || defaultSns;
+        let todoList = JSON.parse(localStorage.getItem('focus_todos')) || defaultTodos;
+
+        const youtubeGrid = document.getElementById('youtube-grid');
+        const youtubeEmpty = document.getElementById('youtube-empty');
+        const snsGrid = document.getElementById('sns-grid');
+        const snsEmpty = document.getElementById('sns-empty');
+        const todoListContainer = document.getElementById('todo-list');
+        const todoEmpty = document.getElementById('todo-empty');
+
+        const tabYoutube = document.getElementById('tab-youtube');
+        const tabSns = document.getElementById('tab-sns');
+        const tabTimer = document.getElementById('tab-timer');
+        const tabTodo = document.getElementById('tab-todo');
+
+        const sectionYoutube = document.getElementById('section-youtube');
+        const sectionSns = document.getElementById('section-sns');
+        const sectionTimer = document.getElementById('section-timer');
+        const sectionTodo = document.getElementById('section-todo');
+
+        const addModal = document.getElementById('add-modal');
+        const playerModal = document.getElementById('player-modal');
+        const settingsModal = document.getElementById('settings-modal');
+        const playerContainer = document.getElementById('player-container');
+        const modalTitle = document.getElementById('modal-title');
+        const submitBtn = document.getElementById('submit-btn');
+
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function render() {
+            // YouTube Grid
+            youtubeGrid.innerHTML = '';
+            if (youtubeList.length === 0) {
+                youtubeEmpty.classList.remove('hidden');
+            } else {
+                youtubeEmpty.classList.add('hidden');
+                youtubeList.forEach(item => {
+                    const ytId = getYouTubeId(item.url);
+                    const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=60';
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 border border-[#EFECE6] flex flex-col group cursor-pointer relative';
+                    card.innerHTML = `
+                        <div class="relative aspect-video bg-[#F5F2EC] overflow-hidden">
+                            <img src="${thumbUrl}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition flex items-center justify-center">
+                                <div class="w-10 h-10 rounded-full bg-white/90 text-[#4A4543] flex items-center justify-center shadow-md opacity-80 group-hover:opacity-100 group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-play ml-0.5 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 flex justify-between items-start">
+                            <h4 class="font-medium text-xs text-[#5C534E] line-clamp-2 leading-relaxed">${item.title}</h4>
+                            <div class="flex items-center space-x-1 flex-shrink-0 ml-2">
+                                <button class="edit-btn text-[#B3A9A0] hover:text-[#8C7A6B] p-1 transition" data-id="${item.id}" data-type="youtube" title="編集">
+                                    <i class="fa-solid fa-pen text-[11px]"></i>
+                                </button>
+                                <button class="delete-btn text-[#B3A9A0] hover:text-[#C27878] p-1 transition" data-id="${item.id}" data-type="youtube" title="削除">
+                                    <i class="fa-solid fa-trash-can text-[11px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.delete-btn') || e.target.closest('.edit-btn')) return;
+                        if (ytId) {
+                            playerContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                            playerModal.classList.remove('hidden');
+                        } else {
+                            window.open(item.url, '_blank');
+                        }
+                    });
+                    youtubeGrid.appendChild(card);
+                });
+            }
+
+            // SNS Grid
+            snsGrid.innerHTML = '';
+            if (snsList.length === 0) {
+                snsEmpty.classList.remove('hidden');
+            } else {
+                snsEmpty.classList.add('hidden');
+                snsList.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-3xl p-4 shadow-sm hover:shadow-md transition duration-200 border border-[#EFECE6] flex items-center justify-between group cursor-pointer';
+                    card.innerHTML = `
+                        <div class="flex items-center space-x-3 overflow-hidden">
+                            <div class="w-10 h-10 rounded-2xl bg-[#F5F2EC] text-[#8C7A6B] flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-link text-xs"></i>
+                            </div>
+                            <span class="font-medium text-xs text-[#5C534E] truncate">${item.title}</span>
+                        </div>
+                        <div class="flex items-center space-x-1 flex-shrink-0">
+                            <button class="edit-btn text-[#B3A9A0] hover:text-[#8C7A6B] p-2 transition" data-id="${item.id}" data-type="sns" title="編集">
+                                <i class="fa-solid fa-pen text-[11px]"></i>
+                            </button>
+                            <button class="delete-btn text-[#B3A9A0] hover:text-[#C27878] p-2 transition" data-id="${item.id}" data-type="sns" title="削除">
+                                <i class="fa-solid fa-trash-can text-[11px]"></i>
+                            </button>
+                        </div>
+                    `;
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.delete-btn') || e.target.closest('.edit-btn')) return;
+                        window.open(item.url, '_blank');
+                    });
+                    snsGrid.appendChild(card);
+                });
+            }
+
+            // ToDo List
+            todoListContainer.innerHTML = '';
+            if (todoList.length === 0) {
+                todoEmpty.classList.remove('hidden');
+            } else {
+                todoEmpty.classList.add('hidden');
+                todoList.forEach(todo => {
+                    const item = document.createElement('div');
+                    item.className = 'flex items-center justify-between p-3 rounded-2xl border border-[#EFECE6] bg-[#FAF8F5] transition';
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-3 cursor-pointer select-none toggle-todo" data-id="${todo.id}">
+                            <div class="w-5 h-5 rounded-full border border-[#8C7A6B] flex items-center justify-center ${todo.completed ? 'bg-[#8C7A6B] text-white' : 'bg-white'} transition">
+                                ${todo.completed ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                            </div>
+                            <span class="text-xs ${todo.completed ? 'line-through text-[#B3A9A0]' : 'text-[#5C534E]'} font-medium">${todo.text}</span>
+                        </div>
+                        <button class="delete-todo text-[#B3A9A0] hover:text-[#C27878] p-1.5 transition" data-id="${todo.id}">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    `;
+                    todoListContainer.appendChild(item);
+                });
+            }
+
+            // Event Listeners for Dynamic Items
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const type = btn.getAttribute('data-type');
+                    if (type === 'youtube') {
+                        youtubeList = youtubeList.filter(i => i.id !== id);
+                        localStorage.setItem('focus_youtube', JSON.stringify(youtubeList));
+                    } else {
+                        snsList = snsList.filter(i => i.id !== id);
+                        localStorage.setItem('focus_sns', JSON.stringify(snsList));
+                    }
+                    render();
+                });
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const type = btn.getAttribute('data-type');
+                    let item = type === 'youtube' ? youtubeList.find(i => i.id === id) : snsList.find(i => i.id === id);
+                    if (item) {
+                        document.getElementById('edit-id').value = item.id;
+                        document.getElementById('item-type').value = type;
+                        document.getElementById('item-title').value = item.title;
+                        document.getElementById('item-url').value = item.url;
+                        modalTitle.textContent = 'お気に入り編集';
+                        submitBtn.textContent = '変更を保存する';
+                        addModal.classList.remove('hidden');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.toggle-todo').forEach(el => {
+                el.addEventListener('click', () => {
+                    const id = el.getAttribute('data-id');
+                    const todo = todoList.find(t => t.id === id);
+                    if (todo) {
+                        todo.completed = !todo.completed;
+                        localStorage.setItem('focus_todos', JSON.stringify(todoList));
+                        render();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.delete-todo').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    todoList = todoList.filter(t => t.id !== id);
+                    localStorage.setItem('focus_todos', JSON.stringify(todoList));
+                    render();
+                });
+            });
+        }
+
+        // Tabs Switching
+        function resetTabs() {
+            const tabs = [tabYoutube, tabSns, tabTimer, tabTodo];
+            const sections = [sectionYoutube, sectionSns, sectionTimer, sectionTodo];
+            tabs.forEach(t => t.className = "pb-3 text-sm font-medium text-[#B3A9A0] hover:text-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap");
+            sections.forEach(s => s.classList.add('hidden'));
+        }
+
+        tabYoutube.addEventListener('click', () => { resetTabs(); tabYoutube.className = "pb-3 text-sm font-medium text-[#8C7A6B] border-b-2 border-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap"; sectionYoutube.classList.remove('hidden'); });
+        tabSns.addEventListener('click', () => { resetTabs(); tabSns.className = "pb-3 text-sm font-medium text-[#8C7A6B] border-b-2 border-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap"; sectionSns.classList.remove('hidden'); });
+        tabTimer.addEventListener('click', () => { resetTabs(); tabTimer.className = "pb-3 text-sm font-medium text-[#8C7A6B] border-b-2 border-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap"; sectionTimer.classList.remove('hidden'); });
+        tabTodo.addEventListener('click', () => { resetTabs(); tabTodo.className = "pb-3 text-sm font-medium text-[#8C7A6B] border-b-2 border-[#8C7A6B] transition flex items-center space-x-2 whitespace-nowrap"; sectionTodo.classList.remove('hidden'); });
+
+        // Modals Logic
+        document.getElementById('open-add-modal').addEventListener('click', () => {
+            document.getElementById('add-form').reset();
+            document.getElementById('edit-id').value = '';
+            modalTitle.textContent = 'お気に入り追加';
+            submitBtn.textContent = '追加する';
+            addModal.classList.remove('hidden');
+        });
+        document.getElementById('close-add-modal').addEventListener('click', () => addModal.classList.add('hidden'));
+        document.getElementById('open-settings-modal').addEventListener('click', () => settingsModal.classList.remove('hidden'));
+        document.getElementById('close-settings-modal').addEventListener('click', () => settingsModal.classList.add('hidden'));
+        document.getElementById('close-player-modal').addEventListener('click', () => {
+            playerModal.classList.add('hidden');
+            playerContainer.innerHTML = '';
+        });
+
+        // Add / Edit Item
+        document.getElementById('add-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('edit-id').value;
+            const type = document.getElementById('item-type').value;
+            const title = document.getElementById('item-title').value;
+            const url = document.getElementById('item-url').value;
+
+            if (editId) {
+                youtubeList = youtubeList.filter(i => i.id !== editId);
+                snsList = snsList.filter(i => i.id !== editId);
+                const updatedItem = { id: editId, title, url };
+                if (type === 'youtube') youtubeList.push(updatedItem);
+                else snsList.push(updatedItem);
+            } else {
+                const newItem = { id: Date.now().toString(), title, url };
+                if (type === 'youtube') youtubeList.push(newItem);
+                else snsList.push(newItem);
+            }
+
+            localStorage.setItem('focus_youtube', JSON.stringify(youtubeList));
+            localStorage.setItem('focus_sns', JSON.stringify(snsList));
+            addModal.classList.add('hidden');
+            document.getElementById('add-form').reset();
+            render();
+        });
+
+        // Add Todo Item
+        document.getElementById('todo-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const input = document.getElementById('todo-input');
+            if (!input.value.trim()) return;
+            todoList.push({ id: Date.now().toString(), text: input.value.trim(), completed: false });
+            localStorage.setItem('focus_todos', JSON.stringify(todoList));
+            input.value = '';
+            render();
+        });
+
+        // Timer Logic
+        let timerDuration = 25 * 60;
+        let timerRemaining = timerDuration;
+        let timerInterval = null;
+        let isFocusMode = true;
+
+        const timerDisplay = document.getElementById('timer-display');
+        const timerStartBtn = document.getElementById('timer-start-btn');
+        const timerResetBtn = document.getElementById('timer-reset-btn');
+        const modeFocus = document.getElementById('mode-focus');
+        const modeBreak = document.getElementById('mode-break');
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timerRemaining / 60).toString().padStart(2, '0');
+            const s = (timerRemaining % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${m}:${s}`;
+        }
+
+        function setTimerMode(duration, focus) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerStartBtn.textContent = 'スタート';
+            isFocusMode = focus;
+            timerDuration = duration;
+            timerRemaining = timerDuration;
+            updateTimerDisplay();
+
+            if (isFocusMode) {
+                modeFocus.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition";
+                modeBreak.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition";
+            } else {
+                modeBreak.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C7A6B] text-white transition";
+                modeFocus.className = "px-4 py-1.5 rounded-full text-xs font-medium bg-[#F5F2EC] text-[#8C827A] hover:bg-[#EFECE6] transition";
+            }
+        }
+
+        modeFocus.addEventListener('click', () => setTimerMode(25 * 60, true));
+        modeBreak.addEventListener('click', () => setTimerMode(5 * 60, false));
+
+        timerStartBtn.addEventListener('click', () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerStartBtn.textContent = 'スタート';
+            } else {
+                timerStartBtn.textContent = '一時停止';
+                timerInterval = setInterval(() => {
+                    if (timerRemaining > 0) {
+                        timerRemaining--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        alert(isFocusMode ? 'お疲れ様でした！5分間の休憩に入りましょう' : '休憩終了です！集中モードに入りましょう');
+                        setTimerMode(isFocusMode ? 5 * 60 : 25 * 60, !isFocusMode);
+                    }
+                }, 1000);
+            }
+        });
+
+        timerResetBtn.addEventListener('click', () => setTimerMode(timerDuration, isFocusMode));
+
+        // Export Data
+        document.getElementById('export-data').addEventListener('click', () => {
+            const data = { youtube: youtubeList, sns: snsList, todos: todoList };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'focus-portal-backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        // Import Data
+        document.getElementById('import-file').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (data.youtube && data.sns) {
+                        youtubeList = data.youtube;
+                        snsList = data.sns;
+                        if (data.todos) todoList = data.todos;
+                        localStorage.setItem('focus_youtube', JSON.stringify(youtubeList));
+                        localStorage.setItem('focus_sns', JSON.stringify(snsList));
+                        localStorage.setItem('focus_todos', JSON.stringify(todoList));
+                        render();
+                        settingsModal.classList.add('hidden');
+                        alert('データを正常に読み込みました');
+                    } else {
+                        alert('データ形式が正しくないようです。');
+                    }
+                } catch (err) {
+                    alert('ファイルの読み込みに失敗しました。');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Reset Data
+        document.getElementById('reset-data').addEventListener('click', () => {
+            if (confirm('データを初期状態に戻しますか？')) {
+                localStorage.removeItem('focus_youtube');
+                localStorage.removeItem('focus_sns');
+                localStorage.removeItem('focus_todos');
+                youtubeList = defaultYoutube;
+                snsList = defaultSns;
+                todoList = defaultTodos;
+                settingsModal.classList.add('hidden');
+                render();
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>
