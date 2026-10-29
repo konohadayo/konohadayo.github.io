@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sylvarena Terminal - PRTS</title>
   
-  <!-- PWA Settings -->
   <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,6 +19,7 @@
       --ak-yellow: #ffc107;
       --ak-orange: #ff9800;
       --ak-cyan: #00bcd4;
+      --ak-red: #ff5252;
       --text-main: #ffffff;
       --text-muted: #888888;
       --border-color: rgba(255, 255, 255, 0.15);
@@ -216,6 +216,15 @@
       border-color: var(--ak-orange);
     }
 
+    .ak-btn-danger {
+      background: rgba(255, 82, 82, 0.1);
+      border-color: var(--ak-red);
+      color: var(--ak-red);
+    }
+    .ak-btn-danger:hover {
+      background: rgba(255, 82, 82, 0.25);
+    }
+
     /* タブ切り替えバー */
     .nav-tabs {
       display: flex;
@@ -228,13 +237,13 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 60px;
+      min-width: 55px;
       font-family: var(--font-tech);
       padding: 8px 2px;
       border: none;
       background: var(--bg-panel);
       color: var(--text-muted);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -289,7 +298,7 @@
       width: 100%;
     }
 
-    .ak-input {
+    .ak-input, .ak-select {
       width: 100%;
       padding: 8px 10px;
       background: #000;
@@ -300,7 +309,7 @@
       font-family: var(--font-jp);
     }
 
-    .ak-input:focus {
+    .ak-input:focus, .ak-select:focus {
       border-color: var(--ak-yellow);
     }
 
@@ -322,9 +331,9 @@
       border-top: 1px solid rgba(255,255,255,0.05);
       border-right: 1px solid rgba(255,255,255,0.05);
       border-bottom: 1px solid rgba(255,255,255,0.05);
-      cursor: pointer;
       transition: all 0.2s ease;
       width: 100%;
+      gap: 8px;
     }
 
     .list-item:hover {
@@ -335,6 +344,15 @@
     .list-item.checked {
       opacity: 0.35;
       text-decoration: line-through;
+    }
+
+    .item-content-click {
+      flex: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 0;
     }
 
     .item-text {
@@ -348,7 +366,21 @@
       color: var(--ak-yellow);
       font-weight: bold;
       white-space: nowrap;
-      margin-left: 8px;
+      margin-left: 6px;
+    }
+
+    .action-badge-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-family: var(--font-tech);
+    }
+    .action-badge-btn:hover {
+      border-color: var(--ak-red);
+      color: var(--ak-red);
     }
 
     /* 単語カード 3Dフリップ演出 */
@@ -399,6 +431,17 @@
       position: absolute;
       top: 8px;
       left: 10px;
+    }
+
+    .card-category-tag {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      background: rgba(0, 188, 212, 0.2);
+      color: var(--ak-cyan);
+      padding: 1px 6px;
+      position: absolute;
+      top: 8px;
+      right: 10px;
     }
 
     .card-content {
@@ -497,7 +540,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.6</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.7</div>
       </div>
       <div class="rank-tag" id="rank-badge">NOVICE</div>
     </div>
@@ -555,20 +598,17 @@
       </div>
     </div>
 
+    <!-- デイリールーティン（編集可能） -->
     <div class="section-panel">
       <div class="section-title">DAILY ROUTINE</div>
-      <div class="item-list" id="daily-task-list">
-        <div class="list-item" onclick="completeTask(this, 30)">
-          <span class="item-text">端末起動および定期メンテナンス</span>
-          <span class="item-reward">+30 LEAF</span>
-        </div>
-        <div class="list-item" onclick="completeTask(this, 20)">
-          <span class="item-text">返却データの整合性チェック</span>
-          <span class="item-reward">+20 LEAF</span>
-        </div>
-        <div class="list-item" onclick="completeTask(this, 25)">
-          <span class="item-text">メンタルデトックス (15分休憩)</span>
-          <span class="item-reward">+25 LEAF</span>
+      <div class="item-list" id="daily-task-list"></div>
+      
+      <!-- 新規デイリー追加フォーム -->
+      <div class="input-group" style="margin-top: 6px;">
+        <input type="text" id="new-daily-text" class="ak-input" placeholder="新しい日課の内容...">
+        <div style="display:flex; gap:6px;">
+          <input type="number" id="new-daily-reward" class="ak-input" value="20" placeholder="報酬" style="width: 80px;">
+          <button class="ak-btn ak-btn-primary" onclick="addDailyTask()">ADD ROUTINE</button>
         </div>
       </div>
     </div>
@@ -582,12 +622,23 @@
         <span id="card-count-label">0 CARDS</span>
       </div>
 
+      <!-- ジャンルフィルター -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中</option>
+          <option value="覚えたカード">覚えたカード (ARCHIVED)</option>
+        </select>
+      </div>
+
       <!-- カード表示エリア -->
       <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
         <div class="flashcard-container" onclick="flipCard()">
           <div class="flashcard" id="flashcard">
             <div class="card-face front">
               <span class="card-label">QUESTION (FRONT)</span>
+              <span class="card-category-tag" id="card-category-tag">GENERAL</span>
               <div class="card-content" id="card-front-text">Front Text</div>
               <span class="card-stats" id="card-review-count">REVIEW: 0</span>
             </div>
@@ -602,10 +653,15 @@
           <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
           <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+10 LEAF)</button>
         </div>
+        
+        <div style="display:flex; justify-content:space-between; gap:6px;">
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem;">覚えたカードへ移動</button>
+          <button class="ak-btn ak-btn-danger" onclick="deleteCurrentCard()" style="font-size:0.75rem;">このカードを削除</button>
+        </div>
       </div>
 
       <div id="card-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
-        カードがありません。下のフォームから作成してください。
+        条件に一致するカードがありません。下のフォームから作成してください。
       </div>
     </div>
 
@@ -615,6 +671,7 @@
       <div class="input-group">
         <input type="text" id="card-front-input" class="ak-input" placeholder="表面（単語・問題など）">
         <input type="text" id="card-back-input" class="ak-input" placeholder="裏面（意味・解答など）">
+        <input type="text" id="card-category-input" class="ak-input" value="一般" placeholder="ジャンル / タグ (例: 英語, 歴史)">
         <button class="ak-btn ak-btn-primary" onclick="addCard()">ADD FLASHCARD</button>
       </div>
     </div>
@@ -629,16 +686,12 @@
   <!-- タブ3: アーカイブ -->
   <div id="tab-archive" class="tab-content">
     <div class="section-panel">
-      <div class="section-title">LOG & MEMO</div>
+      <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
       <div class="input-group">
-        <input type="text" id="memo-input" class="ak-input" placeholder="レコードの追加...">
+        <input type="text" id="memo-input" class="ak-input" placeholder="新しい研究メモを追加...">
         <button class="ak-btn" onclick="addMemo()">RECORD</button>
       </div>
-      <div class="item-list" id="memo-list">
-        <div class="list-item">
-          <span class="item-text">LOG.01 - 「古代世界樹植物学 考察」</span>
-        </div>
-      </div>
+      <div class="item-list" id="memo-list"></div>
     </div>
 
     <div class="section-panel">
@@ -655,15 +708,15 @@
       <div class="section-title">SUPPLY STORE</div>
       <div class="item-list">
         <div class="list-item" onclick="buyItem('羊皮紙ノート', 50)">
-          <span class="item-text">羊皮紙ノート</span>
+          <span class="item-content-click"><span class="item-text">羊皮紙ノート</span></span>
           <span class="item-reward">50 LEAF</span>
         </div>
         <div class="list-item" onclick="buyItem('特製ハーブティー', 40)">
-          <span class="item-text">特製ハーブティー</span>
+          <span class="item-content-click"><span class="item-text">特製ハーブティー</span></span>
           <span class="item-reward">40 LEAF</span>
         </div>
         <div class="list-item" onclick="buyItem('タクティカル万年筆', 120)">
-          <span class="item-text">タクティカル万年筆</span>
+          <span class="item-content-click"><span class="item-text">タクティカル万年筆</span></span>
           <span class="item-reward">120 LEAF</span>
         </div>
       </div>
@@ -675,7 +728,7 @@
     <div class="section-panel">
       <div class="section-title">DATA MANAGEMENT</div>
       <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
-        アプリの全データ（レベル、葉貨、単語カード、メモ）を保存・復元できます。
+        アプリの全データ（レベル、葉貨、単語カード、メモ、ルーティン）を保存・復元できます。
       </div>
       <div class="ak-btn-group" style="flex-direction:column;">
         <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
@@ -699,7 +752,12 @@
     lastDate: new Date().toDateString(),
     inventory: { 'HERB TEA SET': 1 },
     cards: [],
-    memos: ['LOG.01 - 「古代世界樹植物学 考察」']
+    memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
+    dailyTasks: [
+      { id: 1, text: '端末起動および定期メンテナンス', reward: 30, completed: false },
+      { id: 2, text: '返却データの整合性チェック', reward: 20, completed: false },
+      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 25, completed: false }
+    ]
   };
 
   let currentCardIndex = 0;
@@ -711,17 +769,17 @@
     loadState();
     checkDailyReset();
     updateUI();
+    renderDailyTasks();
     renderCards();
     renderMemos();
   };
 
-  // 堅牢な読み込み処理（過去の保存データも自動で引き継ぎます）
+  // 堅牢な読み込み処理（マイグレーション対応）
   function loadState() {
     try {
-      let saved = localStorage.getItem('sylvarena_ak_state_v2');
+      let saved = localStorage.getItem('sylvarena_ak_state_v3');
       if (!saved) {
-        // 過去のキーがあれば引っ張ってきて移行する
-        saved = localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v2') || localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -734,7 +792,7 @@
 
   function saveState() {
     try {
-      localStorage.setItem('sylvarena_ak_state_v2', JSON.stringify(state));
+      localStorage.setItem('sylvarena_ak_state_v3', JSON.stringify(state));
     } catch (e) {
       console.error('Data save error:', e);
     }
@@ -745,6 +803,8 @@
     const today = new Date().toDateString();
     if (state.lastDate !== today) {
       state.lastDate = today;
+      // すべての日課の完了状態をリセット
+      state.dailyTasks.forEach(t => t.completed = false);
       showToast('SYSTEM: DAILY TASKS RESET');
       saveState();
     }
@@ -777,7 +837,7 @@
     document.getElementById(`tab-${tabId}`).classList.add('active');
   }
 
-  // タイマー
+  // --- タイマー ---
   function toggleTimer() {
     const btn = document.getElementById('timer-btn');
     if (isRunning) {
@@ -844,26 +904,90 @@
     }
   }
 
-  function completeTask(el, reward) {
-    if (!el.classList.contains('checked')) {
-      el.classList.add('checked');
-      addLeaf(reward);
-      addXP(20);
-      showToast(`TASK COMPLETED (+${reward} LEAF)`);
+  // --- デイリールーティン管理 ---
+  function renderDailyTasks() {
+    const list = document.getElementById('daily-task-list');
+    list.innerHTML = '';
+    state.dailyTasks.forEach(task => {
+      const item = document.createElement('div');
+      item.className = `list-item ${task.completed ? 'checked' : ''}`;
+      
+      item.innerHTML = `
+        <div class="item-content-click" onclick="completeDailyTask(${task.id})">
+          <span class="item-text">${task.text}</span>
+          <span class="item-reward">+${task.reward} LEAF</span>
+        </div>
+        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})" title="削除">DEL</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function addDailyTask() {
+    const textInput = document.getElementById('new-daily-text');
+    const rewardInput = document.getElementById('new-daily-reward');
+    const text = textInput.value.trim();
+    const reward = parseInt(rewardInput.value) || 20;
+
+    if (text) {
+      state.dailyTasks.push({
+        id: Date.now(),
+        text: text,
+        reward: reward,
+        completed: false
+      });
+      textInput.value = '';
+      showToast('ROUTINE ADDED');
+      saveState();
+      renderDailyTasks();
+    } else {
+      showToast('ERROR: ENTER ROUTINE TEXT');
     }
   }
 
-  // --- 単語カード機能 ---
+  function completeDailyTask(id) {
+    const task = state.dailyTasks.find(t => t.id === id);
+    if (task && !task.completed) {
+      task.completed = true;
+      addLeaf(task.reward);
+      addXP(20);
+      showToast(`TASK COMPLETED (+${task.reward} LEAF)`);
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  function deleteDailyTask(id) {
+    state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+    showToast('ROUTINE DELETED');
+    saveState();
+    renderDailyTasks();
+  }
+
+  // --- 単語カード管理 ---
+  function getFilteredCards() {
+    const filter = document.getElementById('card-filter-select').value;
+    if (filter === '学習中') {
+      return state.cards.filter(c => !c.archived);
+    } else if (filter === '覚えたカード') {
+      return state.cards.filter(c => c.archived);
+    }
+    return state.cards; // すべて
+  }
+
   function addCard() {
     const front = document.getElementById('card-front-input').value.trim();
     const back = document.getElementById('card-back-input').value.trim();
+    const category = document.getElementById('card-category-input').value.trim() || '一般';
 
     if (front && back) {
       state.cards.push({
         id: Date.now(),
         front: front,
         back: back,
-        reviews: 0
+        category: category,
+        reviews: 0,
+        archived: false
       });
       document.getElementById('card-front-input').value = '';
       document.getElementById('card-back-input').value = '';
@@ -875,44 +999,59 @@
     }
   }
 
+  function filterCards() {
+    currentCardIndex = 0;
+    renderCards();
+  }
+
   function renderCards() {
     const countLabel = document.getElementById('card-count-label');
     const displayArea = document.getElementById('card-display-area');
     const emptyMsg = document.getElementById('card-empty-msg');
     const registeredList = document.getElementById('card-registered-list');
+    const filtered = getFilteredCards();
 
-    countLabel.textContent = `${state.cards.length} CARDS`;
+    countLabel.textContent = `${filtered.length} CARDS`;
 
-    if (state.cards.length === 0) {
+    if (filtered.length === 0) {
       displayArea.style.display = 'none';
       emptyMsg.style.display = 'block';
     } else {
       displayArea.style.display = 'flex';
       emptyMsg.style.display = 'none';
-      if (currentCardIndex >= state.cards.length) currentCardIndex = 0;
-      updateCardView();
+      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+      updateCardView(filtered);
     }
 
+    // 登録リスト表示
     registeredList.innerHTML = '';
-    state.cards.forEach((card, index) => {
+    state.cards.forEach((card) => {
       const item = document.createElement('div');
-      item.className = 'list-item';
+      item.className = `list-item ${card.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text">${card.front} / ${card.back}</span>
+        <span class="item-text">[${card.category}] ${card.front} / ${card.back}</span>
         <span class="item-reward">REV: ${card.reviews}</span>
       `;
       registeredList.appendChild(item);
     });
   }
 
-  function updateCardView() {
-    const card = state.cards[currentCardIndex];
+  function updateCardView(filtered) {
+    const card = filtered[currentCardIndex];
     if (!card) return;
 
     document.getElementById('card-front-text').textContent = card.front;
     document.getElementById('card-back-text').textContent = card.back;
+    document.getElementById('card-category-tag').textContent = card.category;
     document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
     document.getElementById('flashcard').classList.remove('flipped');
+
+    const archiveBtn = document.getElementById('toggle-archive-btn');
+    if (card.archived) {
+      archiveBtn.textContent = '学習中へ戻す';
+    } else {
+      archiveBtn.textContent = '覚えたカードへ移動';
+    }
   }
 
   function flipCard() {
@@ -920,9 +1059,10 @@
   }
 
   function answerCard(isCorrect) {
-    if (state.cards.length === 0) return;
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
 
-    const card = state.cards[currentCardIndex];
+    const card = filtered[currentCardIndex];
     card.reviews += 1;
 
     if (isCorrect) {
@@ -933,16 +1073,40 @@
       showToast('REVIEW AGAIN');
     }
 
-    currentCardIndex = (currentCardIndex + 1) % state.cards.length;
+    currentCardIndex = (currentCardIndex + 1) % filtered.length;
     saveState();
     renderCards();
   }
 
-  // メモ＆購買
+  function toggleCardArchive() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+    
+    card.archived = !card.archived;
+    showToast(card.archived ? 'ARCHIVED (覚えたカードへ移動)' : 'RESTORED (学習中へ戻す)');
+    saveState();
+    renderCards();
+  }
+
+  function deleteCurrentCard() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+
+    state.cards = state.cards.filter(c => c.id !== card.id);
+    currentCardIndex = 0;
+    showToast('CARD DELETED');
+    saveState();
+    renderCards();
+  }
+
+  // --- メモ（LOG / Memo）管理 ---
   function addMemo() {
     const input = document.getElementById('memo-input');
-    if (input.value.trim()) {
-      state.memos.push(`LOG. - 「${input.value}」`);
+    const text = input.value.trim();
+    if (text) {
+      state.memos.push(`LOG. - 「${text}」`);
       input.value = '';
       showToast('RECORD ADDED');
       saveState();
@@ -953,14 +1117,37 @@
   function renderMemos() {
     const list = document.getElementById('memo-list');
     list.innerHTML = '';
-    state.memos.forEach(memo => {
+    state.memos.forEach((memo, index) => {
       const item = document.createElement('div');
       item.className = 'list-item';
-      item.innerHTML = `<span class="item-text">${memo}</span>`;
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">${memo}</span>
+        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集">EDIT</button>
+        <button class="action-badge-btn" onclick="deleteMemo(${index})" title="削除">DEL</button>
+      `;
       list.appendChild(item);
     });
   }
 
+  function editMemo(index) {
+    const currentText = state.memos[index];
+    const newText = prompt('メモの内容を編集:', currentText.replace(/^LOG\. - 「|」$/g, ''));
+    if (newText !== null && newText.trim() !== '') {
+      state.memos[index] = `LOG. - 「${newText.trim()}」`;
+      showToast('RECORD UPDATED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  function deleteMemo(index) {
+    state.memos.splice(index, 1);
+    showToast('RECORD DELETED');
+    saveState();
+    renderMemos();
+  }
+
+  // --- 購買部 ---
   function buyItem(name, price) {
     if (state.leaf >= price) {
       addLeaf(-price);
@@ -1002,6 +1189,7 @@
         const importedState = JSON.parse(e.target.result);
         state = { ...state, ...importedState };
         saveState();
+        renderDailyTasks();
         renderCards();
         renderMemos();
         showToast('DATA IMPORTED SUCCESSFULLY');
@@ -1056,4 +1244,3 @@
 
 </body>
 </html>
-
