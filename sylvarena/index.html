@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="44E6F93B-FD1C-4EFD-9963-42F939BFBBEC.png">
-    
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap');
 
@@ -37,7 +37,6 @@
 
     body {
       background-color: var(--bg-main);
-      /* アークナイツ風斜めストライプ背景 */
       background-image: 
         linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
         linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%),
@@ -71,7 +70,6 @@
       border-bottom: 1px solid var(--border-color);
       padding: 14px;
       position: relative;
-      /* 斜めカット */
       clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
     }
 
@@ -147,7 +145,7 @@
       color: var(--ak-yellow);
     }
 
-    /* メインタイマー（ミッション画面風） */
+    /* メインタイマー */
     .mission-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -195,7 +193,7 @@
       font-size: 0.85rem;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.15 ease;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -226,19 +224,22 @@
       background: #000;
       padding: 2px;
       border: 1px solid var(--border-color);
+      overflow-x: auto;
     }
 
     .tab-btn {
       flex: 1;
+      min-width: 60px;
       font-family: var(--font-tech);
       padding: 8px 2px;
       border: none;
       background: var(--bg-panel);
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .tab-btn.active {
@@ -276,7 +277,7 @@
       letter-spacing: 0.08em;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 6px;
     }
@@ -284,13 +285,13 @@
     /* フォーム要素 */
     .input-group {
       display: flex;
+      flex-direction: column;
       gap: 6px;
       width: 100%;
     }
 
     .ak-input {
-      flex: 1;
-      min-width: 0;
+      width: 100%;
       padding: 8px 10px;
       background: #000;
       border: 1px solid var(--border-color);
@@ -351,6 +352,71 @@
       margin-left: 8px;
     }
 
+    /* 単語カード 3Dフリップ演出 */
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      height: 160px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+    }
+
+    .card-label {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      position: absolute;
+      top: 8px;
+      left: 10px;
+    }
+
+    .card-content {
+      font-size: 1.1rem;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .card-stats {
+      font-family: var(--font-tech);
+      font-size: 0.7rem;
+      color: var(--ak-yellow);
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+    }
+
     /* サウンド切り替えボタン */
     .sound-grid {
       display: grid;
@@ -393,7 +459,7 @@
       word-break: break-all;
     }
 
-    /* トースト通知 (アークナイツ警告風) */
+    /* トースト */
     .toast {
       position: fixed;
       bottom: 20px;
@@ -417,6 +483,10 @@
     .toast.show {
       transform: translateX(-50%) translateY(0);
     }
+
+    input[type="file"] {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -428,7 +498,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.0</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.5</div>
       </div>
       <div class="rank-tag" id="rank-badge">NOVICE</div>
     </div>
@@ -470,8 +540,10 @@
   <!-- タブナビゲーション -->
   <nav class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('tasks')">MISSIONS</button>
+    <button class="tab-btn" onclick="switchTab('cards')">CARDS</button>
     <button class="tab-btn" onclick="switchTab('archive')">ARCHIVE</button>
     <button class="tab-btn" onclick="switchTab('shop')">STORE</button>
+    <button class="tab-btn" onclick="switchTab('system')">SYSTEM</button>
   </nav>
 
   <!-- タブ1: ミッション -->
@@ -503,7 +575,59 @@
     </div>
   </div>
 
-  <!-- タブ2: アーカイブ -->
+  <!-- タブ2: 単語カード -->
+  <div id="tab-cards" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">
+        <span>MEMORIZATION TERMINAL</span>
+        <span id="card-count-label">0 CARDS</span>
+      </div>
+
+      <!-- カード表示エリア -->
+      <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
+        <div class="flashcard-container" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="card-face front">
+              <span class="card-label">QUESTION (FRONT)</span>
+              <div class="card-content" id="card-front-text">Front Text</div>
+              <span class="card-stats" id="card-review-count">REVIEW: 0</span>
+            </div>
+            <div class="card-face back">
+              <span class="card-label">ANSWER (BACK)</span>
+              <div class="card-content" id="card-back-text">Back Text</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+10 LEAF)</button>
+        </div>
+      </div>
+
+      <div id="card-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
+        カードがありません。下のフォームから作成してください。
+      </div>
+    </div>
+
+    <!-- 単語カード作成 -->
+    <div class="section-panel">
+      <div class="section-title">CREATE NEW CARD</div>
+      <div class="input-group">
+        <input type="text" id="card-front-input" class="ak-input" placeholder="表面（単語・問題など）">
+        <input type="text" id="card-back-input" class="ak-input" placeholder="裏面（意味・解答など）">
+        <button class="ak-btn ak-btn-primary" onclick="addCard()">ADD FLASHCARD</button>
+      </div>
+    </div>
+
+    <!-- 単語リスト -->
+    <div class="section-panel">
+      <div class="section-title">CARD REGISTERED LIST</div>
+      <div class="item-list" id="card-registered-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ3: アーカイブ -->
   <div id="tab-archive" class="tab-content">
     <div class="section-panel">
       <div class="section-title">LOG & MEMO</div>
@@ -526,7 +650,7 @@
     </div>
   </div>
 
-  <!-- タブ3: 購買部 -->
+  <!-- タブ4: 購買部 -->
   <div id="tab-shop" class="tab-content">
     <div class="section-panel">
       <div class="section-title">SUPPLY STORE</div>
@@ -547,6 +671,21 @@
     </div>
   </div>
 
+  <!-- タブ5: システム・バックアップ -->
+  <div id="tab-system" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">DATA MANAGEMENT</div>
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
+        アプリの全データ（レベル、葉貨、単語カード、メモ）を保存・復元できます。
+      </div>
+      <div class="ak-btn-group" style="flex-direction:column;">
+        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
+        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT DATA (JSON)</button>
+        <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- トースト -->
@@ -559,9 +698,12 @@
     level: 1,
     focusMinutes: 0,
     lastDate: new Date().toDateString(),
-    inventory: { 'HERB TEA SET': 1 }
+    inventory: { 'HERB TEA SET': 1 },
+    cards: [],
+    memos: ['LOG.01 - 「古代世界樹植物学 考察」']
   };
 
+  let currentCardIndex = 0;
   let timerInterval = null;
   let timeLeft = 25 * 60;
   let isRunning = false;
@@ -570,6 +712,8 @@
     loadState();
     checkDailyReset();
     updateUI();
+    renderCards();
+    renderMemos();
   };
 
   function loadState() {
@@ -620,6 +764,7 @@
     document.getElementById(`tab-${tabId}`).classList.add('active');
   }
 
+  // タイマー
   function toggleTimer() {
     const btn = document.getElementById('timer-btn');
     if (isRunning) {
@@ -695,6 +840,115 @@
     }
   }
 
+  // --- 単語カード機能 ---
+  function addCard() {
+    const front = document.getElementById('card-front-input').value.trim();
+    const back = document.getElementById('card-back-input').value.trim();
+
+    if (front && back) {
+      state.cards.push({
+        id: Date.now(),
+        front: front,
+        back: back,
+        reviews: 0
+      });
+      document.getElementById('card-front-input').value = '';
+      document.getElementById('card-back-input').value = '';
+      showToast('FLASHCARD ADDED');
+      saveState();
+      renderCards();
+    } else {
+      showToast('ERROR: BOTH SIDES REQUIRED');
+    }
+  }
+
+  function renderCards() {
+    const countLabel = document.getElementById('card-count-label');
+    const displayArea = document.getElementById('card-display-area');
+    const emptyMsg = document.getElementById('card-empty-msg');
+    const registeredList = document.getElementById('card-registered-list');
+
+    countLabel.textContent = `${state.cards.length} CARDS`;
+
+    if (state.cards.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentCardIndex >= state.cards.length) currentCardIndex = 0;
+      updateCardView();
+    }
+
+    // 登録リスト表示
+    registeredList.innerHTML = '';
+    state.cards.forEach((card, index) => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <span class="item-text">${card.front} / ${card.back}</span>
+        <span class="item-reward">REV: ${card.reviews}</span>
+      `;
+      registeredList.appendChild(item);
+    });
+  }
+
+  function updateCardView() {
+    const card = state.cards[currentCardIndex];
+    if (!card) return;
+
+    document.getElementById('card-front-text').textContent = card.front;
+    document.getElementById('card-back-text').textContent = card.back;
+    document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
+    document.getElementById('flashcard').classList.remove('flipped');
+  }
+
+  function flipCard() {
+    document.getElementById('flashcard').classList.toggle('flipped');
+  }
+
+  function answerCard(isCorrect) {
+    if (state.cards.length === 0) return;
+
+    const card = state.cards[currentCardIndex];
+    card.reviews += 1;
+
+    if (isCorrect) {
+      addLeaf(10);
+      addXP(15);
+      showToast('CORRECT! (+10 LEAF)');
+    } else {
+      showToast('REVIEW AGAIN');
+    }
+
+    currentCardIndex = (currentCardIndex + 1) % state.cards.length;
+    saveState();
+    renderCards();
+  }
+
+  // メモ＆購買
+  function addMemo() {
+    const input = document.getElementById('memo-input');
+    if (input.value.trim()) {
+      state.memos.push(`LOG. - 「${input.value}」`);
+      input.value = '';
+      showToast('RECORD ADDED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  function renderMemos() {
+    const list = document.getElementById('memo-list');
+    list.innerHTML = '';
+    state.memos.forEach(memo => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `<span class="item-text">${memo}</span>`;
+      list.appendChild(item);
+    });
+  }
+
   function buyItem(name, price) {
     if (state.leaf >= price) {
       addLeaf(-price);
@@ -717,17 +971,33 @@
     }
   }
 
-  function addMemo() {
-    const input = document.getElementById('memo-input');
-    if (input.value.trim()) {
-      const list = document.getElementById('memo-list');
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `<span class="item-text">LOG. - 「${input.value}」</span>`;
-      list.appendChild(item);
-      input.value = '';
-      showToast('RECORD ADDED');
-    }
+  // --- バックアップ（データ出入力） ---
+  function exportData() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('DATA EXPORTED');
+  }
+
+  function importData(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+      try {
+        const importedState = JSON.parse(e.target.result);
+        state = { ...state, ...importedState };
+        saveState();
+        renderCards();
+        renderMemos();
+        showToast('DATA IMPORTED SUCCESSFULLY');
+      } catch (err) {
+        showToast('ERROR: INVALID JSON FILE');
+      }
+    };
+    fileReader.readAsText(event.target.files[0]);
   }
 
   // Web Audio
