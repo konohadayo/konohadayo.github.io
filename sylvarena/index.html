@@ -9,7 +9,6 @@
   <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="44E6F93B-FD1C-4EFD-9963-42F939BFBBEC.png">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap');
@@ -498,7 +497,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.5</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.6</div>
       </div>
       <div class="rank-tag" id="rank-badge">NOVICE</div>
     </div>
@@ -716,15 +715,29 @@
     renderMemos();
   };
 
+  // 堅牢な読み込み処理（過去の保存データも自動で引き継ぎます）
   function loadState() {
-    const saved = localStorage.getItem('sylvarena_ak_state');
-    if (saved) {
-      state = { ...state, ...JSON.parse(saved) };
+    try {
+      let saved = localStorage.getItem('sylvarena_ak_state_v2');
+      if (!saved) {
+        // 過去のキーがあれば引っ張ってきて移行する
+        saved = localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
+      }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed };
+      }
+    } catch (e) {
+      console.error('Data load error:', e);
     }
   }
 
   function saveState() {
-    localStorage.setItem('sylvarena_ak_state', JSON.stringify(state));
+    try {
+      localStorage.setItem('sylvarena_ak_state_v2', JSON.stringify(state));
+    } catch (e) {
+      console.error('Data save error:', e);
+    }
     updateUI();
   }
 
@@ -880,7 +893,6 @@
       updateCardView();
     }
 
-    // 登録リスト表示
     registeredList.innerHTML = '';
     state.cards.forEach((card, index) => {
       const item = document.createElement('div');
@@ -1044,3 +1056,4 @@
 
 </body>
 </html>
+
