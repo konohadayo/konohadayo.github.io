@@ -849,23 +849,17 @@
     renderMemos();
   };
 
-  // 全過去キー対応マイグレーション処理（旧キーも検索して引き継ぎます）
+  
+  // 堅牢な読み込み処理（マイグレーション対応）
   function loadState() {
     try {
       let saved = localStorage.getItem('sylvarena_ak_state_v4');
       if (!saved) {
-        saved = localStorage.getItem('sylvarena_ak_state_v6') ||
-                localStorage.getItem('sylvarena_ak_state_v5') ||
-                localStorage.getItem('sylvarena_ak_state_v3') ||
-                localStorage.getItem('sylvarena_ak_state_v2') ||
-                localStorage.getItem('sylvarena_ak_state') ||
-                localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v3') || localStorage.getItem('sylvarena_ak_state_v2') || localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
         state = { ...state, ...parsed };
-        if (state.totalLevel === undefined) state.totalLevel = 1;
-        if (state.xp === undefined) state.xp = 0;
       }
     } catch (e) {
       console.error('Data load error:', e);
