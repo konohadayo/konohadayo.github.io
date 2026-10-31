@@ -103,13 +103,14 @@
       margin-top: -2px;
     }
 
-    .rank-tag {
+    /* 右上のLEAFバッジ */
+    .leaf-tag {
       font-family: var(--font-tech);
       background: var(--ak-yellow);
       color: #000;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: bold;
-      padding: 2px 8px;
+      padding: 3px 10px;
       letter-spacing: 0.05em;
       clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
     }
@@ -136,7 +137,7 @@
 
     .cell-value {
       font-family: var(--font-tech);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: bold;
     }
 
@@ -557,15 +558,17 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.8</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.9</div>
       </div>
-      <div class="rank-tag" id="rank-badge">NOVICE - I</div>
+      <!-- 右上にLEAF配置 -->
+      <div class="leaf-tag" id="leaf-val">LEAF: 120</div>
     </div>
 
+    <!-- ステータスグリッド（称号、Level、Focus Time） -->
     <div class="status-grid">
       <div class="status-cell">
-        <span class="cell-label">CURRENCY (LEAF)</span>
-        <span class="cell-value highlight" id="leaf-val">120</span>
+        <span class="cell-label">OPERATOR RANK</span>
+        <span class="cell-value highlight" id="rank-badge">NOVICE - I</span>
       </div>
       <div class="status-cell">
         <span class="cell-label">LEVEL (TIER)</span>
@@ -779,8 +782,8 @@
 <script>
   let state = {
     leaf: 120,
-    xp: 0,            // 現在の階級内でのXP（0〜100）
-    totalLevel: 1,    // 通算レベル（1〜400など、称号計算用）
+    xp: 0,
+    totalLevel: 1,
     focusMinutes: 0,
     lastDate: new Date().toDateString(),
     inventory: { 'ハーブティーセット': 1 },
@@ -808,12 +811,11 @@
     renderMemos();
   };
 
-  // マイグレーション対応ロード
   function loadState() {
     try {
-      let saved = localStorage.getItem('sylvarena_ak_state_v5');
+      let saved = localStorage.getItem('sylvarena_ak_state_v6');
       if (!saved) {
-        saved = localStorage.getItem('sylvarena_ak_state_v4') || localStorage.getItem('sylvarena_ak_state_v3') || localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v5') || localStorage.getItem('sylvarena_ak_state_v4') || localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -828,7 +830,7 @@
 
   function saveState() {
     try {
-      localStorage.setItem('sylvarena_ak_state_v5', JSON.stringify(state));
+      localStorage.setItem('sylvarena_ak_state_v6', JSON.stringify(state));
     } catch (e) {
       console.error('Data save error:', e);
     }
@@ -845,13 +847,11 @@
     }
   }
 
-  // 階級 (NOVICE, OPERATOR, ELITE, HEAD) と 1〜100Lv の計算
   function updateUI() {
-    document.getElementById('leaf-val').textContent = state.leaf;
+    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
     document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
 
     const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
-    // 100Lv ごとに称号が上がる (Lv.1〜100 = 0, Lv.101〜200 = 1 ...)
     let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
     if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;
     
@@ -865,7 +865,6 @@
     document.getElementById('rank-badge').textContent = rankName;
     document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
 
-    // XPバーの更新（1Lvあたり100XP必要とする）
     const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
     document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
     document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
@@ -908,7 +907,6 @@
           timeLeft = 25 * 60;
           btn.textContent = 'START MISSION';
           
-          // 25分集中で 50XP & 50LEAF 獲得
           addXP(50);
           addLeaf(50);
           state.focusMinutes += 25;
@@ -938,14 +936,12 @@
     saveState();
   }
 
-  // XP加算とレベルアップ処理（100XPで1Lvアップ、LvUP時にLEAFボーナス支給）
   function addXP(amt) {
     state.xp += amt;
     while (state.xp >= 100) {
       state.xp -= 100;
       state.totalLevel += 1;
       
-      // レベルアップボーナス支給 (Lv × 10 LEAF など)
       const bonusLeaf = 20;
       state.leaf += bonusLeaf;
       showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)%100)+1} (+${bonusLeaf} LEAF BONUS!)`);
@@ -964,7 +960,7 @@
     }
   }
 
-  // デイリールーティン管理
+  // デイリールーティン管理（確認アラート付き）
   function renderDailyTasks() {
     const list = document.getElementById('daily-task-list');
     list.innerHTML = '';
@@ -1010,7 +1006,7 @@
     if (task && !task.completed) {
       task.completed = true;
       addLeaf(task.reward);
-      addXP(15); // デイリー完了で15XP
+      addXP(15);
       showToast(`TASK COMPLETED (+${task.reward} LEAF / +15 XP)`);
       saveState();
       renderDailyTasks();
@@ -1018,10 +1014,12 @@
   }
 
   function deleteDailyTask(id) {
-    state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
-    showToast('ROUTINE DELETED');
-    saveState();
-    renderDailyTasks();
+    if (confirm('この日課を削除しますか？')) {
+      state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+      showToast('ROUTINE DELETED');
+      saveState();
+      renderDailyTasks();
+    }
   }
 
   // 単語カード管理
@@ -1158,7 +1156,7 @@
 
     if (isCorrect) {
       addLeaf(10);
-      addXP(10); // カード正解で10XP
+      addXP(10);
       showToast('CORRECT! (+10 LEAF / +10 XP)');
     } else {
       showToast('REVIEW AGAIN');
@@ -1185,15 +1183,17 @@
     if (filtered.length === 0) return;
     const card = filtered[currentCardIndex];
 
-    state.cards = state.cards.filter(c => c.id !== card.id);
-    currentCardIndex = 0;
-    showToast('CARD DELETED');
-    saveState();
-    updateCategoryFilterDropdown();
-    renderCards();
+    if (confirm(`「${card.front}」の単語カードを削除しますか？`)) {
+      state.cards = state.cards.filter(c => c.id !== card.id);
+      currentCardIndex = 0;
+      showToast('CARD DELETED');
+      saveState();
+      updateCategoryFilterDropdown();
+      renderCards();
+    }
   }
 
-  // メモ管理
+  // メモ管理（確認アラート付き）
   function addMemo() {
     const input = document.getElementById('memo-input');
     const text = input.value.trim();
@@ -1233,10 +1233,12 @@
   }
 
   function deleteMemo(index) {
-    state.memos.splice(index, 1);
-    showToast('RECORD DELETED');
-    saveState();
-    renderMemos();
+    if (confirm('このメモを削除しますか？')) {
+      state.memos.splice(index, 1);
+      showToast('RECORD DELETED');
+      saveState();
+      renderMemos();
+    }
   }
 
   // 購買部
@@ -1337,3 +1339,4 @@
 
 </body>
 </html>
+
