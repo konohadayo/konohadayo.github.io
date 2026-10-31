@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sylvarena Terminal - PRTS</title>
+  
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+    :root {
+      --bg-main: #121212;
+      --bg-panel: #1e1e1e;
+      --bg-card: rgba(35, 35, 35, 0.9);
+      --ak-yellow: #ffc107;
+      --ak-orange: #ff9800;
+      --ak-cyan: #00bcd4;
+      --ak-red: #ff5252;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      --border-color: rgba(255, 255, 255, 0.15);
+      --font-tech: 'Chakra Petch', sans-serif;
+      --font-jp: 'Noto Sans JP', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
+        linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(255,255,255,0.02) 25%, #121212 25%);
+      background-size: 40px 40px;
+      color: var(--text-main);
+      font-family: var(--font-jp);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 30px;
+    }
+
+    /* ヘッダー端末エリア */
+    .terminal-header {
+      background: var(--bg-panel);
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .system-title {
+      font-family: var(--font-tech);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .system-title::before {
+      content: '//';
+      color: var(--ak-yellow);
+    }
+
+    .system-sub {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--ak-yellow);
+      letter-spacing: 0.15em;
+      margin-top: -2px;
+    }
+
+    .rank-tag {
+      font-family: var(--font-tech);
+      background: var(--ak-yellow);
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 2px 8px;
+      letter-spacing: 0.05em;
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .status-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cell-label {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .cell-value {
+      font-family: var(--font-tech);
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .cell-value.highlight {
+      color: var(--ak-yellow);
+    }
+
+    /* XPバー */
+    .xp-bar-container {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border-color);
+      height: 6px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: var(--ak-yellow);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .xp-text {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+    }
+
+    /* メインタイマー */
+    .mission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .mission-card::before {
+      content: 'MISSION TIMER';
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .timer-display {
+      font-family: var(--font-tech);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+      text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+
+    .ak-btn-group {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .ak-btn {
+      font-family: var(--font-tech);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+
+    .ak-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .ak-btn-primary {
+      flex: 2;
+      background: var(--ak-yellow);
+      border-color: var(--ak-yellow);
+      color: #000;
+    }
+
+    .ak-btn-primary:hover {
+      background: var(--ak-orange);
+      border-color: var(--ak-orange);
+    }
+
+    .ak-btn-danger {
+      background: rgba(255, 82, 82, 0.1);
+      border-color: var(--ak-red);
+      color: var(--ak-red);
+    }
+    .ak-btn-danger:hover {
+      background: rgba(255, 82, 82, 0.25);
+    }
+
+    /* タブ切り替えバー */
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      background: #000;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 55px;
+      font-family: var(--font-tech);
+      padding: 8px 2px;
+      border: none;
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--ak-yellow);
+      color: #000;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .section-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ak-yellow);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .ak-input, .ak-select {
+      width: 100%;
+      padding: 8px 10px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      font-family: var(--font-jp);
+    }
+
+    .ak-input:focus, .ak-select:focus {
+      border-color: var(--ak-yellow);
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 2px solid var(--border-color);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s ease;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .list-item:hover {
+      border-left-color: var(--ak-yellow);
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .list-item.checked {
+      opacity: 0.35;
+      text-decoration: line-through;
+    }
+
+    .item-content-click {
+      flex: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .item-text {
+      font-size: 0.8rem;
+      word-break: break-word;
+    }
+
+    .item-reward {
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      font-weight: bold;
+      white-space: nowrap;
+      margin-left: 6px;
+    }
+
+    .action-badge-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-family: var(--font-tech);
+    }
+    .action-badge-btn:hover {
+      border-color: var(--ak-red);
+      color: var(--ak-red);
+    }
+
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      height: 160px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+    }
+
+    .card-label {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      position: absolute;
+      top: 8px;
+      left: 10px;
+    }
+
+    .card-category-tag {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      background: rgba(0, 188, 212, 0.2);
+      color: var(--ak-cyan);
+      padding: 1px 6px;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+    }
+
+    .card-content {
+      font-size: 1.1rem;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .card-stats {
+      font-family: var(--font-tech);
+      font-size: 0.7rem;
+      color: var(--ak-yellow);
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+    }
+
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .sound-btn {
+      font-family: var(--font-tech);
+      padding: 8px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .sound-btn.active {
+      border-color: var(--ak-cyan);
+      color: var(--ak-cyan);
+      background: rgba(0, 188, 212, 0.1);
+    }
+
+    .inventory-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .inventory-chip {
+      font-family: var(--font-tech);
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid var(--ak-yellow);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      word-break: break-all;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #000;
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-family: var(--font-tech);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+      transition: transform 0.25s ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ヘッダー端末 -->
+  <header class="terminal-header">
+    <div class="header-top">
+      <div>
+        <div class="system-title">SYLVARENA</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.8</div>
+      </div>
+      <div class="rank-tag" id="rank-badge">NOVICE - I</div>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-cell">
+        <span class="cell-label">CURRENCY (LEAF)</span>
+        <span class="cell-value highlight" id="leaf-val">120</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">LEVEL (TIER)</span>
+        <span class="cell-value" id="level-val">Lv.1</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">FOCUS TIME</span>
+        <span class="cell-value" id="focus-val">0m</span>
+      </div>
+    </div>
+
+    <!-- XPバー -->
+    <div class="xp-bar-container">
+      <div class="xp-bar-fill" id="xp-bar-fill"></div>
+    </div>
+    <div class="xp-text">
+      <span id="xp-current-text">XP: 0 / 100</span>
+      <span id="next-rank-text">TIER MAX: 100Lv</span>
+    </div>
+  </header>
+
+  <!-- タイマーセクション -->
+  <section class="mission-card">
+    <div class="timer-display" id="timer-display">25:00</div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" id="timer-btn" onclick="toggleTimer()">START MISSION</button>
+      <button class="ak-btn" onclick="resetTimer()">RESET</button>
+    </div>
+  </section>
+
+  <!-- サウンド機能 -->
+  <section class="section-panel">
+    <div class="section-title">AMBIENT SOUNDS</div>
+    <div class="sound-grid">
+      <button class="sound-btn" id="snd-fire" onclick="toggleSound('fire')">WHITE NOISE (FIRE)</button>
+      <button class="sound-btn" id="snd-rain" onclick="toggleSound('rain')">WHITE NOISE (RAIN)</button>
+    </div>
+  </section>
+
+  <!-- タブナビゲーション -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('tasks')">MISSIONS</button>
+    <button class="tab-btn" onclick="switchTab('cards')">CARDS</button>
+    <button class="tab-btn" onclick="switchTab('archive')">ARCHIVE</button>
+    <button class="tab-btn" onclick="switchTab('shop')">STORE</button>
+    <button class="tab-btn" onclick="switchTab('system')">SYSTEM</button>
+  </nav>
+  <!-- タブ1: ミッション -->
+  <div id="tab-tasks" class="tab-content active">
+    <div class="section-panel">
+      <div class="section-title">MAIN QUEST</div>
+      <div class="input-group">
+        <input type="text" id="quest-input" class="ak-input" value="主要書類整理の完了" placeholder="最重要目標...">
+        <button class="ak-btn ak-btn-primary" id="quest-btn" onclick="completeMainQuest()">EXECUTE</button>
+      </div>
+    </div>
+
+    <!-- デイリールーティン（編集可能） -->
+    <div class="section-panel">
+      <div class="section-title">DAILY ROUTINE</div>
+      <div class="item-list" id="daily-task-list"></div>
+      
+      <!-- 新規デイリー追加フォーム -->
+      <div class="input-group" style="margin-top: 6px;">
+        <input type="text" id="new-daily-text" class="ak-input" placeholder="新しい日課の内容...">
+        <div style="display:flex; gap:6px;">
+          <input type="number" id="new-daily-reward" class="ak-input" value="20" placeholder="報酬" style="width: 80px;">
+          <button class="ak-btn ak-btn-primary" onclick="addDailyTask()">ADD ROUTINE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ2: 単語カード -->
+  <div id="tab-cards" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">
+        <span>MEMORIZATION TERMINAL</span>
+        <span id="card-count-label">0 CARDS</span>
+      </div>
+
+      <!-- ジャンルフィルター -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたカード</option>
+        </select>
+      </div>
+
+      <!-- カテゴリフィルター -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="card-category-filter" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
+        </select>
+      </div>
+
+      <!-- カード表示エリア -->
+      <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
+        <div class="flashcard-container" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="card-face front">
+              <span class="card-label">QUESTION (FRONT)</span>
+              <span class="card-category-tag" id="card-category-tag">GENERAL</span>
+              <div class="card-content" id="card-front-text">Front Text</div>
+              <span class="card-stats" id="card-review-count">REVIEW: 0</span>
+            </div>
+            <div class="card-face back">
+              <span class="card-label">ANSWER (BACK)</span>
+              <div class="card-content" id="card-back-text">Back Text</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+10 LEAF)</button>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; gap:6px;">
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem;">覚えたカードへ移動</button>
+          <button class="ak-btn ak-btn-danger" onclick="deleteCurrentCard()" style="font-size:0.75rem;">このカードを削除</button>
+        </div>
+      </div>
+
+      <div id="card-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
+        条件に一致するカードがありません。下のフォームから作成してください。
+      </div>
+    </div>
+
+    <!-- 単語カード作成 -->
+    <div class="section-panel">
+      <div class="section-title">CREATE NEW CARD</div>
+      <div class="input-group">
+        <input type="text" id="card-front-input" class="ak-input" placeholder="表面（単語・問題など）">
+        <input type="text" id="card-back-input" class="ak-input" placeholder="裏面（意味・解答など）">
+        <input type="text" id="card-category-input" class="ak-input" value="一般" placeholder="ジャンル / タグ (例: 英語, 歴史)">
+        <button class="ak-btn ak-btn-primary" onclick="addCard()">ADD FLASHCARD</button>
+      </div>
+    </div>
+
+    <!-- 単語リスト -->
+    <div class="section-panel">
+      <div class="section-title">CARD REGISTERED LIST</div>
+      <div class="item-list" id="card-registered-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ3: アーカイブ -->
+  <div id="tab-archive" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
+      <div class="input-group">
+        <input type="text" id="memo-input" class="ak-input" placeholder="新しい研究メモを追加...">
+        <button class="ak-btn" onclick="addMemo()">RECORD</button>
+      </div>
+      <div class="item-list" id="memo-list"></div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">STORAGE</div>
+      <div class="inventory-grid" id="inventory-container">
+        <div class="inventory-chip">ハーブティーセット x1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ4: 購買部 -->
+  <div id="tab-shop" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">SUPPLY STORE</div>
+      <div class="item-list">
+        <div class="list-item" onclick="buyItem('羊皮紙ノート', 50)">
+          <span class="item-content-click"><span class="item-text">羊皮紙ノート</span></span>
+          <span class="item-reward">50 LEAF</span>
+        </div>
+        <div class="list-item" onclick="buyItem('特製ハーブティー', 40)">
+          <span class="item-content-click"><span class="item-text">特製ハーブティー</span></span>
+          <span class="item-reward">40 LEAF</span>
+        </div>
+        <div class="list-item" onclick="buyItem('タクティカル万年筆', 120)">
+          <span class="item-content-click"><span class="item-text">タクティカル万年筆</span></span>
+          <span class="item-reward">120 LEAF</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ5: システム・バックアップ -->
+  <div id="tab-system" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">DATA MANAGEMENT</div>
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
+        アプリの全データ（階級、LEAF、単語カード、メモ、ルーティン）を保存・復元できます。
+      </div>
+      <div class="ak-btn-group" style="flex-direction:column;">
+        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
+        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT DATA (JSON)</button>
+        <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast">SYSTEM NOTIFICATION</div>
+
+<script>
+  let state = {
+    leaf: 120,
+    xp: 0,            // 現在の階級内でのXP（0〜100）
+    totalLevel: 1,    // 通算レベル（1〜400など、称号計算用）
+    focusMinutes: 0,
+    lastDate: new Date().toDateString(),
+    inventory: { 'ハーブティーセット': 1 },
+    cards: [],
+    memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
+    dailyTasks: [
+      { id: 1, text: '端末起動および定期メンテナンス', reward: 30, completed: false },
+      { id: 2, text: '返却データの整合性チェック', reward: 20, completed: false },
+      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 25, completed: false }
+    ]
+  };
+
+  let currentCardIndex = 0;
+  let timerInterval = null;
+  let timeLeft = 25 * 60;
+  let isRunning = false;
+
+  window.onload = () => {
+    loadState();
+    checkDailyReset();
+    updateUI();
+    renderDailyTasks();
+    updateCategoryFilterDropdown();
+    renderCards();
+    renderMemos();
+  };
+
+  // マイグレーション対応ロード
+  function loadState() {
+    try {
+      let saved = localStorage.getItem('sylvarena_ak_state_v5');
+      if (!saved) {
+        saved = localStorage.getItem('sylvarena_ak_state_v4') || localStorage.getItem('sylvarena_ak_state_v3') || localStorage.getItem('sylvarena_state');
+      }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed };
+        if (state.totalLevel === undefined) state.totalLevel = 1;
+        if (state.xp === undefined) state.xp = 0;
+      }
+    } catch (e) {
+      console.error('Data load error:', e);
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem('sylvarena_ak_state_v5', JSON.stringify(state));
+    } catch (e) {
+      console.error('Data save error:', e);
+    }
+    updateUI();
+  }
+
+  function checkDailyReset() {
+    const today = new Date().toDateString();
+    if (state.lastDate !== today) {
+      state.lastDate = today;
+      state.dailyTasks.forEach(t => t.completed = false);
+      showToast('SYSTEM: DAILY TASKS RESET');
+      saveState();
+    }
+  }
+
+  // 階級 (NOVICE, OPERATOR, ELITE, HEAD) と 1〜100Lv の計算
+  function updateUI() {
+    document.getElementById('leaf-val').textContent = state.leaf;
+    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
+
+    const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
+    // 100Lv ごとに称号が上がる (Lv.1〜100 = 0, Lv.101〜200 = 1 ...)
+    let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
+    if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;
+    
+    const romanSub = ['I', 'II', 'III', 'IV'];
+    let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
+    if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
+
+    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
+    const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
+
+    document.getElementById('rank-badge').textContent = rankName;
+    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+
+    // XPバーの更新（1Lvあたり100XP必要とする）
+    const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
+    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
+    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
+    document.getElementById('next-rank-text').textContent = `TIER MAX: 100Lv`;
+
+    renderInventory();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+  }
+
+  // タイマー
+  function toggleTimer() {
+    const btn = document.getElementById('timer-btn');
+    if (isRunning) {
+      clearInterval(timerInterval);
+      btn.textContent = 'RESUME MISSION';
+      isRunning = false;
+    } else {
+      isRunning = true;
+      btn.textContent = 'PAUSE';
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          isRunning = false;
+          timeLeft = 25 * 60;
+          btn.textContent = 'START MISSION';
+          
+          // 25分集中で 50XP & 50LEAF 獲得
+          addXP(50);
+          addLeaf(50);
+          state.focusMinutes += 25;
+          showToast('MISSION ACCOMPLISHED (+50 LEAF / +50 XP)');
+          saveState();
+        }
+      }, 1000);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = 25 * 60;
+    document.getElementById('timer-btn').textContent = 'START MISSION';
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${m}:${s}`;
+  }
+
+  function addLeaf(amt) {
+    state.leaf += amt;
+    saveState();
+  }
+
+  // XP加算とレベルアップ処理（100XPで1Lvアップ、LvUP時にLEAFボーナス支給）
+  function addXP(amt) {
+    state.xp += amt;
+    while (state.xp >= 100) {
+      state.xp -= 100;
+      state.totalLevel += 1;
+      
+      // レベルアップボーナス支給 (Lv × 10 LEAF など)
+      const bonusLeaf = 20;
+      state.leaf += bonusLeaf;
+      showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)%100)+1} (+${bonusLeaf} LEAF BONUS!)`);
+    }
+    saveState();
+  }
+
+  function completeMainQuest() {
+    const btn = document.getElementById('quest-btn');
+    if (!btn.disabled) {
+      btn.disabled = true;
+      btn.textContent = 'COMPLETED';
+      addLeaf(100);
+      addXP(40);
+      showToast('MAIN QUEST COMPLETED (+100 LEAF / +40 XP)');
+    }
+  }
+
+  // デイリールーティン管理
+  function renderDailyTasks() {
+    const list = document.getElementById('daily-task-list');
+    list.innerHTML = '';
+    state.dailyTasks.forEach(task => {
+      const item = document.createElement('div');
+      item.className = `list-item ${task.completed ? 'checked' : ''}`;
+      
+      item.innerHTML = `
+        <div class="item-content-click" onclick="completeDailyTask(${task.id})">
+          <span class="item-text">${task.text}</span>
+          <span class="item-reward">+${task.reward} LEAF</span>
+        </div>
+        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})" title="削除">DEL</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function addDailyTask() {
+    const textInput = document.getElementById('new-daily-text');
+    const rewardInput = document.getElementById('new-daily-reward');
+    const text = textInput.value.trim();
+    const reward = parseInt(rewardInput.value) || 20;
+
+    if (text) {
+      state.dailyTasks.push({
+        id: Date.now(),
+        text: text,
+        reward: reward,
+        completed: false
+      });
+      textInput.value = '';
+      showToast('ROUTINE ADDED');
+      saveState();
+      renderDailyTasks();
+    } else {
+      showToast('ERROR: ENTER ROUTINE TEXT');
+    }
+  }
+
+  function completeDailyTask(id) {
+    const task = state.dailyTasks.find(t => t.id === id);
+    if (task && !task.completed) {
+      task.completed = true;
+      addLeaf(task.reward);
+      addXP(15); // デイリー完了で15XP
+      showToast(`TASK COMPLETED (+${task.reward} LEAF / +15 XP)`);
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  function deleteDailyTask(id) {
+    state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+    showToast('ROUTINE DELETED');
+    saveState();
+    renderDailyTasks();
+  }
+
+  // 単語カード管理
+  function updateCategoryFilterDropdown() {
+    const select = document.getElementById('card-category-filter');
+    const currentVal = select.value;
+    const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
+    
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+    
+    if ([...select.options].some(o => o.value === currentVal)) {
+      select.value = currentVal;
+    } else {
+      select.value = 'ALL';
+    }
+  }
+
+  function getFilteredCards() {
+    const statusFilter = document.getElementById('card-filter-select').value;
+    const categoryFilter = document.getElementById('card-category-filter').value;
+
+    return state.cards.filter(card => {
+      let matchStatus = true;
+      if (statusFilter === '学習中') {
+        matchStatus = !card.archived;
+      } else if (statusFilter === '覚えたカード') {
+        matchStatus = card.archived;
+      }
+
+      let matchCategory = true;
+      if (categoryFilter !== 'ALL') {
+        matchCategory = (card.category || '一般') === categoryFilter;
+      }
+
+      return matchStatus && matchCategory;
+    });
+  }
+
+  function addCard() {
+    const front = document.getElementById('card-front-input').value.trim();
+    const back = document.getElementById('card-back-input').value.trim();
+    const category = document.getElementById('card-category-input').value.trim() || '一般';
+
+    if (front && back) {
+      state.cards.push({
+        id: Date.now(),
+        front: front,
+        back: back,
+        category: category,
+        reviews: 0,
+        archived: false
+      });
+      document.getElementById('card-front-input').value = '';
+      document.getElementById('card-back-input').value = '';
+      showToast('FLASHCARD ADDED');
+      saveState();
+      updateCategoryFilterDropdown();
+      renderCards();
+    } else {
+      showToast('ERROR: BOTH SIDES REQUIRED');
+    }
+  }
+
+  function filterCards() {
+    currentCardIndex = 0;
+    renderCards();
+  }
+
+  function renderCards() {
+    const countLabel = document.getElementById('card-count-label');
+    const displayArea = document.getElementById('card-display-area');
+    const emptyMsg = document.getElementById('card-empty-msg');
+    const registeredList = document.getElementById('card-registered-list');
+    const filtered = getFilteredCards();
+
+    countLabel.textContent = `${filtered.length} CARDS`;
+
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+      updateCardView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.cards.forEach((card) => {
+      const item = document.createElement('div');
+      item.className = `list-item ${card.archived ? 'checked' : ''}`;
+      item.innerHTML = `
+        <span class="item-text">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-reward">REV: ${card.reviews}</span>
+      `;
+      registeredList.appendChild(item);
+    });
+  }
+
+  function updateCardView(filtered) {
+    const card = filtered[currentCardIndex];
+    if (!card) return;
+
+    document.getElementById('card-front-text').textContent = card.front;
+    document.getElementById('card-back-text').textContent = card.back;
+    document.getElementById('card-category-tag').textContent = card.category;
+    document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
+    document.getElementById('flashcard').classList.remove('flipped');
+
+    const archiveBtn = document.getElementById('toggle-archive-btn');
+    if (card.archived) {
+      archiveBtn.textContent = '学習中へ戻す';
+    } else {
+      archiveBtn.textContent = '覚えたカードへ移動';
+    }
+  }
+
+  function flipCard() {
+    document.getElementById('flashcard').classList.toggle('flipped');
+  }
+
+  function answerCard(isCorrect) {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+
+    const card = filtered[currentCardIndex];
+    card.reviews += 1;
+
+    if (isCorrect) {
+      addLeaf(10);
+      addXP(10); // カード正解で10XP
+      showToast('CORRECT! (+10 LEAF / +10 XP)');
+    } else {
+      showToast('REVIEW AGAIN');
+    }
+
+    currentCardIndex = (currentCardIndex + 1) % filtered.length;
+    saveState();
+    renderCards();
+  }
+
+  function toggleCardArchive() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+    
+    card.archived = !card.archived;
+    showToast(card.archived ? 'ARCHIVED (覚えたカードへ移動)' : 'RESTORED (学習中へ戻す)');
+    saveState();
+    renderCards();
+  }
+
+  function deleteCurrentCard() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+
+    state.cards = state.cards.filter(c => c.id !== card.id);
+    currentCardIndex = 0;
+    showToast('CARD DELETED');
+    saveState();
+    updateCategoryFilterDropdown();
+    renderCards();
+  }
+
+  // メモ管理
+  function addMemo() {
+    const input = document.getElementById('memo-input');
+    const text = input.value.trim();
+    if (text) {
+      state.memos.push(`LOG. - 「${text}」`);
+      input.value = '';
+      showToast('RECORD ADDED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  function renderMemos() {
+    const list = document.getElementById('memo-list');
+    list.innerHTML = '';
+    state.memos.forEach((memo, index) => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">${memo}</span>
+        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集">EDIT</button>
+        <button class="action-badge-btn" onclick="deleteMemo(${index})" title="削除">DEL</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function editMemo(index) {
+    const currentText = state.memos[index];
+    const newText = prompt('メモの内容を編集:', currentText.replace(/^LOG\. - 「|」$/g, ''));
+    if (newText !== null && newText.trim() !== '') {
+      state.memos[index] = `LOG. - 「${newText.trim()}」`;
+      showToast('RECORD UPDATED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  function deleteMemo(index) {
+    state.memos.splice(index, 1);
+    showToast('RECORD DELETED');
+    saveState();
+    renderMemos();
+  }
+
+  // 購買部
+  function buyItem(name, price) {
+    if (state.leaf >= price) {
+      addLeaf(-price);
+      state.inventory[name] = (state.inventory[name] || 0) + 1;
+      showToast(`PURCHASED: ${name}`);
+      saveState();
+    } else {
+      showToast('ERROR: INSUFFICIENT LEAF');
+    }
+  }
+
+  function renderInventory() {
+    const container = document.getElementById('inventory-container');
+    container.innerHTML = '';
+    for (const [name, count] of Object.entries(state.inventory)) {
+      const chip = document.createElement('div');
+      chip.className = 'inventory-chip';
+      chip.textContent = `${name} x${count}`;
+      container.appendChild(chip);
+    }
+  }
+
+  // バックアップ
+  function exportData() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('DATA EXPORTED');
+  }
+
+  function importData(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+      try {
+        const importedState = JSON.parse(e.target.result);
+        state = { ...state, ...importedState };
+        saveState();
+        renderDailyTasks();
+        updateCategoryFilterDropdown();
+        renderCards();
+        renderMemos();
+        showToast('DATA IMPORTED SUCCESSFULLY');
+      } catch (err) {
+        showToast('ERROR: INVALID JSON FILE');
+      }
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+
+  // Web Audio
+  let audioCtx = null;
+  let activeNodes = {};
+
+  function toggleSound(type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const btn = document.getElementById(`snd-${type}`);
+
+    if (activeNodes[type]) {
+      activeNodes[type].stop();
+      delete activeNodes[type];
+      btn.classList.remove('active');
+    } else {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = type === 'fire' ? 'bandpass' : 'lowpass';
+      filter.frequency.value = type === 'fire' ? 800 : 350;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.04;
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      whiteNoise.start();
+      activeNodes[type] = whiteNoise;
+      btn.classList.add('active');
+    }
+  }
+</script>
+
+</body>
+</html>
