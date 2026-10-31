@@ -103,7 +103,6 @@
       margin-top: -2px;
     }
 
-    /* 右上のLEAFバッジ */
     .leaf-tag {
       font-family: var(--font-tech);
       background: var(--ak-yellow);
@@ -401,8 +400,8 @@
       font-family: var(--font-tech);
     }
     .action-badge-btn:hover {
-      border-color: var(--ak-red);
-      color: var(--ak-red);
+      border-color: var(--ak-yellow);
+      color: var(--ak-yellow);
     }
 
     .flashcard-container {
@@ -520,6 +519,34 @@
       word-break: break-all;
     }
 
+    /* モーダルダイアログ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--ak-yellow);
+      width: 100%;
+      max-width: 400px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .toast {
       position: fixed;
       bottom: 20px;
@@ -558,13 +585,11 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.9</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.0</div>
       </div>
-      <!-- 右上にLEAF配置 -->
       <div class="leaf-tag" id="leaf-val">LEAF: 120</div>
     </div>
 
-    <!-- ステータスグリッド（称号、Level、Focus Time） -->
     <div class="status-grid">
       <div class="status-cell">
         <span class="cell-label">OPERATOR RANK</span>
@@ -580,7 +605,6 @@
       </div>
     </div>
 
-    <!-- XPバー -->
     <div class="xp-bar-container">
       <div class="xp-bar-fill" id="xp-bar-fill"></div>
     </div>
@@ -616,6 +640,7 @@
     <button class="tab-btn" onclick="switchTab('shop')">STORE</button>
     <button class="tab-btn" onclick="switchTab('system')">SYSTEM</button>
   </nav>
+
   <!-- タブ1: ミッション -->
   <div id="tab-tasks" class="tab-content active">
     <div class="section-panel">
@@ -626,12 +651,10 @@
       </div>
     </div>
 
-    <!-- デイリールーティン（編集可能） -->
     <div class="section-panel">
       <div class="section-title">DAILY ROUTINE</div>
       <div class="item-list" id="daily-task-list"></div>
       
-      <!-- 新規デイリー追加フォーム -->
       <div class="input-group" style="margin-top: 6px;">
         <input type="text" id="new-daily-text" class="ak-input" placeholder="新しい日課の内容...">
         <div style="display:flex; gap:6px;">
@@ -650,7 +673,6 @@
         <span id="card-count-label">0 CARDS</span>
       </div>
 
-      <!-- ジャンルフィルター -->
       <div style="display:flex; gap:6px; align-items:center;">
         <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
         <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
@@ -660,7 +682,6 @@
         </select>
       </div>
 
-      <!-- カテゴリフィルター -->
       <div style="display:flex; gap:6px; align-items:center;">
         <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
         <select id="card-category-filter" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
@@ -668,7 +689,6 @@
         </select>
       </div>
 
-      <!-- カード表示エリア -->
       <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
         <div class="flashcard-container" onclick="flipCard()">
           <div class="flashcard" id="flashcard">
@@ -690,9 +710,8 @@
           <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+10 LEAF)</button>
         </div>
         
-        <div style="display:flex; justify-content:space-between; gap:6px;">
-          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem;">覚えたカードへ移動</button>
-          <button class="ak-btn ak-btn-danger" onclick="deleteCurrentCard()" style="font-size:0.75rem;">このカードを削除</button>
+        <div style="display:flex; justify-content:center;">
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem; width:100%;">覚えたカードへ移動</button>
         </div>
       </div>
 
@@ -701,7 +720,6 @@
       </div>
     </div>
 
-    <!-- 単語カード作成 -->
     <div class="section-panel">
       <div class="section-title">CREATE NEW CARD</div>
       <div class="input-group">
@@ -712,7 +730,6 @@
       </div>
     </div>
 
-    <!-- 単語リスト -->
     <div class="section-panel">
       <div class="section-title">CARD REGISTERED LIST</div>
       <div class="item-list" id="card-registered-list"></div>
@@ -776,6 +793,26 @@
 
 </div>
 
+<!-- カード編集ダイアログ -->
+<div id="card-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="section-title">EDIT CARD DATA</div>
+    <div class="input-group">
+      <label style="font-size:0.7rem; color:var(--text-muted);">表面 (FRONT)</label>
+      <input type="text" id="modal-card-front" class="ak-input">
+      <label style="font-size:0.7rem; color:var(--text-muted);">裏面 (BACK)</label>
+      <input type="text" id="modal-card-back" class="ak-input">
+      <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
+      <input type="text" id="modal-card-category" class="ak-input">
+    </div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" onclick="saveCardModal()">SAVE</button>
+      <button class="ak-btn ak-btn-danger" onclick="deleteCardModal()">DELETE</button>
+    </div>
+    <button class="ak-btn" onclick="closeCardModal()">CANCEL</button>
+  </div>
+</div>
+
 <!-- トースト -->
 <div id="toast" class="toast">SYSTEM NOTIFICATION</div>
 
@@ -797,6 +834,7 @@
   };
 
   let currentCardIndex = 0;
+  let editingCardId = null;
   let timerInterval = null;
   let timeLeft = 25 * 60;
   let isRunning = false;
@@ -811,11 +849,17 @@
     renderMemos();
   };
 
+  // 全過去キー対応マイグレーション処理（旧キーも検索して引き継ぎます）
   function loadState() {
     try {
-      let saved = localStorage.getItem('sylvarena_ak_state_v6');
+      let saved = localStorage.getItem('sylvarena_ak_state_v4');
       if (!saved) {
-        saved = localStorage.getItem('sylvarena_ak_state_v5') || localStorage.getItem('sylvarena_ak_state_v4') || localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v6') ||
+                localStorage.getItem('sylvarena_ak_state_v5') ||
+                localStorage.getItem('sylvarena_ak_state_v3') ||
+                localStorage.getItem('sylvarena_ak_state_v2') ||
+                localStorage.getItem('sylvarena_ak_state') ||
+                localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -830,7 +874,7 @@
 
   function saveState() {
     try {
-      localStorage.setItem('sylvarena_ak_state_v6', JSON.stringify(state));
+      localStorage.setItem('sylvarena_ak_state_v4', JSON.stringify(state));
     } catch (e) {
       console.error('Data save error:', e);
     }
@@ -960,7 +1004,7 @@
     }
   }
 
-  // デイリールーティン管理（確認アラート付き）
+  // デイリールーティン
   function renderDailyTasks() {
     const list = document.getElementById('daily-task-list');
     list.innerHTML = '';
@@ -1118,8 +1162,9 @@
       const item = document.createElement('div');
       item.className = `list-item ${card.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text">[${card.category}] ${card.front} / ${card.back}</span>
-        <span class="item-reward">REV: ${card.reviews}</span>
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
+        <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
       `;
       registeredList.appendChild(item);
     });
@@ -1178,22 +1223,58 @@
     renderCards();
   }
 
-  function deleteCurrentCard() {
-    const filtered = getFilteredCards();
-    if (filtered.length === 0) return;
-    const card = filtered[currentCardIndex];
+  // カードEDITダイアログ（編集・削除統合）
+  function openCardModal(cardId) {
+    editingCardId = cardId;
+    const card = state.cards.find(c => c.id === cardId);
+    if (!card) return;
 
-    if (confirm(`「${card.front}」の単語カードを削除しますか？`)) {
-      state.cards = state.cards.filter(c => c.id !== card.id);
-      currentCardIndex = 0;
+    document.getElementById('modal-card-front').value = card.front;
+    document.getElementById('modal-card-back').value = card.back;
+    document.getElementById('modal-card-category').value = card.category || '一般';
+    document.getElementById('card-modal').classList.add('show');
+  }
+
+  function closeCardModal() {
+    document.getElementById('card-modal').classList.remove('show');
+    editingCardId = null;
+  }
+
+  function saveCardModal() {
+    const card = state.cards.find(c => c.id === editingCardId);
+    if (card) {
+      const f = document.getElementById('modal-card-front').value.trim();
+      const b = document.getElementById('modal-card-back').value.trim();
+      const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+
+      if (f && b) {
+        card.front = f;
+        card.back = b;
+        card.category = cat;
+        showToast('CARD UPDATED');
+        saveState();
+        updateCategoryFilterDropdown();
+        renderCards();
+        closeCardModal();
+      } else {
+        showToast('ERROR: BOTH SIDES REQUIRED');
+      }
+    }
+  }
+
+  function deleteCardModal() {
+    const card = state.cards.find(c => c.id === editingCardId);
+    if (card && confirm(`「${card.front}」の単語カードを削除しますか？`)) {
+      state.cards = state.cards.filter(c => c.id !== editingCardId);
       showToast('CARD DELETED');
       saveState();
       updateCategoryFilterDropdown();
       renderCards();
+      closeCardModal();
     }
   }
 
-  // メモ管理（確認アラート付き）
+  // メモ管理
   function addMemo() {
     const input = document.getElementById('memo-input');
     const text = input.value.trim();
@@ -1214,28 +1295,26 @@
       item.className = 'list-item';
       item.innerHTML = `
         <span class="item-text" style="flex:1;">${memo}</span>
-        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集">EDIT</button>
-        <button class="action-badge-btn" onclick="deleteMemo(${index})" title="削除">DEL</button>
+        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集 / 削除">EDIT</button>
       `;
       list.appendChild(item);
     });
   }
 
   function editMemo(index) {
-    const currentText = state.memos[index];
-    const newText = prompt('メモの内容を編集:', currentText.replace(/^LOG\. - 「|」$/g, ''));
-    if (newText !== null && newText.trim() !== '') {
+    const currentText = state.memos[index].replace(/^LOG\. - 「|」$/g, '');
+    const newText = prompt('メモの内容を編集してください（空欄にしてOKを押すと削除できます）:', currentText);
+    
+    if (newText === '') {
+      if (confirm('このメモを削除しますか？')) {
+        state.memos.splice(index, 1);
+        showToast('RECORD DELETED');
+        saveState();
+        renderMemos();
+      }
+    } else if (newText !== null && newText.trim() !== '') {
       state.memos[index] = `LOG. - 「${newText.trim()}」`;
       showToast('RECORD UPDATED');
-      saveState();
-      renderMemos();
-    }
-  }
-
-  function deleteMemo(index) {
-    if (confirm('このメモを削除しますか？')) {
-      state.memos.splice(index, 1);
-      showToast('RECORD DELETED');
       saveState();
       renderMemos();
     }
@@ -1339,4 +1418,3 @@
 
 </body>
 </html>
-
