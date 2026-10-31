@@ -540,14 +540,14 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v2.7</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v2.8</div>
       </div>
       <div class="rank-tag" id="rank-badge">NOVICE</div>
     </div>
 
     <div class="status-grid">
       <div class="status-cell">
-        <span class="cell-label">LMD / LEAF</span>
+        <span class="cell-label">CURRENCY (LEAF)</span>
         <span class="cell-value highlight" id="leaf-val">120</span>
       </div>
       <div class="status-cell">
@@ -627,8 +627,16 @@
         <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
         <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
           <option value="ALL">すべて表示</option>
-          <option value="学習中">学習中</option>
-          <option value="覚えたカード">覚えたカード (ARCHIVED)</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたカード</option>
+        </select>
+      </div>
+
+      <!-- ジャンル別の個別フィルタードロップダウン -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="card-category-filter" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
         </select>
       </div>
 
@@ -697,7 +705,7 @@
     <div class="section-panel">
       <div class="section-title">STORAGE</div>
       <div class="inventory-grid" id="inventory-container">
-        <div class="inventory-chip">HERB TEA SET x1</div>
+        <div class="inventory-chip">ハーブティーセット x1</div>
       </div>
     </div>
   </div>
@@ -728,7 +736,7 @@
     <div class="section-panel">
       <div class="section-title">DATA MANAGEMENT</div>
       <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
-        アプリの全データ（レベル、葉貨、単語カード、メモ、ルーティン）を保存・復元できます。
+        アプリの全データ（レベル、LEAF、単語カード、メモ、ルーティン）を保存・復元できます。
       </div>
       <div class="ak-btn-group" style="flex-direction:column;">
         <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
@@ -750,7 +758,7 @@
     level: 1,
     focusMinutes: 0,
     lastDate: new Date().toDateString(),
-    inventory: { 'HERB TEA SET': 1 },
+    inventory: { 'ハーブティーセット': 1 },
     cards: [],
     memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
     dailyTasks: [
@@ -770,6 +778,7 @@
     checkDailyReset();
     updateUI();
     renderDailyTasks();
+    updateCategoryFilterDropdown();
     renderCards();
     renderMemos();
   };
@@ -777,9 +786,9 @@
   // 堅牢な読み込み処理（マイグレーション対応）
   function loadState() {
     try {
-      let saved = localStorage.getItem('sylvarena_ak_state_v3');
+      let saved = localStorage.getItem('sylvarena_ak_state_v4');
       if (!saved) {
-        saved = localStorage.getItem('sylvarena_ak_state_v2') || localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v3') || localStorage.getItem('sylvarena_ak_state_v2') || localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
@@ -792,7 +801,7 @@
 
   function saveState() {
     try {
-      localStorage.setItem('sylvarena_ak_state_v3', JSON.stringify(state));
+      localStorage.setItem('sylvarena_ak_state_v4', JSON.stringify(state));
     } catch (e) {
       console.error('Data save error:', e);
     }
@@ -803,7 +812,6 @@
     const today = new Date().toDateString();
     if (state.lastDate !== today) {
       state.lastDate = today;
-      // すべての日課の完了状態をリセット
       state.dailyTasks.forEach(t => t.completed = false);
       showToast('SYSTEM: DAILY TASKS RESET');
       saveState();
@@ -965,14 +973,50 @@
   }
 
   // --- 単語カード管理 ---
-  function getFilteredCards() {
-    const filter = document.getElementById('card-filter-select').value;
-    if (filter === '学習中') {
-      return state.cards.filter(c => !c.archived);
-    } else if (filter === '覚えたカード') {
-      return state.cards.filter(c => c.archived);
+  function updateCategoryFilterDropdown() {
+    const select = document.getElementById('card-category-filter');
+    const currentVal = select.value;
+    
+    // 登録されているカテゴリの一意のリストを作成
+    const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
+    
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+    
+    // 以前選択していた値があれば復元、なければALL
+    if ([...select.options].some(o => o.value === currentVal)) {
+      select.value = currentVal;
+    } else {
+      select.value = 'ALL';
     }
-    return state.cards; // すべて
+  }
+
+  function getFilteredCards() {
+    const statusFilter = document.getElementById('card-filter-select').value;
+    const categoryFilter = document.getElementById('card-category-filter').value;
+
+    return state.cards.filter(card => {
+      // ステータス（学習中 / 覚えたカード / すべて）の判定
+      let matchStatus = true;
+      if (statusFilter === '学習中') {
+        matchStatus = !card.archived;
+      } else if (statusFilter === '覚えたカード') {
+        matchStatus = card.archived;
+      }
+
+      // カテゴリ（ジャンル）の判定
+      let matchCategory = true;
+      if (categoryFilter !== 'ALL') {
+        matchCategory = (card.category || '一般') === categoryFilter;
+      }
+
+      return matchStatus && matchCategory;
+    });
   }
 
   function addCard() {
@@ -993,6 +1037,7 @@
       document.getElementById('card-back-input').value = '';
       showToast('FLASHCARD ADDED');
       saveState();
+      updateCategoryFilterDropdown();
       renderCards();
     } else {
       showToast('ERROR: BOTH SIDES REQUIRED');
@@ -1098,6 +1143,7 @@
     currentCardIndex = 0;
     showToast('CARD DELETED');
     saveState();
+    updateCategoryFilterDropdown();
     renderCards();
   }
 
@@ -1190,6 +1236,7 @@
         state = { ...state, ...importedState };
         saveState();
         renderDailyTasks();
+        updateCategoryFilterDropdown();
         renderCards();
         renderMemos();
         showToast('DATA IMPORTED SUCCESSFULLY');
