@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sylvarena Terminal - PRTS</title>
+  
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+    :root {
+      --bg-main: #121212;
+      --bg-panel: #1e1e1e;
+      --bg-card: rgba(35, 35, 35, 0.9);
+      --ak-yellow: #ffc107;
+      --ak-orange: #ff9800;
+      --ak-cyan: #00bcd4;
+      --ak-red: #ff5252;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      --border-color: rgba(255, 255, 255, 0.15);
+      --font-tech: 'Chakra Petch', sans-serif;
+      --font-jp: 'Noto Sans JP', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
+        linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(255,255,255,0.02) 25%, #121212 25%);
+      background-size: 40px 40px;
+      color: var(--text-main);
+      font-family: var(--font-jp);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 30px;
+    }
+
+    /* ヘッダー端末エリア */
+    .terminal-header {
+      background: var(--bg-panel);
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .system-title {
+      font-family: var(--font-tech);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .system-title::before {
+      content: '//';
+      color: var(--ak-yellow);
+    }
+
+    .system-sub {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--ak-yellow);
+      letter-spacing: 0.15em;
+      margin-top: -2px;
+    }
+
+    .leaf-tag {
+      font-family: var(--font-tech);
+      background: var(--ak-yellow);
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 3px 10px;
+      letter-spacing: 0.05em;
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .status-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cell-label {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .cell-value {
+      font-family: var(--font-tech);
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .cell-value.highlight {
+      color: var(--ak-yellow);
+    }
+
+    /* XPバー */
+    .xp-bar-container {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border-color);
+      height: 6px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: var(--ak-yellow);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .xp-text {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+    }
+
+    /* メインタイマー */
+    .mission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .mission-card::before {
+      content: 'MISSION TIMER';
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .timer-display {
+      font-family: var(--font-tech);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+      text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+
+    .ak-btn-group {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .ak-btn {
+      font-family: var(--font-tech);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+
+    .ak-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .ak-btn-primary {
+      flex: 2;
+      background: var(--ak-yellow);
+      border-color: var(--ak-yellow);
+      color: #000;
+    }
+
+    .ak-btn-primary:hover {
+      background: var(--ak-orange);
+      border-color: var(--ak-orange);
+    }
+
+    .ak-btn-danger {
+      background: rgba(255, 82, 82, 0.1);
+      border-color: var(--ak-red);
+      color: var(--ak-red);
+    }
+    .ak-btn-danger:hover {
+      background: rgba(255, 82, 82, 0.25);
+    }
+
+    /* タブ切り替えバー */
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      background: #000;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 55px;
+      font-family: var(--font-tech);
+      padding: 8px 2px;
+      border: none;
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--ak-yellow);
+      color: #000;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .section-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ak-yellow);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .ak-input, .ak-select {
+      width: 100%;
+      padding: 8px 10px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      font-family: var(--font-jp);
+    }
+
+    .ak-input:focus, .ak-select:focus {
+      border-color: var(--ak-yellow);
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 2px solid var(--border-color);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s ease;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .list-item:hover {
+      border-left-color: var(--ak-yellow);
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .list-item.checked {
+      opacity: 0.35;
+      text-decoration: line-through;
+    }
+
+    .item-content-click {
+      flex: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .item-text {
+      font-size: 0.8rem;
+      word-break: break-word;
+    }
+
+    .item-reward {
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      font-weight: bold;
+      white-space: nowrap;
+      margin-left: 6px;
+    }
+
+    .action-badge-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-family: var(--font-tech);
+    }
+    .action-badge-btn:hover {
+      border-color: var(--ak-yellow);
+      color: var(--ak-yellow);
+    }
+
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      height: 160px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+    }
+
+    .card-label {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      position: absolute;
+      top: 8px;
+      left: 10px;
+    }
+
+    .card-category-tag {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      background: rgba(0, 188, 212, 0.2);
+      color: var(--ak-cyan);
+      padding: 1px 6px;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+    }
+
+    .card-content {
+      font-size: 1.1rem;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .card-stats {
+      font-family: var(--font-tech);
+      font-size: 0.7rem;
+      color: var(--ak-yellow);
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+    }
+
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .sound-btn {
+      font-family: var(--font-tech);
+      padding: 8px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .sound-btn.active {
+      border-color: var(--ak-cyan);
+      color: var(--ak-cyan);
+      background: rgba(0, 188, 212, 0.1);
+    }
+
+    .inventory-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .inventory-chip {
+      font-family: var(--font-tech);
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid var(--ak-yellow);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      word-break: break-all;
+    }
+
+    /* モーダルダイアログ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--ak-yellow);
+      width: 100%;
+      max-width: 400px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #000;
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-family: var(--font-tech);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+      transition: transform 0.25s ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ヘッダー端末 -->
+  <header class="terminal-header">
+    <div class="header-top">
+      <div>
+        <div class="system-title">SYLVARENA</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.1</div>
+      </div>
+      <div class="leaf-tag" id="leaf-val">LEAF: 120</div>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-cell">
+        <span class="cell-label">OPERATOR RANK</span>
+        <span class="cell-value highlight" id="rank-badge">NOVICE - I</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">LEVEL (TIER)</span>
+        <span class="cell-value" id="level-val">Lv.1</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">FOCUS TIME</span>
+        <span class="cell-value" id="focus-val">0m</span>
+      </div>
+    </div>
+
+    <div class="xp-bar-container">
+      <div class="xp-bar-fill" id="xp-bar-fill"></div>
+    </div>
+    <div class="xp-text">
+      <span id="xp-current-text">XP: 0 / 100</span>
+      <span id="next-rank-text">TIER MAX: 100Lv</span>
+    </div>
+  </header>
+
+  <!-- タイマーセクション -->
+  <section class="mission-card">
+    <div class="timer-display" id="timer-display">25:00</div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" id="timer-btn" onclick="toggleTimer()">START MISSION</button>
+      <button class="ak-btn" onclick="resetTimer()">RESET</button>
+    </div>
+  </section>
+
+  <!-- サウンド機能 -->
+  <section class="section-panel">
+    <div class="section-title">AMBIENT SOUNDS</div>
+    <div class="sound-grid">
+      <button class="sound-btn" id="snd-fire" onclick="toggleSound('fire')">WHITE NOISE (FIRE)</button>
+      <button class="sound-btn" id="snd-rain" onclick="toggleSound('rain')">WHITE NOISE (RAIN)</button>
+      <!-- 手動でサウンドを追加可能 -->
+    </div>
+  </section>
+
+  <!-- タブナビゲーション -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('tasks')">MISSIONS</button>
+    <button class="tab-btn" onclick="switchTab('cards')">CARDS</button>
+    <button class="tab-btn" onclick="switchTab('archive')">ARCHIVE</button>
+    <button class="tab-btn" onclick="switchTab('shop')">STORE</button>
+    <button class="tab-btn" onclick="switchTab('system')">SYSTEM</button>
+  </nav>
+
+  <!-- タブ1: ミッション -->
+  <div id="tab-tasks" class="tab-content active">
+    <div class="section-panel">
+      <div class="section-title">MAIN QUEST</div>
+      <div class="input-group">
+        <input type="text" id="quest-input" class="ak-input" value="主要書類整理の完了" placeholder="最重要目標...">
+        <button class="ak-btn ak-btn-primary" id="quest-btn" onclick="completeMainQuest()">EXECUTE</button>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">DAILY ROUTINE</div>
+      <div class="item-list" id="daily-task-list"></div>
+      
+      <div class="input-group" style="margin-top: 6px;">
+        <input type="text" id="new-daily-text" class="ak-input" placeholder="新しい日課の内容...">
+        <div style="display:flex; gap:6px;">
+          <input type="number" id="new-daily-reward" class="ak-input" value="20" placeholder="報酬" style="width: 80px;">
+          <button class="ak-btn ak-btn-primary" onclick="addDailyTask()">ADD ROUTINE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ2: 単語カード -->
+  <div id="tab-cards" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">
+        <span>MEMORIZATION TERMINAL</span>
+        <span id="card-count-label">0 CARDS</span>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたカード</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="card-category-filter" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
+        </select>
+      </div>
+
+      <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
+        <div class="flashcard-container" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="card-face front">
+              <span class="card-label">QUESTION (FRONT)</span>
+              <span class="card-category-tag" id="card-category-tag">GENERAL</span>
+              <div class="card-content" id="card-front-text">Front Text</div>
+              <span class="card-stats" id="card-review-count">REVIEW: 0</span>
+            </div>
+            <div class="card-face back">
+              <span class="card-label">ANSWER (BACK)</span>
+              <div class="card-content" id="card-back-text">Back Text</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+10 LEAF)</button>
+        </div>
+        
+        <div style="display:flex; justify-content:center;">
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem; width:100%;">覚えたカードへ移動</button>
+        </div>
+      </div>
+
+      <div id="card-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
+        条件に一致するカードがありません。下のフォームから作成してください。
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">CREATE NEW CARD</div>
+      <div class="input-group">
+        <input type="text" id="card-front-input" class="ak-input" placeholder="表面（単語・問題など）">
+        <input type="text" id="card-back-input" class="ak-input" placeholder="裏面（意味・解答など）">
+        <input type="text" id="card-category-input" class="ak-input" value="一般" placeholder="ジャンル / タグ (例: 英語, 歴史)">
+        <button class="ak-btn ak-btn-primary" onclick="addCard()">ADD FLASHCARD</button>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">CARD REGISTERED LIST</div>
+      <div class="item-list" id="card-registered-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ3: アーカイブ -->
+  <div id="tab-archive" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
+      <div class="input-group">
+        <input type="text" id="memo-input" class="ak-input" placeholder="新しい研究メモを追加...">
+        <button class="ak-btn" onclick="addMemo()">RECORD</button>
+      </div>
+      <div class="item-list" id="memo-list"></div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">STORAGE (COLLECTED ITEMS)</div>
+      <div class="inventory-grid" id="inventory-container"></div>
+    </div>
+  </div>
+
+  <!-- タブ4: 購買部 (手動で商品を追加可能) -->
+  <div id="tab-shop" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">SUPPLY STORE</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        LEAFを消費して収集品や着せ替えアイテムを獲得できます。
+      </div>
+      <div class="item-list" id="shop-item-list">
+        <!-- JavaScriptで自動描画されます -->
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ5: システム・バックアップ & カスタマイズ -->
+  <div id="tab-system" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">TERMINAL CUSTOMIZE</div>
+      <div class="input-group">
+        <label style="font-size:0.75rem; color:var(--text-muted);">アクセントカラー選択 (要購入)</label>
+        <select id="theme-color-select" class="ak-select" onchange="changeThemeColor(this.value)">
+          <option value="yellow">PRTSイエロー (デフォルト)</option>
+          <option value="cyan">サイバーシアン</option>
+          <option value="emerald">エメラルドグリーン</option>
+          <option value="crimson">クリムゾンレッド</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">DATA MANAGEMENT</div>
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
+        アプリの全データを保存・復元できます。
+      </div>
+      <div class="ak-btn-group" style="flex-direction:column;">
+        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
+        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT DATA (JSON)</button>
+        <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- カード編集ダイアログ -->
+<div id="card-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="section-title">EDIT CARD DATA</div>
+    <div class="input-group">
+      <label style="font-size:0.7rem; color:var(--text-muted);">表面 (FRONT)</label>
+      <input type="text" id="modal-card-front" class="ak-input">
+      <label style="font-size:0.7rem; color:var(--text-muted);">裏面 (BACK)</label>
+      <input type="text" id="modal-card-back" class="ak-input">
+      <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
+      <input type="text" id="modal-card-category" class="ak-input">
+    </div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" onclick="saveCardModal()">SAVE</button>
+      <button class="ak-btn ak-btn-danger" onclick="deleteCardModal()">DELETE</button>
+    </div>
+    <button class="ak-btn" onclick="closeCardModal()">CANCEL</button>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast">SYSTEM NOTIFICATION</div>
+
+<script>
+  // ----------------------------------------------------
+  // ★ここに新しいショップアイテムを手動で追加できます！
+  // type: 'item' (所持品・コレクション), 'theme' (着せ替えカラー)
+  // ----------------------------------------------------
+  const shopItems = [
+    { id: 'item_note', name: '羊皮紙ノート', price: 50, type: 'item', desc: '古びた記録用ノート' },
+    { id: 'item_tea', name: 'ハーブティーセット', price: 40, type: 'item', desc: '心を落ち着かせるお茶' },
+    { id: 'item_pen', name: 'タクティカル万年筆', price: 120, type: 'item', desc: '特務仕様の高級万年筆' },
+    { id: 'item_tree_leaf', name: '世界樹の黄金の葉', price: 300, type: 'item', desc: '極めて希少な世界樹の断片' },
+    { id: 'theme_cyan', name: 'テーマ: サイバーシアン', price: 150, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_emerald', name: 'テーマ: エメラルド', price: 150, type: 'theme', color: '#4caf50', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_crimson', name: 'テーマ: クリムゾン', price: 200, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
+  ];
+
+  let state = {
+    leaf: 120,
+    xp: 0,
+    totalLevel: 1,
+    focusMinutes: 0,
+    lastDate: new Date().toDateString(),
+    inventory: { 'ハーブティーセット': 1 },
+    unlockedThemes: ['yellow'],
+    currentTheme: 'yellow',
+    cards: [],
+    memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
+    dailyTasks: [
+      { id: 1, text: '端末起動および定期メンテナンス', reward: 30, completed: false },
+      { id: 2, text: '返却データの整合性チェック', reward: 20, completed: false },
+      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 25, completed: false }
+    ]
+  };
+
+  let currentCardIndex = 0;
+  let editingCardId = null;
+  let timerInterval = null;
+  let timeLeft = 25 * 60;
+  let isRunning = false;
+
+  window.onload = () => {
+    loadState();
+    checkDailyReset();
+    applyTheme(state.currentTheme);
+    updateUI();
+    renderDailyTasks();
+    renderShop();
+    updateCategoryFilterDropdown();
+    renderCards();
+    renderMemos();
+  };
+
+  function loadState() {
+    try {
+      let saved = localStorage.getItem('sylvarena_ak_state_v4');
+      if (!saved) {
+        saved = localStorage.getItem('sylvarena_ak_state_v6') ||
+                localStorage.getItem('sylvarena_ak_state_v5') ||
+                localStorage.getItem('sylvarena_ak_state_v3') ||
+                localStorage.getItem('sylvarena_ak_state_v2') ||
+                localStorage.getItem('sylvarena_ak_state') ||
+                localStorage.getItem('sylvarena_state');
+      }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed };
+        if (state.totalLevel === undefined) state.totalLevel = 1;
+        if (state.xp === undefined) state.xp = 0;
+        if (state.unlockedThemes === undefined) state.unlockedThemes = ['yellow'];
+        if (state.currentTheme === undefined) state.currentTheme = 'yellow';
+      }
+    } catch (e) {
+      console.error('Data load error:', e);
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem('sylvarena_ak_state_v4', JSON.stringify(state));
+    } catch (e) {
+      console.error('Data save error:', e);
+    }
+    updateUI();
+  }
+
+  function checkDailyReset() {
+    const today = new Date().toDateString();
+    if (state.lastDate !== today) {
+      state.lastDate = today;
+      state.dailyTasks.forEach(t => t.completed = false);
+      showToast('SYSTEM: DAILY TASKS RESET');
+      saveState();
+    }
+  }
+
+  function updateUI() {
+    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
+    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
+
+    const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
+    let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
+    if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;
+    
+    const romanSub = ['I', 'II', 'III', 'IV'];
+    let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
+    if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
+
+    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
+    const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
+
+    document.getElementById('rank-badge').textContent = rankName;
+    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+
+    const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
+    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
+    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
+    document.getElementById('next-rank-text').textContent = `TIER MAX: 100Lv`;
+
+    renderInventory();
+    renderShop();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.target.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+  }
+
+  // --- テーマカラー着せ替え機能 ---
+  function applyTheme(themeKey) {
+    state.currentTheme = themeKey;
+    let colorHex = '#ffc107'; // デフォルトイエロー
+    if (themeKey === 'cyan') colorHex = '#00bcd4';
+    if (themeKey === 'emerald') colorHex = '#4caf50';
+    if (themeKey === 'crimson') colorHex = '#ff5252';
+
+    document.documentElement.style.setProperty('--ak-yellow', colorHex);
+    document.getElementById('theme-color-select').value = themeKey;
+    saveState();
+  }
+
+  function changeThemeColor(val) {
+    if (val === 'yellow' || state.unlockedThemes.includes(val)) {
+      applyTheme(val);
+      showToast(`THEME CHANGED: ${val.toUpperCase()}`);
+    } else {
+      showToast('ERROR: THEME NOT UNLOCKED IN STORE');
+      document.getElementById('theme-color-select').value = state.currentTheme;
+    }
+  }
+
+  // --- タイマー ---
+  function toggleTimer() {
+    const btn = document.getElementById('timer-btn');
+    if (isRunning) {
+      clearInterval(timerInterval);
+      btn.textContent = 'RESUME MISSION';
+      isRunning = false;
+    } else {
+      isRunning = true;
+      btn.textContent = 'PAUSE';
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          isRunning = false;
+          timeLeft = 25 * 60;
+          btn.textContent = 'START MISSION';
+          
+          addXP(50);
+          addLeaf(50);
+          state.focusMinutes += 25;
+          showToast('MISSION ACCOMPLISHED (+50 LEAF / +50 XP)');
+          saveState();
+        }
+      }, 1000);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = 25 * 60;
+    document.getElementById('timer-btn').textContent = 'START MISSION';
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${m}:${s}`;
+  }
+
+  function addLeaf(amt) {
+    state.leaf += amt;
+    saveState();
+  }
+
+  function addXP(amt) {
+    state.xp += amt;
+    while (state.xp >= 100) {
+      state.xp -= 100;
+      state.totalLevel += 1;
+      
+      const bonusLeaf = 20;
+      state.leaf += bonusLeaf;
+      showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)%100)+1} (+${bonusLeaf} LEAF BONUS!)`);
+    }
+    saveState();
+  }
+
+  function completeMainQuest() {
+    const btn = document.getElementById('quest-btn');
+    if (!btn.disabled) {
+      btn.disabled = true;
+      btn.textContent = 'COMPLETED';
+      addLeaf(100);
+      addXP(40);
+      showToast('MAIN QUEST COMPLETED (+100 LEAF / +40 XP)');
+    }
+  }
+
+  // デイリータスク
+  function renderDailyTasks() {
+    const list = document.getElementById('daily-task-list');
+    list.innerHTML = '';
+    state.dailyTasks.forEach(task => {
+      const item = document.createElement('div');
+      item.className = `list-item ${task.completed ? 'checked' : ''}`;
+      
+      item.innerHTML = `
+        <div class="item-content-click" onclick="completeDailyTask(${task.id})">
+          <span class="item-text">${task.text}</span>
+          <span class="item-reward">+${task.reward} LEAF</span>
+        </div>
+        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})" title="削除">DEL</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function addDailyTask() {
+    const textInput = document.getElementById('new-daily-text');
+    const rewardInput = document.getElementById('new-daily-reward');
+    const text = textInput.value.trim();
+    const reward = parseInt(rewardInput.value) || 20;
+
+    if (text) {
+      state.dailyTasks.push({
+        id: Date.now(),
+        text: text,
+        reward: reward,
+        completed: false
+      });
+      textInput.value = '';
+      showToast('ROUTINE ADDED');
+      saveState();
+      renderDailyTasks();
+    } else {
+      showToast('ERROR: ENTER ROUTINE TEXT');
+    }
+  }
+
+  function completeDailyTask(id) {
+    const task = state.dailyTasks.find(t => t.id === id);
+    if (task && !task.completed) {
+      task.completed = true;
+      addLeaf(task.reward);
+      addXP(15);
+      showToast(`TASK COMPLETED (+${task.reward} LEAF / +15 XP)`);
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  function deleteDailyTask(id) {
+    if (confirm('この日課を削除しますか？')) {
+      state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+      showToast('ROUTINE DELETED');
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  // 単語カード管理
+  function updateCategoryFilterDropdown() {
+    const select = document.getElementById('card-category-filter');
+    const currentVal = select.value;
+    const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
+    
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+    
+    if ([...select.options].some(o => o.value === currentVal)) {
+      select.value = currentVal;
+    } else {
+      select.value = 'ALL';
+    }
+  }
+
+  function getFilteredCards() {
+    const statusFilter = document.getElementById('card-filter-select').value;
+    const categoryFilter = document.getElementById('card-category-filter').value;
+
+    return state.cards.filter(card => {
+      let matchStatus = true;
+      if (statusFilter === '学習中') {
+        matchStatus = !card.archived;
+      } else if (statusFilter === '覚えたカード') {
+        matchStatus = card.archived;
+      }
+
+      let matchCategory = true;
+      if (categoryFilter !== 'ALL') {
+        matchCategory = (card.category || '一般') === categoryFilter;
+      }
+
+      return matchStatus && matchCategory;
+    });
+  }
+
+  function addCard() {
+    const front = document.getElementById('card-front-input').value.trim();
+    const back = document.getElementById('card-back-input').value.trim();
+    const category = document.getElementById('card-category-input').value.trim() || '一般';
+
+    if (front && back) {
+      state.cards.push({
+        id: Date.now(),
+        front: front,
+        back: back,
+        category: category,
+        reviews: 0,
+        archived: false
+      });
+      document.getElementById('card-front-input').value = '';
+      document.getElementById('card-back-input').value = '';
+      showToast('FLASHCARD ADDED');
+      saveState();
+      updateCategoryFilterDropdown();
+      renderCards();
+    } else {
+      showToast('ERROR: BOTH SIDES REQUIRED');
+    }
+  }
+
+  function filterCards() {
+    currentCardIndex = 0;
+    renderCards();
+  }
+
+  function renderCards() {
+    const countLabel = document.getElementById('card-count-label');
+    const displayArea = document.getElementById('card-display-area');
+    const emptyMsg = document.getElementById('card-empty-msg');
+    const registeredList = document.getElementById('card-registered-list');
+    const filtered = getFilteredCards();
+
+    countLabel.textContent = `${filtered.length} CARDS`;
+
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+      updateCardView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.cards.forEach((card) => {
+      const item = document.createElement('div');
+      item.className = `list-item ${card.archived ? 'checked' : ''}`;
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
+        <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
+      `;
+      registeredList.appendChild(item);
+    });
+  }
+
+  function updateCardView(filtered) {
+    const card = filtered[currentCardIndex];
+    if (!card) return;
+
+    document.getElementById('card-front-text').textContent = card.front;
+    document.getElementById('card-back-text').textContent = card.back;
+    document.getElementById('card-category-tag').textContent = card.category;
+    document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
+    document.getElementById('flashcard').classList.remove('flipped');
+
+    const archiveBtn = document.getElementById('toggle-archive-btn');
+    if (card.archived) {
+      archiveBtn.textContent = '学習中へ戻す';
+    } else {
+      archiveBtn.textContent = '覚えたカードへ移動';
+    }
+  }
+
+  function flipCard() {
+    document.getElementById('flashcard').classList.toggle('flipped');
+  }
+
+  function answerCard(isCorrect) {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+
+    const card = filtered[currentCardIndex];
+    card.reviews += 1;
+
+    if (isCorrect) {
+      addLeaf(10);
+      addXP(10);
+      showToast('CORRECT! (+10 LEAF / +10 XP)');
+    } else {
+      showToast('REVIEW AGAIN');
+    }
+
+    currentCardIndex = (currentCardIndex + 1) % filtered.length;
+    saveState();
+    renderCards();
+  }
+
+  function toggleCardArchive() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+    
+    card.archived = !card.archived;
+    showToast(card.archived ? 'ARCHIVED (覚えたカードへ移動)' : 'RESTORED (学習中へ戻す)');
+    saveState();
+    renderCards();
+  }
+
+  function openCardModal(cardId) {
+    editingCardId = cardId;
+    const card = state.cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    document.getElementById('modal-card-front').value = card.front;
+    document.getElementById('modal-card-back').value = card.back;
+    document.getElementById('modal-card-category').value = card.category || '一般';
+    document.getElementById('card-modal').classList.add('show');
+  }
+
+  function closeCardModal() {
+    document.getElementById('card-modal').classList.remove('show');
+    editingCardId = null;
+  }
+
+  function saveCardModal() {
+    const card = state.cards.find(c => c.id === editingCardId);
+    if (card) {
+      const f = document.getElementById('modal-card-front').value.trim();
+      const b = document.getElementById('modal-card-back').value.trim();
+      const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+
+      if (f && b) {
+        card.front = f;
+        card.back = b;
+        card.category = cat;
+        showToast('CARD UPDATED');
+        saveState();
+        updateCategoryFilterDropdown();
+        renderCards();
+        closeCardModal();
+      } else {
+        showToast('ERROR: BOTH SIDES REQUIRED');
+      }
+    }
+  }
+
+  function deleteCardModal() {
+    const card = state.cards.find(c => c.id === editingCardId);
+    if (card && confirm(`「${card.front}」の単語カードを削除しますか？`)) {
+      state.cards = state.cards.filter(c => c.id !== editingCardId);
+      showToast('CARD DELETED');
+      saveState();
+      updateCategoryFilterDropdown();
+      renderCards();
+      closeCardModal();
+    }
+  }
+
+  // メモ管理
+  function addMemo() {
+    const input = document.getElementById('memo-input');
+    const text = input.value.trim();
+    if (text) {
+      state.memos.push(`LOG. - 「${text}」`);
+      input.value = '';
+      showToast('RECORD ADDED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  function renderMemos() {
+    const list = document.getElementById('memo-list');
+    list.innerHTML = '';
+    state.memos.forEach((memo, index) => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">${memo}</span>
+        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集 / 削除">EDIT</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function editMemo(index) {
+    const currentText = state.memos[index].replace(/^LOG\. - 「|」$/g, '');
+    const newText = prompt('メモの内容を編集してください（空欄にしてOKを押すと削除できます）:', currentText);
+    
+    if (newText === '') {
+      if (confirm('このメモを削除しますか？')) {
+        state.memos.splice(index, 1);
+        showToast('RECORD DELETED');
+        saveState();
+        renderMemos();
+      }
+    } else if (newText !== null && newText.trim() !== '') {
+      state.memos[index] = `LOG. - 「${newText.trim()}」`;
+      showToast('RECORD UPDATED');
+      saveState();
+      renderMemos();
+    }
+  }
+
+  // --- 購買部 & ストア管理 ---
+  function renderShop() {
+    const shopList = document.getElementById('shop-item-list');
+    shopList.innerHTML = '';
+
+    shopItems.forEach(item => {
+      const isThemeUnlocked = item.type === 'theme' && state.unlockedThemes.includes(item.color || item.id.replace('theme_', ''));
+      const listItem = document.createElement('div');
+      listItem.className = 'list-item';
+      
+      listItem.innerHTML = `
+        <div class="item-content-click">
+          <span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span>
+        </div>
+        <span class="item-reward">${item.price} LEAF</span>
+        <button class="action-badge-btn" onclick="buyShopItem('${item.id}')">${isUnlocked(item) ? 'UNLOCKED' : 'BUY'}</button>
+      `;
+      shopList.appendChild(listItem);
+    });
+  }
+
+  function isUnlocked(item) {
+    if (item.type === 'theme') {
+      const key = item.id.replace('theme_', '');
+      return state.unlockedThemes.includes(key);
+    }
+    return false;
+  }
+
+  function buyShopItem(itemId) {
+    const item = shopItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (item.type === 'theme') {
+      const key = item.id.replace('theme_', '');
+      if (state.unlockedThemes.includes(key)) {
+        showToast('ALREADY UNLOCKED');
+        return;
+      }
+      if (state.leaf >= item.price) {
+        state.leaf -= item.price;
+        state.unlockedThemes.push(key);
+        applyTheme(key);
+        showToast(`UNLOCKED & APPLIED: ${item.name}`);
+        saveState();
+      } else {
+        showToast('ERROR: INSUFFICIENT LEAF');
+      }
+    } else if (item.type === 'item') {
+      if (state.leaf >= item.price) {
+        state.leaf -= item.price;
+        state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+        showToast(`PURCHASED: ${item.name}`);
+        saveState();
+      } else {
+        showToast('ERROR: INSUFFICIENT LEAF');
+      }
+    }
+  }
+
+  function renderInventory() {
+    const container = document.getElementById('inventory-container');
+    container.innerHTML = '';
+    for (const [name, count] of Object.entries(state.inventory)) {
+      const chip = document.createElement('div');
+      chip.className = 'inventory-chip';
+      chip.textContent = `${name} x${count}`;
+      container.appendChild(chip);
+    }
+  }
+
+  // バックアップ
+  function exportData() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('DATA EXPORTED');
+  }
+
+  function importData(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function(e) {
+      try {
+        const importedState = JSON.parse(e.target.result);
+        state = { ...state, ...importedState };
+        applyTheme(state.currentTheme || 'yellow');
+        saveState();
+        renderDailyTasks();
+        updateCategoryFilterDropdown();
+        renderCards();
+        renderMemos();
+        showToast('DATA IMPORTED SUCCESSFULLY');
+      } catch (err) {
+        showToast('ERROR: INVALID JSON FILE');
+      }
+    };
+    fileReader.readAsText(event.target.files[0]);
+  }
+
+  // Web Audio
+  let audioCtx = null;
+  let activeNodes = {};
+
+  function toggleSound(type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const btn = document.getElementById(`snd-${type}`);
+
+    if (activeNodes[type]) {
+      activeNodes[type].stop();
+      delete activeNodes[type];
+      btn.classList.remove('active');
+    } else {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      const whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = type === 'fire' ? 'bandpass' : 'lowpass';
+      filter.frequency.value = type === 'fire' ? 800 : 350;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.04;
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      whiteNoise.start();
+      activeNodes[type] = whiteNoise;
+      btn.classList.add('active');
+    }
+  }
+</script>
+
+</body>
+</html>
