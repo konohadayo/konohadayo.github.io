@@ -585,7 +585,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v3.0</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.1</div>
       </div>
       <div class="leaf-tag" id="leaf-val">LEAF: 120</div>
     </div>
@@ -629,6 +629,7 @@
     <div class="sound-grid">
       <button class="sound-btn" id="snd-fire" onclick="toggleSound('fire')">WHITE NOISE (FIRE)</button>
       <button class="sound-btn" id="snd-rain" onclick="toggleSound('rain')">WHITE NOISE (RAIN)</button>
+      <!-- 手動でサウンドを追加可能 -->
     </div>
   </section>
 
@@ -748,40 +749,43 @@
     </div>
 
     <div class="section-panel">
-      <div class="section-title">STORAGE</div>
-      <div class="inventory-grid" id="inventory-container">
-        <div class="inventory-chip">ハーブティーセット x1</div>
-      </div>
+      <div class="section-title">STORAGE (COLLECTED ITEMS)</div>
+      <div class="inventory-grid" id="inventory-container"></div>
     </div>
   </div>
 
-  <!-- タブ4: 購買部 -->
+  <!-- タブ4: 購買部 (手動で商品を追加可能) -->
   <div id="tab-shop" class="tab-content">
     <div class="section-panel">
       <div class="section-title">SUPPLY STORE</div>
-      <div class="item-list">
-        <div class="list-item" onclick="buyItem('羊皮紙ノート', 50)">
-          <span class="item-content-click"><span class="item-text">羊皮紙ノート</span></span>
-          <span class="item-reward">50 LEAF</span>
-        </div>
-        <div class="list-item" onclick="buyItem('特製ハーブティー', 40)">
-          <span class="item-content-click"><span class="item-text">特製ハーブティー</span></span>
-          <span class="item-reward">40 LEAF</span>
-        </div>
-        <div class="list-item" onclick="buyItem('タクティカル万年筆', 120)">
-          <span class="item-content-click"><span class="item-text">タクティカル万年筆</span></span>
-          <span class="item-reward">120 LEAF</span>
-        </div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        LEAFを消費して収集品や着せ替えアイテムを獲得できます。
+      </div>
+      <div class="item-list" id="shop-item-list">
+        <!-- JavaScriptで自動描画されます -->
       </div>
     </div>
   </div>
 
-  <!-- タブ5: システム・バックアップ -->
+  <!-- タブ5: システム・バックアップ & カスタマイズ -->
   <div id="tab-system" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">TERMINAL CUSTOMIZE</div>
+      <div class="input-group">
+        <label style="font-size:0.75rem; color:var(--text-muted);">アクセントカラー選択 (要購入)</label>
+        <select id="theme-color-select" class="ak-select" onchange="changeThemeColor(this.value)">
+          <option value="yellow">PRTSイエロー (デフォルト)</option>
+          <option value="cyan">サイバーシアン</option>
+          <option value="emerald">エメラルドグリーン</option>
+          <option value="crimson">クリムゾンレッド</option>
+        </select>
+      </div>
+    </div>
+
     <div class="section-panel">
       <div class="section-title">DATA MANAGEMENT</div>
       <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
-        アプリの全データ（階級、LEAF、単語カード、メモ、ルーティン）を保存・復元できます。
+        アプリの全データを保存・復元できます。
       </div>
       <div class="ak-btn-group" style="flex-direction:column;">
         <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
@@ -817,6 +821,20 @@
 <div id="toast" class="toast">SYSTEM NOTIFICATION</div>
 
 <script>
+  // ----------------------------------------------------
+  // ★ここに新しいショップアイテムを手動で追加できます！
+  // type: 'item' (所持品・コレクション), 'theme' (着せ替えカラー)
+  // ----------------------------------------------------
+  const shopItems = [
+    { id: 'item_note', name: '羊皮紙ノート', price: 50, type: 'item', desc: '古びた記録用ノート' },
+    { id: 'item_tea', name: 'ハーブティーセット', price: 40, type: 'item', desc: '心を落ち着かせるお茶' },
+    { id: 'item_pen', name: 'タクティカル万年筆', price: 120, type: 'item', desc: '特務仕様の高級万年筆' },
+    { id: 'item_tree_leaf', name: '世界樹の黄金の葉', price: 300, type: 'item', desc: '極めて希少な世界樹の断片' },
+    { id: 'theme_cyan', name: 'テーマ: サイバーシアン', price: 150, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_emerald', name: 'テーマ: エメラルド', price: 150, type: 'theme', color: '#4caf50', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_crimson', name: 'テーマ: クリムゾン', price: 200, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
+  ];
+
   let state = {
     leaf: 120,
     xp: 0,
@@ -824,6 +842,8 @@
     focusMinutes: 0,
     lastDate: new Date().toDateString(),
     inventory: { 'ハーブティーセット': 1 },
+    unlockedThemes: ['yellow'],
+    currentTheme: 'yellow',
     cards: [],
     memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
     dailyTasks: [
@@ -842,24 +862,33 @@
   window.onload = () => {
     loadState();
     checkDailyReset();
+    applyTheme(state.currentTheme);
     updateUI();
     renderDailyTasks();
+    renderShop();
     updateCategoryFilterDropdown();
     renderCards();
     renderMemos();
   };
 
-  
-  // 堅牢な読み込み処理（マイグレーション対応）
   function loadState() {
     try {
       let saved = localStorage.getItem('sylvarena_ak_state_v4');
       if (!saved) {
-        saved = localStorage.getItem('sylvarena_ak_state_v3') || localStorage.getItem('sylvarena_ak_state_v2') || localStorage.getItem('sylvarena_ak_state') || localStorage.getItem('sylvarena_state');
+        saved = localStorage.getItem('sylvarena_ak_state_v6') ||
+                localStorage.getItem('sylvarena_ak_state_v5') ||
+                localStorage.getItem('sylvarena_ak_state_v3') ||
+                localStorage.getItem('sylvarena_ak_state_v2') ||
+                localStorage.getItem('sylvarena_ak_state') ||
+                localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
         state = { ...state, ...parsed };
+        if (state.totalLevel === undefined) state.totalLevel = 1;
+        if (state.xp === undefined) state.xp = 0;
+        if (state.unlockedThemes === undefined) state.unlockedThemes = ['yellow'];
+        if (state.currentTheme === undefined) state.currentTheme = 'yellow';
       }
     } catch (e) {
       console.error('Data load error:', e);
@@ -909,6 +938,7 @@
     document.getElementById('next-rank-text').textContent = `TIER MAX: 100Lv`;
 
     renderInventory();
+    renderShop();
   }
 
   function showToast(msg) {
@@ -926,7 +956,30 @@
     document.getElementById(`tab-${tabId}`).classList.add('active');
   }
 
-  // タイマー
+  // --- テーマカラー着せ替え機能 ---
+  function applyTheme(themeKey) {
+    state.currentTheme = themeKey;
+    let colorHex = '#ffc107'; // デフォルトイエロー
+    if (themeKey === 'cyan') colorHex = '#00bcd4';
+    if (themeKey === 'emerald') colorHex = '#4caf50';
+    if (themeKey === 'crimson') colorHex = '#ff5252';
+
+    document.documentElement.style.setProperty('--ak-yellow', colorHex);
+    document.getElementById('theme-color-select').value = themeKey;
+    saveState();
+  }
+
+  function changeThemeColor(val) {
+    if (val === 'yellow' || state.unlockedThemes.includes(val)) {
+      applyTheme(val);
+      showToast(`THEME CHANGED: ${val.toUpperCase()}`);
+    } else {
+      showToast('ERROR: THEME NOT UNLOCKED IN STORE');
+      document.getElementById('theme-color-select').value = state.currentTheme;
+    }
+  }
+
+  // --- タイマー ---
   function toggleTimer() {
     const btn = document.getElementById('timer-btn');
     if (isRunning) {
@@ -998,7 +1051,7 @@
     }
   }
 
-  // デイリールーティン
+  // デイリータスク
   function renderDailyTasks() {
     const list = document.getElementById('daily-task-list');
     list.innerHTML = '';
@@ -1217,7 +1270,6 @@
     renderCards();
   }
 
-  // カードEDITダイアログ（編集・削除統合）
   function openCardModal(cardId) {
     editingCardId = cardId;
     const card = state.cards.find(c => c.id === cardId);
@@ -1314,15 +1366,63 @@
     }
   }
 
-  // 購買部
-  function buyItem(name, price) {
-    if (state.leaf >= price) {
-      addLeaf(-price);
-      state.inventory[name] = (state.inventory[name] || 0) + 1;
-      showToast(`PURCHASED: ${name}`);
-      saveState();
-    } else {
-      showToast('ERROR: INSUFFICIENT LEAF');
+  // --- 購買部 & ストア管理 ---
+  function renderShop() {
+    const shopList = document.getElementById('shop-item-list');
+    shopList.innerHTML = '';
+
+    shopItems.forEach(item => {
+      const isThemeUnlocked = item.type === 'theme' && state.unlockedThemes.includes(item.color || item.id.replace('theme_', ''));
+      const listItem = document.createElement('div');
+      listItem.className = 'list-item';
+      
+      listItem.innerHTML = `
+        <div class="item-content-click">
+          <span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span>
+        </div>
+        <span class="item-reward">${item.price} LEAF</span>
+        <button class="action-badge-btn" onclick="buyShopItem('${item.id}')">${isUnlocked(item) ? 'UNLOCKED' : 'BUY'}</button>
+      `;
+      shopList.appendChild(listItem);
+    });
+  }
+
+  function isUnlocked(item) {
+    if (item.type === 'theme') {
+      const key = item.id.replace('theme_', '');
+      return state.unlockedThemes.includes(key);
+    }
+    return false;
+  }
+
+  function buyShopItem(itemId) {
+    const item = shopItems.find(i => i.id === itemId);
+    if (!item) return;
+
+    if (item.type === 'theme') {
+      const key = item.id.replace('theme_', '');
+      if (state.unlockedThemes.includes(key)) {
+        showToast('ALREADY UNLOCKED');
+        return;
+      }
+      if (state.leaf >= item.price) {
+        state.leaf -= item.price;
+        state.unlockedThemes.push(key);
+        applyTheme(key);
+        showToast(`UNLOCKED & APPLIED: ${item.name}`);
+        saveState();
+      } else {
+        showToast('ERROR: INSUFFICIENT LEAF');
+      }
+    } else if (item.type === 'item') {
+      if (state.leaf >= item.price) {
+        state.leaf -= item.price;
+        state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+        showToast(`PURCHASED: ${item.name}`);
+        saveState();
+      } else {
+        showToast('ERROR: INSUFFICIENT LEAF');
+      }
     }
   }
 
@@ -1355,6 +1455,7 @@
       try {
         const importedState = JSON.parse(e.target.result);
         state = { ...state, ...importedState };
+        applyTheme(state.currentTheme || 'yellow');
         saveState();
         renderDailyTasks();
         updateCategoryFilterDropdown();
