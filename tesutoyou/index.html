@@ -404,17 +404,18 @@
       color: var(--ak-yellow);
     }
 
-    /* 単語カード 3Dフリップ仕様（元のまま復元） */
+    /* 3Dフリップカード（共通） */
     .flashcard-container {
       perspective: 1000px;
       width: 100%;
-      height: 160px;
+      min-height: 180px;
       cursor: pointer;
     }
 
     .flashcard {
       width: 100%;
       height: 100%;
+      min-height: 180px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -428,6 +429,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      min-height: 180px;
       backface-visibility: hidden;
       background: #000;
       border: 1px solid var(--ak-yellow);
@@ -435,7 +437,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px 16px;
       box-sizing: border-box;
       text-align: center;
     }
@@ -466,9 +468,11 @@
     }
 
     .card-content {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: bold;
       word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.4;
     }
 
     .card-stats {
@@ -478,24 +482,6 @@
       position: absolute;
       bottom: 8px;
       right: 10px;
-    }
-
-    /* 暗記テストシート用ビューボックス */
-    .test-view-box {
-      background: #000;
-      border: 1px solid var(--ak-cyan);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 140px;
-    }
-
-    .test-text-display {
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-      word-break: break-all;
-      line-height: 1.5;
     }
 
     .sound-grid {
@@ -604,7 +590,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v3.3</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.4</div>
       </div>
       <div class="leaf-tag" id="leaf-val">LEAF: 1,200</div>
     </div>
@@ -651,7 +637,7 @@
     </div>
   </section>
 
-  <!-- タブナビゲーション（Systemタブ復活） -->
+  <!-- タブナビゲーション -->
   <nav class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('tasks')">MISSIONS</button>
     <button class="tab-btn" onclick="switchTab('cards')">CARDS</button>
@@ -685,7 +671,7 @@
     </div>
   </div>
 
-  <!-- タブ2: 単語カード（元の3Dフリップ仕様に戻しました） -->
+  <!-- タブ2: 単語カード -->
   <div id="tab-cards" class="tab-content">
     <div class="section-panel">
       <div class="section-title">
@@ -709,7 +695,6 @@
         </select>
       </div>
 
-      <!-- 3Dフリップカード表示エリア -->
       <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
         <div class="flashcard-container" onclick="flipCard()">
           <div class="flashcard" id="flashcard">
@@ -732,7 +717,7 @@
         </div>
         
         <div style="display:flex; justify-content:space-between; gap:6px;">
-          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem;">覚えたカードへ移動</button>
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem; width:100%;">覚えたカードへ移動</button>
         </div>
       </div>
 
@@ -757,7 +742,7 @@
     </div>
   </div>
 
-  <!-- タブ3: MEMO TEST（長文・画像・ミニテスト形式暗記シート） -->
+  <!-- タブ3: TEST（フィルター・カテゴリ・3Dフリップ・EDIT対応） -->
   <div id="tab-test" class="tab-content">
     <div class="section-panel">
       <div class="section-title">
@@ -765,28 +750,51 @@
         <span id="test-count-label">0 TESTS</span>
       </div>
 
-      <!-- テストシート表示エリア -->
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="test-filter-select" class="ak-select" onchange="filterTests()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたテスト</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="test-category-filter" class="ak-select" onchange="filterTests()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
+        </select>
+      </div>
+
+      <!-- 3Dフリップテスト表示エリア -->
       <div id="test-display-area" style="display:none; flex-direction:column; gap:10px;">
-        <div class="test-view-box">
-          <div style="display:flex; justify-content:space-between; font-family:var(--font-tech); font-size:0.65rem; color:var(--text-muted);">
-            <span id="test-mode-label">QUESTION / PROBLEM</span>
-            <span id="test-num-label">1 / 1</span>
+        <div class="flashcard-container" onclick="flipTestCard()">
+          <div class="flashcard" id="test-flashcard">
+            <div class="card-face front">
+              <span class="card-label">QUESTION (FRONT)</span>
+              <span class="card-category-tag" id="test-category-tag">GENERAL</span>
+              <div class="card-content" id="test-front-text">Question Text</div>
+              <span class="card-stats" id="test-review-count">REVIEW: 0</span>
+            </div>
+            <div class="card-face back">
+              <span class="card-label">ANSWER & EXPLANATION (BACK)</span>
+              <div class="card-content" id="test-back-text">Answer Text</div>
+            </div>
           </div>
-          <div class="test-text-display" id="test-main-text">問題文がここに表示されます。</div>
         </div>
 
-        <div id="test-action-pre" class="ak-btn-group">
-          <button class="ak-btn ak-btn-primary" onclick="revealTestAnswer()" style="width:100%;">ANSWER CHECK (解答・解説を表示)</button>
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerTestCard(false)">RETRY (もう一度)</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerTestCard(true)">PASSED (+50 LEAF)</button>
         </div>
-
-        <div id="test-action-post" class="ak-btn-group" style="display:none;">
-          <button class="ak-btn" onclick="nextTestCard(false)" style="flex:1;">RETRY (もう一度)</button>
-          <button class="ak-btn ak-btn-primary" onclick="nextTestCard(true)" style="flex:1;">PASSED (+50 LEAF)</button>
+        
+        <div style="display:flex; justify-content:space-between; gap:6px;">
+          <button class="ak-btn" id="toggle-test-archive-btn" onclick="toggleTestArchive()" style="font-size:0.75rem; width:100%;">覚えたテストへ移動</button>
         </div>
       </div>
 
       <div id="test-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
-        テスト問題が登録されていません。下のフォームから作成してください。
+        条件に一致するテスト問題がありません。下のフォームから作成してください。
       </div>
     </div>
 
@@ -798,6 +806,8 @@
         <textarea id="test-question-input" class="ak-textarea" rows="3" placeholder="問題文を入力..."></textarea>
         <label style="font-size:0.7rem; color:var(--text-muted);">解答・解説</label>
         <textarea id="test-answer-input" class="ak-textarea" rows="3" placeholder="解答や解説を入力..."></textarea>
+        <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
+        <input type="text" id="test-category-input" class="ak-input" value="一般" placeholder="ジャンル (例: 専門科目, 歴史)">
         <button class="ak-btn ak-btn-primary" onclick="addTestProblem()">ADD TEST PROBLEM</button>
       </div>
     </div>
@@ -870,12 +880,12 @@
 <!-- カード編集ダイアログ -->
 <div id="card-modal" class="modal-overlay">
   <div class="modal-box">
-    <div class="section-title">EDIT CARD DATA</div>
+    <div class="section-title" id="modal-title-text">EDIT CARD DATA</div>
     <div class="input-group">
-      <label style="font-size:0.7rem; color:var(--text-muted);">表面 (FRONT)</label>
-      <input type="text" id="modal-card-front" class="ak-input">
-      <label style="font-size:0.7rem; color:var(--text-muted);">裏面 (BACK)</label>
-      <input type="text" id="modal-card-back" class="ak-input">
+      <label style="font-size:0.7rem; color:var(--text-muted);" id="modal-label-front">表面 (FRONT)</label>
+      <textarea id="modal-card-front" class="ak-textarea" rows="2"></textarea>
+      <label style="font-size:0.7rem; color:var(--text-muted);" id="modal-label-back">裏面 (BACK)</label>
+      <textarea id="modal-card-back" class="ak-textarea" rows="2"></textarea>
       <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
       <input type="text" id="modal-card-category" class="ak-input">
     </div>
@@ -911,7 +921,7 @@
     unlockedThemes: ['yellow'],
     currentTheme: 'yellow',
     cards: [],
-    testProblems: [], // 長文テスト用
+    testProblems: [],
     memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
     dailyTasks: [
       { id: 1, text: '端末起動および定期メンテナンス', reward: 1000, completed: false },
@@ -922,8 +932,8 @@
 
   let currentCardIndex = 0;
   let currentTestIndex = 0;
-  let isTestAnswerRevealed = false;
   let editingCardId = null;
+  let editingType = 'card'; // 'card' or 'test'
   let timerInterval = null;
   let timeLeft = 25 * 60;
   let isRunning = false;
@@ -937,6 +947,7 @@
     renderShop();
     updateCategoryFilterDropdown();
     renderCards();
+    updateTestCategoryFilterDropdown();
     renderTests();
     renderMemos();
   };
@@ -958,6 +969,12 @@
         if (state.totalLevel === undefined) state.totalLevel = 1;
         if (state.xp === undefined) state.xp = 0;
         if (state.testProblems === undefined) state.testProblems = [];
+        // 既存のtestProblemsにarchivedやreviewsがない場合の補正
+        state.testProblems.forEach(tp => {
+          if (tp.reviews === undefined) tp.reviews = 0;
+          if (tp.archived === undefined) tp.archived = false;
+          if (tp.category === undefined) tp.category = '一般';
+        });
         if (state.unlockedThemes === undefined) state.unlockedThemes = ['yellow'];
         if (state.currentTheme === undefined) state.currentTheme = 'yellow';
       }
@@ -987,25 +1004,10 @@
 
   function updateUI() {
     document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
-    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
-
-    const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
-    let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
-    if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;
-    
-    const romanSub = ['I', 'II', 'III', 'IV'];
-    let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
-    if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
-
-    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
-    const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
-
-    document.getElementById('rank-badge').textContent = rankName;
-    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;  const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD']; let rankTierIndex = Math.floor((state.totalLevel - 1) / 100); if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;  const romanSub = ['I', 'II', 'III', 'IV']; let subIndex = Math.floor(((state.totalLevel - 1) \% 100) / 25); if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;  const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`; const currentLvInTier = ((state.totalLevel - 1) \% 100) + 1;  document.getElementById('rank-badge').textContent = rankName; document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
 
     const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
-    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
-    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
+    document.getElementById('xp-bar-fill').style.width = `${xpPercent}\%`; document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
     document.getElementById('next-rank-text').textContent = `TIER MAX: 100Lv`;
 
     renderInventory();
@@ -1106,7 +1108,7 @@
       
       const bonusLeaf = 1000;
       state.leaf += bonusLeaf;
-      showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)%100)+1} (+${bonusLeaf.toLocaleString()} LEAF BONUS!)`);
+      showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)\%100)+1} (+${bonusLeaf.toLocaleString()} LEAF BONUS!)`);
     }
     saveState();
   }
@@ -1184,7 +1186,7 @@
     }
   }
 
-  // 単語カード管理（元の3Dフリップ）
+  // --- 単語カード管理 ---
   function updateCategoryFilterDropdown() {
     const select = document.getElementById('card-category-filter');
     const currentVal = select.value;
@@ -1263,24 +1265,9 @@
     const registeredList = document.getElementById('card-registered-list');
     const filtered = getFilteredCards();
 
-    countLabel.textContent = `${filtered.length} CARDS`;
-
-    if (filtered.length === 0) {
-      displayArea.style.display = 'none';
-      emptyMsg.style.display = 'block';
-    } else {
-      displayArea.style.display = 'flex';
-      emptyMsg.style.display = 'none';
-      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
-      updateCardView(filtered);
-    }
-
-    registeredList.innerHTML = '';
-    state.cards.forEach((card) => {
-      const item = document.createElement('div');
-      item.className = `list-item ${card.archived ? 'checked' : ''}`;
+    countLabel.textContent = `${filtered.length} CARDS`;  if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentCardIndex >= filtered.length) currentCardIndex = 0; updateCardView(filtered); }  registeredList.innerHTML = ''; state.cards.forEach((card) => { const item = document.createElement('div'); item.className = `list-item ${card.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} /${card.back}</span>
         <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
         <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
       `;
@@ -1330,76 +1317,87 @@
     renderCards();
   }
 
-  function openCardModal(cardId) {
-    editingCardId = cardId;
-    const card = state.cards.find(c => c.id === cardId);
-    if (!card) return;
-
-    document.getElementById('modal-card-front').value = card.front;
-    document.getElementById('modal-card-back').value = card.back;
-    document.getElementById('modal-card-category').value = card.category || '一般';
-    document.getElementById('card-modal').classList.add('show');
+  function toggleCardArchive() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+    
+    card.archived = !card.archived;
+    showToast(card.archived ? 'ARCHIVED (覚えたカードへ移動)' : 'RESTORED (学習中へ戻す)');
+    saveState();
+    renderCards();
   }
 
-  function closeCardModal() {
-    document.getElementById('card-modal').classList.remove('show');
-    editingCardId = null;
+  // --- MEMO TEST（暗記シート / ミニテスト機能・フィルター＆3Dフリップ対応） ---
+  function updateTestCategoryFilterDropdown() {
+    const select = document.getElementById('test-category-filter');
+    const currentVal = select.value;
+    const categories = [...new Set(state.testProblems.map(tp => tp.category || '一般'))];
+    
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+    
+    if ([...select.options].some(o => o.value === currentVal)) {
+      select.value = currentVal;
+    } else {
+      select.value = 'ALL';
+    }
   }
 
-  function saveCardModal() {
-    const card = state.cards.find(c => c.id === editingCardId);
-    if (card) {
-      const f = document.getElementById('modal-card-front').value.trim();
-      const b = document.getElementById('modal-card-back').value.trim();
-      const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+  function getFilteredTests() {
+    const statusFilter = document.getElementById('test-filter-select').value;
+    const categoryFilter = document.getElementById('test-category-filter').value;
 
-      if (f && b) {
-        card.front = f;
-        card.back = b;
-        card.category = cat;
-        showToast('CARD UPDATED');
-        saveState();
-        updateCategoryFilterDropdown();
-        renderCards();
-        closeCardModal();
-      } else {
-        showToast('ERROR: BOTH SIDES REQUIRED');
+    return state.testProblems.filter(tp => {
+      let matchStatus = true;
+      if (statusFilter === '学習中') {
+        matchStatus = !tp.archived;
+      } else if (statusFilter === '覚えたカード') {
+        matchStatus = tp.archived;
       }
-    }
+
+      let matchCategory = true;
+      if (categoryFilter !== 'ALL') {
+        matchCategory = (tp.category || '一般') === categoryFilter;
+      }
+
+      return matchStatus && matchCategory;
+    });
   }
 
-  function deleteCardModal() {
-    const card = state.cards.find(c => c.id === editingCardId);
-    if (card && confirm(`「${card.front}」の単語カードを削除しますか？`)) {
-      state.cards = state.cards.filter(c => c.id !== editingCardId);
-      showToast('CARD DELETED');
-      saveState();
-      updateCategoryFilterDropdown();
-      renderCards();
-      closeCardModal();
-    }
-  }
-
-  // --- MEMO TEST（暗記シート / ミニテスト機能） ---
   function addTestProblem() {
     const q = document.getElementById('test-question-input').value.trim();
     const a = document.getElementById('test-answer-input').value.trim();
+    const category = document.getElementById('test-category-input').value.trim() || '一般';
 
     if (q && a) {
       state.testProblems.push({
         id: Date.now(),
         question: q,
         answer: a,
-        reviews: 0
+        category: category,
+        reviews: 0,
+        archived: false
       });
       document.getElementById('test-question-input').value = '';
       document.getElementById('test-answer-input').value = '';
       showToast('TEST PROBLEM ADDED');
       saveState();
+      updateTestCategoryFilterDropdown();
       renderTests();
     } else {
       showToast('ERROR: QUESTION & ANSWER REQUIRED');
     }
+  }
+
+  function filterTests() {
+    currentTestIndex = 0;
+    renderTests();
   }
 
   function renderTests() {
@@ -1407,63 +1405,46 @@
     const displayArea = document.getElementById('test-display-area');
     const emptyMsg = document.getElementById('test-empty-msg');
     const registeredList = document.getElementById('test-registered-list');
+    const filtered = getFilteredTests();
 
-    countLabel.textContent = `${state.testProblems.length} TESTS`;
-
-    if (state.testProblems.length === 0) {
-      displayArea.style.display = 'none';
-      emptyMsg.style.display = 'block';
-    } else {
-      displayArea.style.display = 'flex';
-      emptyMsg.style.display = 'none';
-      if (currentTestIndex >= state.testProblems.length) currentTestIndex = 0;
-      updateTestView();
-    }
-
-    registeredList.innerHTML = '';
-    state.testProblems.forEach((tp, index) => {
-      const item = document.createElement('div');
-      item.className = 'list-item';
+    countLabel.textContent = `${filtered.length} TESTS`;  if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentTestIndex >= filtered.length) currentTestIndex = 0; updateTestView(filtered); }  registeredList.innerHTML = ''; state.testProblems.forEach((tp) => { const item = document.createElement('div'); item.className = `list-item ${tp.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">[Q] ${tp.question}</span>
-        <button class="action-badge-btn" onclick="deleteTestProblem(${tp.id})">DEL</button>
+        <span class="item-text" style="flex:1;">[${tp.category \vert{}\vert{} '一般'}] ${tp.question}</span>
+        <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
+        <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
       `;
       registeredList.appendChild(item);
     });
   }
 
-  function updateTestView() {
-    const tp = state.testProblems[currentTestIndex];
+  function updateTestView(filtered) {
+    const tp = filtered[currentTestIndex];
     if (!tp) return;
 
-    const mainText = document.getElementById('test-main-text');
-    const modeLabel = document.getElementById('test-mode-label');
-    const numLabel = document.getElementById('test-num-label');
-    const actionPre = document.getElementById('test-action-pre');
-    const actionPost = document.getElementById('test-action-post');
+    document.getElementById('test-front-text').textContent = tp.question;
+    document.getElementById('test-back-text').textContent = tp.answer;
+    document.getElementById('test-category-tag').textContent = tp.category || '一般';
+    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`;
+    document.getElementById('test-flashcard').classList.remove('flipped');
 
-    numLabel.textContent = `${currentTestIndex + 1} / ${state.testProblems.length}`;
-
-    if (!isTestAnswerRevealed) {
-      modeLabel.textContent = 'QUESTION / PROBLEM';
-      mainText.textContent = tp.question;
-      actionPre.style.display = 'flex';
-      actionPost.style.display = 'none';
+    const archiveBtn = document.getElementById('toggle-test-archive-btn');
+    if (tp.archived) {
+      archiveBtn.textContent = '学習中へ戻す';
     } else {
-      modeLabel.textContent = 'ANSWER / EXPLANATION';
-      mainText.textContent = tp.answer;
-      actionPre.style.display = 'none';
-      actionPost.style.display = 'flex';
+      archiveBtn.textContent = '覚えたテストへ移動';
     }
   }
 
-  function revealTestAnswer() {
-    isTestAnswerRevealed = true;
-    updateTestView();
+  function flipTestCard() {
+    document.getElementById('test-flashcard').classList.toggle('flipped');
   }
 
-  function nextTestCard(isPassed) {
-    if (state.testProblems.length === 0) return;
+  function answerTestCard(isPassed) {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+
+    const tp = filtered[currentTestIndex];
+    tp.reviews += 1;
 
     if (isPassed) {
       addLeaf(50);
@@ -1473,29 +1454,98 @@
       showToast('REVIEW AGAIN');
     }
 
-    isTestAnswerRevealed = false;
-    currentTestIndex = (currentTestIndex + 1) % state.testProblems.length;
+    currentTestIndex = (currentTestIndex + 1) % filtered.length;
     saveState();
     renderTests();
   }
 
-  function deleteTestProblem(id) {
-    if (confirm('このテスト問題を削除しますか？')) {
-      state.testProblems = state.testProblems.filter(tp => tp.id !== id);
-      currentTestIndex = 0;
-      isTestAnswerRevealed = false;
-      showToast('TEST PROBLEM DELETED');
-      saveState();
-      renderTests();
-    }
+  function toggleTestArchive() {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+    const tp = filtered[currentTestIndex];
+    
+    tp.archived = !tp.archived;
+    showToast(tp.archived ? 'ARCHIVED (覚えたテストへ移動)' : 'RESTORED (学習中へ戻す)');
+    saveState();
+    renderTests();
   }
 
-  // メモ管理
-  function addMemo() {
-    const input = document.getElementById('memo-input');
-    const text = input.value.trim();
-    if (text) {
-      state.memos.push(`LOG. - 「${text}」`);
+  // --- 共通モーダルダイアログ（カード & テスト兼用） ---
+  function openCardModal(cardId) {
+    editingCardId = cardId;
+    editingType = 'card';
+    const card = state.cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA';
+    document.getElementById('modal-label-front').textContent = '表面 (FRONT)';
+    document.getElementById('modal-label-back').textContent = '裏面 (BACK)';
+    document.getElementById('modal-card-front').value = card.front;
+    document.getElementById('modal-card-back').value = card.back;
+    document.getElementById('modal-card-category').value = card.category || '一般';
+    document.getElementById('card-modal').classList.add('show');
+  }
+
+  function openTestModal(testId) {
+    editingCardId = testId;
+    editingType = 'test';
+    const tp = state.testProblems.find(t => t.id === testId);
+    if (!tp) return;
+
+    document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM';
+    document.getElementById('modal-label-front').textContent = '問題文 (QUESTION)';
+    document.getElementById('modal-label-back').textContent = '解答・解説 (ANSWER)';
+    document.getElementById('modal-card-front').value = tp.question;
+    document.getElementById('modal-card-back').value = tp.answer;
+    document.getElementById('modal-card-category').value = tp.category || '一般';
+    document.getElementById('card-modal').classList.add('show');
+  }
+
+  function closeCardModal() {
+    document.getElementById('card-modal').classList.remove('show');
+    editingCardId = null;
+  }
+
+  function saveCardModal() {
+    const f = document.getElementById('modal-card-front').value.trim();
+    const b = document.getElementById('modal-card-back').value.trim();
+    const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+
+    if (!f || !b) {
+      showToast('ERROR: BOTH FIELDS REQUIRED');
+      return;
+    }
+
+    if (editingType === 'card') {
+      const card = state.cards.find(c => c.id === editingCardId);
+      if (card) {
+        card.front = f;
+        card.back = b;
+        card.category = cat;
+        showToast('CARD UPDATED');
+        saveState();
+        updateCategoryFilterDropdown();
+        renderCards();
+      }
+    } else {
+      const tp = state.testProblems.find(t => t.id === editingCardId);
+      if (tp) {
+        tp.question = f;
+        tp.answer = b;
+        tp.category = cat;
+        showToast('TEST UPDATED');
+        saveState();
+        updateTestCategoryFilterDropdown();
+        renderTests();
+      }
+    }
+    closeCardModal();
+  }
+
+  function deleteCardModal() {
+    if (editingType === 'card') {
+      const card = state.cards.find(c => c.id === editingCardId);
+      if (card && confirm(`「${card.front}」の単語カードを削除しますか？`)) { state.cards = state.cards.filter(c => c.id !== editingCardId); showToast('CARD DELETED'); saveState(); updateCategoryFilterDropdown(); renderCards(); closeCardModal(); } } else { const tp = state.testProblems.find(t => t.id === editingCardId); if (tp && confirm(`このテスト問題を削除しますか？`)) { state.testProblems = state.testProblems.filter(t => t.id !== editingCardId); showToast('TEST DELETED'); saveState(); updateTestCategoryFilterDropdown(); renderTests(); closeCardModal(); } } }  // メモ管理 function addMemo() { const input = document.getElementById('memo-input'); const text = input.value.trim(); if (text) { state.memos.push(`LOG. - 「${text}」`);
       input.value = '';
       showToast('RECORD ADDED');
       saveState();
@@ -1579,16 +1629,7 @@
         state.leaf -= item.price;
         state.unlockedThemes.push(key);
         applyTheme(key);
-        showToast(`UNLOCKED & APPLIED: ${item.name}`);
-        saveState();
-      } else {
-        showToast('ERROR: INSUFFICIENT LEAF');
-      }
-    } else if (item.type === 'item') {
-      if (state.leaf >= item.price) {
-        state.leaf -= item.price;
-        state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
-        showToast(`PURCHASED: ${item.name}`);
+        showToast(`UNLOCKED & APPLIED: ${item.name}`); saveState(); } else { showToast('ERROR: INSUFFICIENT LEAF'); } } else if (item.type === 'item') { if (state.leaf >= item.price) { state.leaf -= item.price; state.inventory[item.name] = (state.inventory[item.name] \vert{}\vert{} 0) + 1; showToast(`PURCHASED: ${item.name}`);
         saveState();
       } else {
         showToast('ERROR: INSUFFICIENT LEAF');
@@ -1612,41 +1653,7 @@
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    showToast('DATA EXPORTED');
-  }
-
-  function importData(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = function(e) {
-      try {
-        const importedState = JSON.parse(e.target.result);
-        state = { ...state, ...importedState };
-        applyTheme(state.currentTheme || 'yellow');
-        saveState();
-        renderDailyTasks();
-        updateCategoryFilterDropdown();
-        renderCards();
-        renderTests();
-        renderMemos();
-        showToast('DATA IMPORTED SUCCESSFULLY');
-      } catch (err) {
-        showToast('ERROR: INVALID JSON FILE');
-      }
-    };
-    fileReader.readAsText(event.target.files[0]);
-  }
-
-  // Web Audio
-  let audioCtx = null;
-  let activeNodes = {};
-
-  function toggleSound(type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const btn = document.getElementById(`snd-${type}`);
+    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`); document.body.appendChild(downloadAnchor); downloadAnchor.click(); downloadAnchor.remove(); showToast('DATA EXPORTED'); }  function importData(event) { const fileReader = new FileReader(); fileReader.onload = function(e) { try { const importedState = JSON.parse(e.target.result); state = { ...state, ...importedState }; applyTheme(state.currentTheme \vert{}\vert{} 'yellow'); saveState(); renderDailyTasks(); updateCategoryFilterDropdown(); renderCards(); updateTestCategoryFilterDropdown(); renderTests(); renderMemos(); showToast('DATA IMPORTED SUCCESSFULLY'); } catch (err) { showToast('ERROR: INVALID JSON FILE'); } }; fileReader.readAsText(event.target.files[0]); }  // Web Audio let audioCtx = null; let activeNodes = {};  function toggleSound(type) { if (!audioCtx) audioCtx = new (window.AudioContext \vert{}\vert{} window.webkitAudioContext)(); const btn = document.getElementById(`snd-${type}`);
 
     if (activeNodes[type]) {
       activeNodes[type].stop();
@@ -1684,3 +1691,4 @@
 
 </body>
 </html>
+
