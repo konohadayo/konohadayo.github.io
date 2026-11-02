@@ -406,18 +406,17 @@
       color: var(--ak-yellow);
     }
 
-    /* 3Dフリップカード仕様（CARD & TEST 共通） */
+        /* --- 従来の単語カード用 --- */
     .flashcard-container {
       perspective: 1000px;
       width: 100%;
-      min-height: 170px;
+      height: 160px;
       cursor: pointer;
     }
 
     .flashcard {
       width: 100%;
       height: 100%;
-      min-height: 170px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -431,7 +430,6 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      min-height: 170px;
       backface-visibility: hidden;
       background: #000;
       border: 1px solid var(--ak-yellow);
@@ -439,7 +437,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 16px;
+      padding: 16px;
       box-sizing: border-box;
       text-align: center;
     }
@@ -470,11 +468,9 @@
     }
 
     .card-content {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: bold;
       word-break: break-all;
-      white-space: pre-wrap;
-      line-height: 1.4;
     }
 
     .card-stats {
@@ -485,6 +481,61 @@
       bottom: 8px;
       right: 10px;
     }
+
+    /* --- 新規：テスト（長文・太字なし）専用CSS --- */
+    .test-card-container {
+      perspective: 1000px;
+      width: 100%;
+      min-height: 200px;
+      cursor: pointer;
+    }
+
+    .test-card {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .test-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .test-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 24px 16px 16px 16px;
+      box-sizing: border-box;
+      text-align: left;
+    }
+
+    .test-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+    }
+
+    .test-content {
+      font-size: 0.9rem;
+      font-weight: normal; /* 太字にしない */
+      word-break: break-all;
+      white-space: pre-wrap; /* 改行や長文をそのまま反映 */
+      line-height: 1.6;
+      width: 100%;
+      max-height: 140px;
+      overflow-y: auto; /* 長文の場合スクロール可能に */
+    }
+
 
     .sound-grid {
       display: grid;
@@ -745,7 +796,7 @@
     </div>
   </div>
 
-  <!-- タブ3: TEST（回転・フィルター・カテゴリ・EDIT対応） -->
+    <!-- タブ3: TEST -->
   <div id="tab-test" class="tab-content">
     <div class="section-panel">
       <div class="section-title">
@@ -769,19 +820,19 @@
         </select>
       </div>
 
-      <!-- 3Dフリップテスト表示エリア -->
+      <!-- テスト専用3Dフリップ表示エリア -->
       <div id="test-display-area" style="display:none; flex-direction:column; gap:10px;">
-        <div class="flashcard-container" onclick="flipTestCard()">
-          <div class="flashcard" id="test-flashcard">
-            <div class="card-face front">
+        <div class="test-card-container" onclick="flipTestCard()">
+          <div class="test-card" id="test-flashcard">
+            <div class="test-face front">
               <span class="card-label">QUESTION / PROBLEM</span>
               <span class="card-category-tag" id="test-category-tag">GENERAL</span>
-              <div class="card-content" id="test-front-text">Question Text</div>
+              <div class="test-content" id="test-front-text">Question Text</div>
               <span class="card-stats" id="test-review-count">REVIEW: 0</span>
             </div>
-            <div class="card-face back">
+            <div class="test-face back">
               <span class="card-label">ANSWER & EXPLANATION</span>
-              <div class="card-content" id="test-back-text">Answer Text</div>
+              <div class="test-content" id="test-back-text">Answer Text</div>
             </div>
           </div>
         </div>
@@ -800,6 +851,8 @@
         条件に一致するテスト問題がありません。下のフォームから作成してください。
       </div>
     </div>
+    <!-- 以下略（問題作成フォームとリストのHTMLはそのまま） -->
+
 
     <!-- テスト問題作成（長文対応） -->
     <div class="section-panel">
@@ -1464,7 +1517,7 @@
     });
   }
 
-  function updateTestView(filtered) {
+    function updateTestView(filtered) {
     const tp = filtered[currentTestIndex];
     if (!tp) return;
 
@@ -1472,7 +1525,7 @@
     document.getElementById('test-back-text').textContent = tp.answer;
     document.getElementById('test-category-tag').textContent = tp.category || '一般';
     document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`;
-    document.getElementById('test-flashcard').classList.remove('flipped');
+    document.getElementById('test-flashcard').classList.remove('flipped'); // ここをテスト専用に
 
     const archiveBtn = document.getElementById('toggle-test-archive-btn');
     if (tp.archived) {
@@ -1483,7 +1536,7 @@
   }
 
   function flipTestCard() {
-    document.getElementById('test-flashcard').classList.toggle('flipped');
+    document.getElementById('test-flashcard').classList.toggle('flipped'); // テスト専用カードを回転
   }
 
   function answerTestCard(isPassed) {
