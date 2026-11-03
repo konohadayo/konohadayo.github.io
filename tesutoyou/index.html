@@ -918,7 +918,7 @@
 
         <div class="ak-btn-group">
           <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
-          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+50 LEAF)</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+5 LEAF)</button>
         </div>
         
         <div style="display:flex; justify-content:space-between; gap:6px;">
@@ -989,7 +989,7 @@
 
         <div class="ak-btn-group">
           <button class="ak-btn" onclick="answerTestCard(false)" style="flex:1;">RETRY (もう一度)</button>
-          <button class="ak-btn ak-btn-primary" onclick="answerTestCard(true)" style="flex:1;">PASSED (+50 LEAF)</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerTestCard(true)" style="flex:1;">PASSED (+10 LEAF)</button>
         </div>
         
         <div style="display:flex; justify-content:space-between; gap:6px;">
@@ -1173,9 +1173,9 @@
     testProblems: [],
     memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
     dailyTasks: [
-      { id: 1, text: '端末起動および定期メンテナンス', reward: 1000, completed: false },
-      { id: 2, text: '返却データの整合性チェック', reward: 1000, completed: false },
-      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 1500, completed: false }
+      { id: 1, text: '端末起動および定期メンテナンス', reward: 500, completed: false },
+      { id: 2, text: '返却データの整合性チェック', reward: 500, completed: false },
+      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 750, completed: false }
     ],
     unlockedStories: [],
     unlockedArchives: []
@@ -1734,7 +1734,7 @@
     if (filtered.length === 0) return;
     const card = filtered[currentCardIndex];
     card.reviews += 1;
-    if (isCorrect) { addLeaf(50); addXP(10); }
+    if (isCorrect) { addLeaf(5); addXP(1); }
     currentCardIndex = (currentCardIndex + 1) % filtered.length;
     saveState();
     renderCards();
@@ -1835,7 +1835,7 @@
     if (filtered.length === 0) return;
     const tp = filtered[currentTestIndex];
     tp.reviews += 1;
-    if (isPassed) { addLeaf(50); addXP(10); }
+    if (isPassed) { addLeaf(10); addXP(2); }
     currentTestIndex = (currentTestIndex + 1) % filtered.length;
     saveState();
     renderTests();
