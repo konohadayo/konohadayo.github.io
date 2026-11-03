@@ -1586,8 +1586,7 @@
     saveState();
   }
 
-  // --- ストーリーリスト描画関数（累計レベル連動） ---
-    // --- ストーリーリスト描画関数（未開放のものを非表示にする版） ---
+  // --- ストーリーリスト描画関数（累計レベル  // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
   function renderStoryList() {
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
@@ -1603,10 +1602,12 @@
       if (id === 'ep_0') continue; // プロローグは除外
 
       const reqTotalLv = story.reqTotalLevel || 1;
-      // 既読、または現在の累計レベルが必要レベルに達しているか判定
-      const isUnlocked = state.unlockedStories.includes(id) || state.totalLevel >= reqTotalLv;
+      
+      // 💡 修正ポイント：累計レベルが必要レベル以上、またはすでに開く許可が出ているか
+      // レベル制限を厳密にするため、基本は totalLevel >= reqTotalLv で判定します！
+      const isUnlocked = state.totalLevel >= reqTotalLv;
 
-      // 💡 未開放（かつ一度も読んでいない）のエピソードは表示リストに入れない（スキップ）
+      // 未開放のエピソードは表示しない（スキップ）
       if (!isUnlocked) continue;
 
       unlockedCount++;
@@ -1635,6 +1636,7 @@
       list.appendChild(emptyMsg);
     }
   }
+
 
 
   function openArchiveModal(archId) {
