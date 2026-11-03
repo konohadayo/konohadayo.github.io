@@ -264,13 +264,13 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 45px;
+      min-width: 40px;
       font-family: var(--font-tech);
       padding: 8px 2px;
       border: none;
       background: var(--bg-panel);
       color: var(--text-muted);
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -406,17 +406,18 @@
       color: var(--ak-yellow);
     }
 
-        /* --- 従来の単語カード用 --- */
+    /* 3Dフリップカード（CARD & TEST 共通） */
     .flashcard-container {
       perspective: 1000px;
       width: 100%;
-      height: 160px;
+      min-height: 170px;
       cursor: pointer;
     }
 
     .flashcard {
       width: 100%;
       height: 100%;
+      min-height: 170px;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -430,6 +431,8 @@
       position: absolute;
       width: 100%;
       height: 100%;
+      min-height: 170px;
+      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       background: #000;
       border: 1px solid var(--ak-yellow);
@@ -437,14 +440,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 20px 16px;
       box-sizing: border-box;
       text-align: center;
+      z-index: 2;
     }
 
     .card-face.back {
       transform: rotateY(180deg);
       border-color: var(--ak-cyan);
+      z-index: 1;
     }
 
     .card-label {
@@ -468,9 +473,11 @@
     }
 
     .card-content {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: bold;
       word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.4;
     }
 
     .card-stats {
@@ -482,7 +489,7 @@
       right: 10px;
     }
 
-    /* --- 新規：テスト（長文・太字なし）専用CSS --- */
+    /* テストカード専用CSS */
     .test-card-container {
       perspective: 1000px;
       width: 100%;
@@ -496,19 +503,19 @@
       min-height: 200px;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .test-card.flipped {
       transform: rotateY(180deg);
     }
 
-        .test-face {
+    .test-face {
       position: absolute;
       width: 100%;
       height: 100%;
       min-height: 200px;
-      -webkit-backface-visibility: hidden; /* Safari / iOS用 */
+      -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       background: #000;
       border: 1px solid var(--ak-yellow);
@@ -519,28 +526,169 @@
       padding: 24px 16px 16px 16px;
       box-sizing: border-box;
       text-align: left;
-      z-index: 2; /* 表面を前面に */
+      z-index: 2;
     }
 
     .test-face.back {
       transform: rotateY(180deg);
       border-color: var(--ak-cyan);
-      z-index: 1; /* 裏面を背面へ */
+      z-index: 1;
     }
-
 
     .test-content {
       font-size: 0.9rem;
-      font-weight: normal; /* 太字にしない */
+      font-weight: normal;
       word-break: break-all;
-      white-space: pre-wrap; /* 改行や長文をそのまま反映 */
+      white-space: pre-wrap;
       line-height: 1.6;
       width: 100%;
       max-height: 140px;
-      overflow-y: auto; /* 長文の場合スクロール可能に */
+      overflow-y: auto;
     }
 
+    /* --- アドベンチャーゲーム / ストーリー演出用オーバーレイ --- */
+    #story-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.92);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 16px;
+      box-sizing: border-box;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    #story-overlay.show {
+      display: flex;
+    }
 
+    /* 初回ログ画面用プレーン黒背景 */
+    #story-log-box {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #00ffcc;
+      font-family: var(--font-tech);
+      font-size: 0.95rem;
+      padding: 30px 20px;
+      white-space: pre-wrap;
+      display: none;
+      z-index: 10000;
+      line-height: 1.6;
+    }
+
+    /* Seの立ち絵画像 */
+    #story-chara-img {
+      position: absolute;
+      right: -10px;
+      bottom: 120px;
+      height: 60vh;
+      max-height: 420px;
+      object-fit: contain;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(-5px 0px 15px rgba(0,0,0,0.8));
+    }
+
+    /* 画像3風の右上テックフレーム */
+    .story-tech-frame {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-right: 2px solid var(--ak-yellow);
+      padding-right: 8px;
+      text-align: right;
+    }
+    .story-tech-frame::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -40px;
+      width: 35px;
+      height: 1px;
+      background: var(--text-muted);
+      transform: rotate(-30deg);
+    }
+
+    /* スキップボタン */
+    #story-skip-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      z-index: 10001;
+    }
+    #story-skip-btn:hover {
+      border-color: var(--ak-yellow);
+      color: var(--ak-yellow);
+    }
+
+    /* 下部ダイアログボックス */
+    .story-dialog-box {
+      background: rgba(18, 18, 18, 0.95);
+      border-top: 3px solid var(--ak-yellow);
+      border-left: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 18px 24px 18px;
+      position: relative;
+      min-height: 140px;
+      max-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .story-speaker-name {
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ak-yellow);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .story-dialog-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .story-next-indicator {
+      position: absolute;
+      bottom: 8px;
+      right: 14px;
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* サウンド・インベントリ等 */
     .sound-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -581,7 +729,6 @@
       word-break: break-all;
     }
 
-    /* モーダルダイアログ */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -647,7 +794,7 @@
     <div class="header-top">
       <div>
         <div class="system-title">SYLVARENA</div>
-        <div class="system-sub">PRTS TERMINAL SYSTEM v3.5</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.6</div>
       </div>
       <div class="leaf-tag" id="leaf-val">LEAF: 1,200</div>
     </div>
@@ -694,11 +841,12 @@
     </div>
   </section>
 
-  <!-- タブナビゲーション -->
+  <!-- タブナビゲーション（STORYタブ追加） -->
   <nav class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('tasks', this)">MISSIONS</button>
     <button class="tab-btn" onclick="switchTab('cards', this)">CARDS</button>
     <button class="tab-btn" onclick="switchTab('test', this)">TEST</button>
+    <button class="tab-btn" onclick="switchTab('story', this)">STORY</button>
     <button class="tab-btn" onclick="switchTab('archive', this)">ARCHIVE</button>
     <button class="tab-btn" onclick="switchTab('shop', this)">STORE</button>
     <button class="tab-btn" onclick="switchTab('system', this)">SYSTEM</button>
@@ -752,7 +900,6 @@
         </select>
       </div>
 
-      <!-- 3Dフリップカード表示エリア -->
       <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
         <div class="flashcard-container" onclick="flipCard()">
           <div class="flashcard" id="flashcard">
@@ -800,7 +947,7 @@
     </div>
   </div>
 
-    <!-- タブ3: TEST -->
+  <!-- タブ3: TEST -->
   <div id="tab-test" class="tab-content">
     <div class="section-panel">
       <div class="section-title">
@@ -824,7 +971,6 @@
         </select>
       </div>
 
-      <!-- テスト専用3Dフリップ表示エリア -->
       <div id="test-display-area" style="display:none; flex-direction:column; gap:10px;">
         <div class="test-card-container" onclick="flipTestCard()">
           <div class="test-card" id="test-flashcard">
@@ -855,10 +1001,7 @@
         条件に一致するテスト問題がありません。下のフォームから作成してください。
       </div>
     </div>
-    <!-- 以下略（問題作成フォームとリストのHTMLはそのまま） -->
 
-
-    <!-- テスト問題作成（長文対応） -->
     <div class="section-panel">
       <div class="section-title">CREATE TEST PROBLEM</div>
       <div class="input-group">
@@ -872,15 +1015,33 @@
       </div>
     </div>
 
-    <!-- テスト問題リスト -->
     <div class="section-panel">
       <div class="section-title">TEST PROBLEMS LIST</div>
       <div class="item-list" id="test-registered-list"></div>
     </div>
   </div>
 
-  <!-- タブ4: アーカイブ -->
+  <!-- タブ4: STORY（解放されたエピソードの選択・再読） -->
+  <div id="tab-story" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">COMMUNICATION RECORDS (STORY)</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        これまでに受信したSeとの通信および記録を再確認できます。
+      </div>
+      <div class="item-list" id="story-list-container"></div>
+    </div>
+  </div>
+
+  <!-- タブ5: ARCHIVE（資料解放リスト） -->
   <div id="tab-archive" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">ARCHIVE & DATABASE</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        ストーリーの進行に伴い、解放された資料がここに格納されます。
+      </div>
+      <div class="item-list" id="archive-list-container"></div>
+    </div>
+
     <div class="section-panel">
       <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
       <div class="input-group">
@@ -896,7 +1057,7 @@
     </div>
   </div>
 
-  <!-- タブ5: 購買部 -->
+  <!-- タブ6: 購買部 -->
   <div id="tab-shop" class="tab-content">
     <div class="section-panel">
       <div class="section-title">SUPPLY STORE</div>
@@ -907,7 +1068,7 @@
     </div>
   </div>
 
-  <!-- タブ6: システム設定 -->
+  <!-- タブ7: システム設定 -->
   <div id="tab-system" class="tab-content">
     <div class="section-panel">
       <div class="section-title">TERMINAL CUSTOMIZE</div>
@@ -937,7 +1098,30 @@
 
 </div>
 
-<!-- 共通編集モーダル（CARD & TEST 兼用） -->
+<!-- ストーリー演出用オーバーレイ（アドベンチャーパート） -->
+<div id="story-overlay" onclick="onStoryScreenClick()">
+  <div id="story-log-box"></div>
+  <button id="story-skip-btn" onclick="skipStory(event)">SKIP</button>
+  <div class="story-tech-frame">COMMS INTERCEPTED<br><span style="font-size:0.55rem; color:var(--ak-yellow);">SIGNAL: STABLE</span></div>
+  <img id="story-chara-img" src="image.png" alt="Se" style="display:none;">
+  
+  <div class="story-dialog-box" id="story-dialog-ui" style="display:none;">
+    <div class="story-speaker-name" id="story-speaker">Se</div>
+    <div class="story-dialog-text" id="story-text"></div>
+    <div class="story-next-indicator">▼</div>
+  </div>
+</div>
+
+<!-- アーカイブ閲覧用モーダル -->
+<div id="archive-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="section-title" id="archive-modal-title">ARCHIVE DATA</div>
+    <div class="test-content" id="archive-modal-text" style="max-height:250px; overflow-y:auto; padding:6px; background:#000; border:1px solid var(--border-color);"></div>
+    <button class="ak-btn" onclick="closeArchiveModal()">CLOSE</button>
+  </div>
+</div>
+
+<!-- 共通編集モーダル -->
 <div id="card-modal" class="modal-overlay">
   <div class="modal-box">
     <div class="section-title" id="modal-title-text">EDIT CARD DATA</div>
@@ -959,6 +1143,9 @@
 
 <!-- トースト -->
 <div id="toast" class="toast">SYSTEM NOTIFICATION</div>
+
+<!-- 100話などのストーリーデータを読み込む別ファイル -->
+<script src="story.js"></script>
 
 <script>
   const shopItems = [
@@ -987,16 +1174,27 @@
       { id: 1, text: '端末起動および定期メンテナンス', reward: 1000, completed: false },
       { id: 2, text: '返却データの整合性チェック', reward: 1000, completed: false },
       { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 1500, completed: false }
-    ]
+    ],
+    unlockedStories: [], // 解放済みのストーリーID
+    unlockedArchives: [] // 解放済みのアーカイブデータ
   };
 
   let currentCardIndex = 0;
   let currentTestIndex = 0;
   let editingCardId = null;
-  let editingType = 'card'; // 'card' or 'test'
+  let editingType = 'card';
   let timerInterval = null;
   let timeLeft = 25 * 60;
   let isRunning = false;
+
+  // ストーリー再生用変数
+  let activeStoryDialogues = [];
+  let currentDialogueIndex = 0;
+  let activeStoryId = null;
+  let isTyping = false;
+  let typingTimer = null;
+  let currentFullText = "";
+  let prologueStep = 0; // プロローグのステップ管理
 
   window.onload = () => {
     loadState();
@@ -1010,6 +1208,13 @@
     updateTestCategoryFilterDropdown();
     renderTests();
     renderMemos();
+    renderStoryList();
+    renderArchiveList();
+
+    // 初回起動チェック (プロローグ未読なら自動再生)
+    if (!state.unlockedStories.includes("ep_0")) {
+      startStory("ep_0");
+    }
   };
 
   function loadState() {
@@ -1018,24 +1223,13 @@
       if (!saved) {
         saved = localStorage.getItem('sylvarena_ak_state_v6') ||
                 localStorage.getItem('sylvarena_ak_state_v5') ||
-                localStorage.getItem('sylvarena_ak_state_v3') ||
-                localStorage.getItem('sylvarena_ak_state_v2') ||
-                localStorage.getItem('sylvarena_ak_state') ||
                 localStorage.getItem('sylvarena_state');
       }
       if (saved) {
         const parsed = JSON.parse(saved);
         state = { ...state, ...parsed };
-        if (state.totalLevel === undefined) state.totalLevel = 1;
-        if (state.xp === undefined) state.xp = 0;
-        if (state.testProblems === undefined) state.testProblems = [];
-        state.testProblems.forEach(tp => {
-          if (tp.reviews === undefined) tp.reviews = 0;
-          if (tp.archived === undefined) tp.archived = false;
-          if (tp.category === undefined) tp.category = '一般';
-        });
-        if (state.unlockedThemes === undefined) state.unlockedThemes = ['yellow'];
-        if (state.currentTheme === undefined) state.currentTheme = 'yellow';
+        if (state.unlockedStories === undefined) state.unlockedStories = [];
+        if (state.unlockedArchives === undefined) state.unlockedArchives = [];
       }
     } catch (e) {
       console.error('Data load error:', e);
@@ -1056,14 +1250,12 @@
     if (state.lastDate !== today) {
       state.lastDate = today;
       state.dailyTasks.forEach(t => t.completed = false);
-      showToast('SYSTEM: DAILY TASKS RESET');
       saveState();
     }
   }
 
   function updateUI() {
-    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
-    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
+    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`; document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
 
     const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
     let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
@@ -1073,37 +1265,17 @@
     let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
     if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
 
-    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
+    const rankName = `${ranks[rankTierIndex]} -${romanSub[subIndex]}`;
     const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
 
     document.getElementById('rank-badge').textContent = rankName;
-    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;  const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100); document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
+    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;  renderInventory(); renderShop(); }  function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2200); }  function switchTab(tabId, btnEl) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));  if (btnEl) btnEl.classList.add('active'); document.getElementById(`tab-${tabId}`).classList.add('active');
 
-    const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
-    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
-    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
-    document.getElementById('next-rank-text').textContent = `TIER MAX: 100Lv`;
-
-    renderInventory();
-    renderShop();
+    if (tabId === 'story') renderStoryList();
+    if (tabId === 'archive') renderArchiveList();
   }
 
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2200);
-  }
-
-  function switchTab(tabId, btnEl) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
-    if (btnEl) btnEl.classList.add('active');
-    document.getElementById(`tab-${tabId}`).classList.add('active');
-  }
-
-  // テーマカラー
   function applyTheme(themeKey) {
     state.currentTheme = themeKey;
     let colorHex = '#ffc107';
@@ -1126,7 +1298,7 @@
     }
   }
 
-  // タイマー
+  // --- タイマー ---
   function toggleTimer() {
     const btn = document.getElementById('timer-btn');
     if (isRunning) {
@@ -1169,20 +1341,14 @@
     document.getElementById('timer-display').textContent = `${m}:${s}`;
   }
 
-  function addLeaf(amt) {
-    state.leaf += amt;
-    saveState();
-  }
-
+  function addLeaf(amt) { state.leaf += amt; saveState(); }
   function addXP(amt) {
     state.xp += amt;
     while (state.xp >= 100) {
       state.xp -= 100;
       state.totalLevel += 1;
-      
-      const bonusLeaf = 1000;
-      state.leaf += bonusLeaf;
-      showToast(`LEVEL UP! Lv.${((state.totalLevel-2)%100)+1} ➔ Lv.${((state.totalLevel-1)%100)+1} (+${bonusLeaf.toLocaleString()} LEAF BONUS!)`);
+      state.leaf += 1000;
+      showToast(`LEVEL UP! (+1,000 LEAF BONUS!)`);
     }
     saveState();
   }
@@ -1198,44 +1364,31 @@
     }
   }
 
-  // デイリータスク
   function renderDailyTasks() {
     const list = document.getElementById('daily-task-list');
     list.innerHTML = '';
     state.dailyTasks.forEach(task => {
       const item = document.createElement('div');
       item.className = `list-item ${task.completed ? 'checked' : ''}`;
-      
       item.innerHTML = `
         <div class="item-content-click" onclick="completeDailyTask(${task.id})">
           <span class="item-text">${task.text}</span>
           <span class="item-reward">+${task.reward.toLocaleString()} LEAF</span>
         </div>
-        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})" title="削除">DEL</button>
+        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})">DEL</button>
       `;
       list.appendChild(item);
     });
   }
 
   function addDailyTask() {
-    const textInput = document.getElementById('new-daily-text');
-    const rewardInput = document.getElementById('new-daily-reward');
-    const text = textInput.value.trim();
-    const reward = parseInt(rewardInput.value) || 1000;
-
+    const text = document.getElementById('new-daily-text').value.trim();
+    const reward = parseInt(document.getElementById('new-daily-reward').value) || 1000;
     if (text) {
-      state.dailyTasks.push({
-        id: Date.now(),
-        text: text,
-        reward: reward,
-        completed: false
-      });
-      textInput.value = '';
-      showToast('ROUTINE ADDED');
+      state.dailyTasks.push({ id: Date.now(), text, reward, completed: false });
+      document.getElementById('new-daily-text').value = '';
       saveState();
       renderDailyTasks();
-    } else {
-      showToast('ERROR: ENTER ROUTINE TEXT');
     }
   }
 
@@ -1245,27 +1398,216 @@
       task.completed = true;
       addLeaf(task.reward);
       addXP(15);
-      showToast(`TASK COMPLETED (+${task.reward.toLocaleString()} LEAF / +15 XP)`);
       saveState();
       renderDailyTasks();
     }
   }
 
   function deleteDailyTask(id) {
-    if (confirm('この日課を削除しますか？')) {
-      state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
-      showToast('ROUTINE DELETED');
-      saveState();
-      renderDailyTasks();
+    state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+    saveState();
+    renderDailyTasks();
+  }
+
+  // --- STORY（アドベンチャーシステム） ---
+  function startStory(storyId) {
+    const story = gameStories[storyId];
+    if (!story) return;
+
+    activeStoryId = storyId;
+    activeStoryDialogues = story.dialogues;
+    currentDialogueIndex = 0;
+
+    const overlay = document.getElementById('story-overlay');
+    const logBox = document.getElementById('story-log-box');
+    const charaImg = document.getElementById('story-chara-img');
+    const dialogUi = document.getElementById('story-dialog-ui');
+
+    overlay.classList.add('show');
+
+    if (story.type === 'prologue') {
+      prologueStep = 0;
+      logBox.style.display = 'block';
+      charaImg.style.display = 'none';
+      dialogUi.style.display = 'none';
+      runPrologueLog();
+    } else {
+      logBox.style.display = 'none';
+      charaImg.style.display = 'block';
+      dialogUi.style.display = 'flex';
+      document.getElementById('story-speaker').textContent = story.speaker || "Se";
+      showNextDialogue();
     }
   }
 
-  // --- CARD（単語カード）機能 ---
+  function runPrologueLog() {
+    const logBox = document.getElementById('story-log-box');
+    if (prologueStep === 0) {
+      typeWriterEffect(activeStoryDialogues[0].text, logBox, () => { prologueStep = 1; });
+    } else if (prologueStep === 1) {
+      typeWriterEffect(activeStoryDialogues[1].text, logBox, () => { prologueStep = 2; });
+    } else if (prologueStep === 2) {
+      // プロローグの黒画面ログが終わったら、Seとの通信画面（立ち絵＆ダイアログ）へ切り替え
+      prologueStep = 3;
+      currentDialogueIndex = 2; // 3番目のセリフ(Seのセリフ)から開始
+      logBox.style.display = 'none';
+      document.getElementById('story-chara-img').style.display = 'block';
+      document.getElementById('story-dialog-ui').style.display = 'flex';
+      showNextDialogue();
+    }
+  }
+
+  function showNextDialogue() {
+    if (currentDialogueIndex >= activeStoryDialogues.length) {
+      endStory();
+      return;
+    }
+
+    const item = activeStoryDialogues[currentDialogueIndex];
+    const textEl = document.getElementById('story-text');
+    let textStr = typeof item === 'string' ? item : item.text;
+    if (item.speaker) {
+      document.getElementById('story-speaker').textContent = item.speaker;
+    }
+
+    currentDialogueIndex++;
+    typeWriterEffect(textStr, textEl, null);
+  }
+
+  function typeWriterEffect(text, element, callback) {
+    if (typingTimer) clearTimeout(typingTimer);
+    isTyping = true;
+    currentFullText = text;
+    element.textContent = "";
+    let i = 0;
+
+    function type() {
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        i++;
+        typingTimer = setTimeout(type, 25);
+      } else {
+        isTyping = false;
+        if (callback) callback();
+      }
+    }
+    type();
+  }
+
+  function onStoryScreenClick() {
+    const story = gameStories[activeStoryId];
+    if (story.type === 'prologue' && prologueStep < 2) {
+      if (isTyping) {
+        // タイピング中なら一瞬で全文表示
+        if (typingTimer) clearTimeout(typingTimer);
+        isTyping = false;
+        document.getElementById('story-log-box').textContent = activeStoryDialogues[prologueStep === 0 ? 0 : 1].text;
+        prologueStep++;
+      } else {
+        runPrologueLog();
+      }
+      return;
+    } else if (story.type === 'prologue' && prologueStep === 2) {
+      runPrologueLog();
+      return;
+    }
+
+    // 通常通信パート
+    if (isTyping) {
+      if (typingTimer) clearTimeout(typingTimer);
+      isTyping = false;
+      document.getElementById('story-text').textContent = currentFullText;
+    } else {
+      showNextDialogue();
+    }
+  }
+
+  function skipStory(event) {
+    event.stopPropagation();
+    endStory();
+  }
+
+  function endStory() {
+    if (typingTimer) clearTimeout(typingTimer);
+    document.getElementById('story-overlay').classList.remove('show');
+
+    // 初回プロローグ完了処理
+    if (!state.unlockedStories.includes(activeStoryId)) {
+      state.unlockedStories.push(activeStoryId);
+    }
+
+    // エピソード完了によるアーカイブ自動解放の処理
+    const story = gameStories[activeStoryId];
+    if (story && story.unlockArchive) {
+      const arch = story.unlockArchive;
+      if (!state.unlockedArchives.some(a => a.id === arch.id)) {
+        state.unlockedArchives.push(arch);
+        showToast(`ARCHIVE UNLOCKED: ${arch.title}`);
+      }
+    }
+    saveState();
+  }
+
+  function renderStoryList() {
+    const list = document.getElementById('story-list-container');
+    list.innerHTML = '';
+
+    // すべてのエピソードを一覧表示（未読はタイトルやステータスを変更可能）
+    for (const [id, story] of Object.entries(gameStories)) {
+      if (id === 'ep_0') continue; // プロローグは除外するかお好みで
+      const isUnlocked = state.unlockedStories.includes(id) || id === 'ep_1'; // ep_1は初期開放テスト用
+
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="item-content-click" ${isUnlocked ? `onclick="startStory('${id}')"` : ''}>
+          <span class="item-text"><b>${story.title}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${isUnlocked ? '通信記録閲覧可能' : '[LOCKED]'}</span></span>
+        </div>
+        <button class="action-badge-btn" ${isUnlocked ? `onclick="startStory('${id}')"` : 'disabled'}>PLAY</button>
+      `;
+      list.appendChild(item);
+    }
+  }
+
+  // --- ARCHIVE（資料解放リスト） ---
+  function renderArchiveList() {
+    const container = document.getElementById('archive-list-container');
+    container.innerHTML = '';
+
+    if (state.unlockedArchives.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">現在解放されている資料はありません。ストーリーを進めてください。</div>';
+      return;
+    }
+
+    state.unlockedArchives.forEach(arch => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="item-content-click" onclick="openArchiveModal('${arch.id}')">
+          <span class="item-text"><b>[${arch.category}]${arch.title}</b></span>
+        </div>
+        <button class="action-badge-btn" onclick="openArchiveModal('${arch.id}')">VIEW</button>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  function openArchiveModal(archId) {
+    const arch = state.unlockedArchives.find(a => a.id === archId);
+    if (!arch) return;
+    document.getElementById('archive-modal-title').textContent = arch.title;
+    document.getElementById('archive-modal-text').textContent = arch.content;
+    document.getElementById('archive-modal').classList.add('show');
+  }
+
+  function closeArchiveModal() {
+    document.getElementById('archive-modal').classList.remove('show');
+  }
+
+  // --- カード・テスト・メモ等の基本関数 ---
   function updateCategoryFilterDropdown() {
     const select = document.getElementById('card-category-filter');
-    const currentVal = select.value;
     const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
-    
     select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
     categories.forEach(cat => {
       const opt = document.createElement('option');
@@ -1273,31 +1615,14 @@
       opt.textContent = cat;
       select.appendChild(opt);
     });
-    
-    if ([...select.options].some(o => o.value === currentVal)) {
-      select.value = currentVal;
-    } else {
-      select.value = 'ALL';
-    }
   }
 
   function getFilteredCards() {
     const statusFilter = document.getElementById('card-filter-select').value;
     const categoryFilter = document.getElementById('card-category-filter').value;
-
     return state.cards.filter(card => {
-      let matchStatus = true;
-      if (statusFilter === '学習中') {
-        matchStatus = !card.archived;
-      } else if (statusFilter === '覚えたカード') {
-        matchStatus = card.archived;
-      }
-
-      let matchCategory = true;
-      if (categoryFilter !== 'ALL') {
-        matchCategory = (card.category || '一般') === categoryFilter;
-      }
-
+      let matchStatus = statusFilter === 'ALL' ? true : (statusFilter === '学習中' ? !card.archived : card.archived);
+      let matchCategory = categoryFilter === 'ALL' ? true : (card.category || '一般') === categoryFilter;
       return matchStatus && matchCategory;
     });
   }
@@ -1306,31 +1631,17 @@
     const front = document.getElementById('card-front-input').value.trim();
     const back = document.getElementById('card-back-input').value.trim();
     const category = document.getElementById('card-category-input').value.trim() || '一般';
-
     if (front && back) {
-      state.cards.push({
-        id: Date.now(),
-        front: front,
-        back: back,
-        category: category,
-        reviews: 0,
-        archived: false
-      });
+      state.cards.push({ id: Date.now(), front, back, category, reviews: 0, archived: false });
       document.getElementById('card-front-input').value = '';
       document.getElementById('card-back-input').value = '';
-      showToast('FLASHCARD ADDED');
       saveState();
       updateCategoryFilterDropdown();
       renderCards();
-    } else {
-      showToast('ERROR: BOTH SIDES REQUIRED');
     }
   }
 
-  function filterCards() {
-    currentCardIndex = 0;
-    renderCards();
-  }
+  function filterCards() { currentCardIndex = 0; renderCards(); }
 
   function renderCards() {
     const countLabel = document.getElementById('card-count-label');
@@ -1339,24 +1650,9 @@
     const registeredList = document.getElementById('card-registered-list');
     const filtered = getFilteredCards();
 
-    countLabel.textContent = `${filtered.length} CARDS`;
-
-    if (filtered.length === 0) {
-      displayArea.style.display = 'none';
-      emptyMsg.style.display = 'block';
-    } else {
-      displayArea.style.display = 'flex';
-      emptyMsg.style.display = 'none';
-      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
-      updateCardView(filtered);
-    }
-
-    registeredList.innerHTML = '';
-    state.cards.forEach((card) => {
-      const item = document.createElement('div');
-      item.className = `list-item ${card.archived ? 'checked' : ''}`;
+    countLabel.textContent = `${filtered.length} CARDS`; if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentCardIndex >= filtered.length) currentCardIndex = 0; updateCardView(filtered); }  registeredList.innerHTML = ''; state.cards.forEach(card => { const item = document.createElement('div'); item.className = `list-item ${card.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} /${card.back}</span>
         <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
         <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
       `;
@@ -1367,40 +1663,22 @@
   function updateCardView(filtered) {
     const card = filtered[currentCardIndex];
     if (!card) return;
-
     document.getElementById('card-front-text').textContent = card.front;
     document.getElementById('card-back-text').textContent = card.back;
     document.getElementById('card-category-tag').textContent = card.category;
     document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
     document.getElementById('flashcard').classList.remove('flipped');
-
-    const archiveBtn = document.getElementById('toggle-archive-btn');
-    if (card.archived) {
-      archiveBtn.textContent = '学習中へ戻す';
-    } else {
-      archiveBtn.textContent = '覚えたカードへ移動';
-    }
+    document.getElementById('toggle-archive-btn').textContent = card.archived ? '学習中へ戻す' : '覚えたカードへ移動';
   }
 
-  function flipCard() {
-    document.getElementById('flashcard').classList.toggle('flipped');
-  }
+  function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
 
   function answerCard(isCorrect) {
     const filtered = getFilteredCards();
     if (filtered.length === 0) return;
-
     const card = filtered[currentCardIndex];
     card.reviews += 1;
-
-    if (isCorrect) {
-      addLeaf(50);
-      addXP(10);
-      showToast('CORRECT! (+50 LEAF / +10 XP)');
-    } else {
-      showToast('REVIEW AGAIN');
-    }
-
+    if (isCorrect) { addLeaf(50); addXP(10); }
     currentCardIndex = (currentCardIndex + 1) % filtered.length;
     saveState();
     renderCards();
@@ -1409,20 +1687,15 @@
   function toggleCardArchive() {
     const filtered = getFilteredCards();
     if (filtered.length === 0) return;
-    const card = filtered[currentCardIndex];
-    
-    card.archived = !card.archived;
-    showToast(card.archived ? 'ARCHIVED (覚えたカードへ移動)' : 'RESTORED (学習中へ戻す)');
+    filtered[currentCardIndex].archived = !filtered[currentCardIndex].archived;
     saveState();
     renderCards();
   }
 
-  // --- TEST（暗記シート / 3Dフリップ / フィルター対応）機能 ---
+  // テスト用関数
   function updateTestCategoryFilterDropdown() {
     const select = document.getElementById('test-category-filter');
-    const currentVal = select.value;
     const categories = [...new Set(state.testProblems.map(tp => tp.category || '一般'))];
-    
     select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
     categories.forEach(cat => {
       const opt = document.createElement('option');
@@ -1430,31 +1703,14 @@
       opt.textContent = cat;
       select.appendChild(opt);
     });
-    
-    if ([...select.options].some(o => o.value === currentVal)) {
-      select.value = currentVal;
-    } else {
-      select.value = 'ALL';
-    }
   }
 
   function getFilteredTests() {
     const statusFilter = document.getElementById('test-filter-select').value;
     const categoryFilter = document.getElementById('test-category-filter').value;
-
     return state.testProblems.filter(tp => {
-      let matchStatus = true;
-      if (statusFilter === '学習中') {
-        matchStatus = !tp.archived;
-      } else if (statusFilter === '覚えたカード') {
-        matchStatus = tp.archived;
-      }
-
-      let matchCategory = true;
-      if (categoryFilter !== 'ALL') {
-        matchCategory = (tp.category || '一般') === categoryFilter;
-      }
-
+      let matchStatus = statusFilter === 'ALL' ? true : (statusFilter === '学習中' ? !tp.archived : tp.archived);
+      let matchCategory = categoryFilter === 'ALL' ? true : (tp.category || '一般') === categoryFilter;
       return matchStatus && matchCategory;
     });
   }
@@ -1463,31 +1719,17 @@
     const q = document.getElementById('test-question-input').value.trim();
     const a = document.getElementById('test-answer-input').value.trim();
     const category = document.getElementById('test-category-input').value.trim() || '一般';
-
     if (q && a) {
-      state.testProblems.push({
-        id: Date.now(),
-        question: q,
-        answer: a,
-        category: category,
-        reviews: 0,
-        archived: false
-      });
+      state.testProblems.push({ id: Date.now(), question: q, answer: a, category, reviews: 0, archived: false });
       document.getElementById('test-question-input').value = '';
       document.getElementById('test-answer-input').value = '';
-      showToast('TEST PROBLEM ADDED');
       saveState();
       updateTestCategoryFilterDropdown();
       renderTests();
-    } else {
-      showToast('ERROR: QUESTION & ANSWER REQUIRED');
     }
   }
 
-  function filterTests() {
-    currentTestIndex = 0;
-    renderTests();
-  }
+  function filterTests() { currentTestIndex = 0; renderTests(); }
 
   function renderTests() {
     const countLabel = document.getElementById('test-count-label');
@@ -1496,24 +1738,9 @@
     const registeredList = document.getElementById('test-registered-list');
     const filtered = getFilteredTests();
 
-    countLabel.textContent = `${filtered.length} TESTS`;
-
-    if (filtered.length === 0) {
-      displayArea.style.display = 'none';
-      emptyMsg.style.display = 'block';
-    } else {
-      displayArea.style.display = 'flex';
-      emptyMsg.style.display = 'none';
-      if (currentTestIndex >= filtered.length) currentTestIndex = 0;
-      updateTestView(filtered);
-    }
-
-    registeredList.innerHTML = '';
-    state.testProblems.forEach((tp) => {
-      const item = document.createElement('div');
-      item.className = `list-item ${tp.archived ? 'checked' : ''}`;
+    countLabel.textContent = `${filtered.length} TESTS`; if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentTestIndex >= filtered.length) currentTestIndex = 0; updateTestView(filtered); }  registeredList.innerHTML = ''; state.testProblems.forEach(tp => { const item = document.createElement('div'); item.className = `list-item ${tp.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${tp.category || '一般'}] ${tp.question}</span>
+        <span class="item-text" style="flex:1;">[${tp.category}]${tp.question}</span>
         <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
         <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
       `;
@@ -1521,347 +1748,45 @@
     });
   }
 
-    function updateTestView(filtered) {
+  function updateTestView(filtered) {
     const tp = filtered[currentTestIndex];
     if (!tp) return;
-
     document.getElementById('test-front-text').textContent = tp.question;
     document.getElementById('test-back-text').textContent = tp.answer;
-    document.getElementById('test-category-tag').textContent = tp.category || '一般';
-    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`;
-    document.getElementById('test-flashcard').classList.remove('flipped'); // ここをテスト専用に
-
-    const archiveBtn = document.getElementById('toggle-test-archive-btn');
-    if (tp.archived) {
-      archiveBtn.textContent = '学習中へ戻す';
-    } else {
-      archiveBtn.textContent = '覚えたテストへ移動';
-    }
+    document.getElementById('test-category-tag').textContent = tp.category;
+    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`; document.getElementById('test-flashcard').classList.remove('flipped'); document.getElementById('toggle-test-archive-btn').textContent = tp.archived ? '学習中へ戻す' : '覚えたテストへ移動'; }  function flipTestCard() { document.getElementById('test-flashcard').classList.toggle('flipped'); }  function answerTestCard(isPassed) { const filtered = getFilteredTests(); if (filtered.length === 0) return; const tp = filtered[currentTestIndex]; tp.reviews += 1; if (isPassed) { addLeaf(50); addXP(10); } currentTestIndex = (currentTestIndex + 1) \% filtered.length; saveState(); renderTests(); }  function toggleTestArchive() { const filtered = getFilteredTests(); if (filtered.length === 0) return; filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived; saveState(); renderTests(); }  // モーダル function openCardModal(cardId) { editingCardId = cardId; editingType = 'card'; const c = state.cards.find(x => x.id === cardId); document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA'; document.getElementById('modal-card-front').value = c.front; document.getElementById('modal-card-back').value = c.back; document.getElementById('modal-card-category').value = c.category; document.getElementById('card-modal').classList.add('show'); } function openTestModal(testId) { editingCardId = testId; editingType = 'test'; const tp = state.testProblems.find(x => x.id === testId); document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM'; document.getElementById('modal-card-front').value = tp.question; document.getElementById('modal-card-back').value = tp.answer; document.getElementById('modal-card-category').value = tp.category; document.getElementById('card-modal').classList.add('show'); } function closeCardModal() { document.getElementById('card-modal').classList.remove('show'); } function saveCardModal() { const f = document.getElementById('modal-card-front').value.trim(); const b = document.getElementById('modal-card-back').value.trim(); const cat = document.getElementById('modal-card-category').value.trim() \vert{}\vert{} '一般'; if (editingType === 'card') { const c = state.cards.find(x => x.id === editingCardId); c.front = f; c.back = b; c.category = cat; updateCategoryFilterDropdown(); renderCards(); } else { const tp = state.testProblems.find(x => x.id === editingCardId); tp.question = f; tp.answer = b; tp.category = cat; updateTestCategoryFilterDropdown(); renderTests(); } saveState(); closeCardModal(); } function deleteCardModal() { if (editingType === 'card') { state.cards = state.cards.filter(x => x.id !== editingCardId); updateCategoryFilterDropdown(); renderCards(); } else { state.testProblems = state.testProblems.filter(x => x.id !== editingCardId); updateTestCategoryFilterDropdown(); renderTests(); } saveState(); closeCardModal(); }  // メモ、ショップ、オーディオ、バックアップ function addMemo() { const text = document.getElementById('memo-input').value.trim(); if (text) { state.memos.push(`LOG. - 「${text}」`); document.getElementById('memo-input').value = ''; saveState(); renderMemos(); }
   }
-
-  function flipTestCard() {
-    document.getElementById('test-flashcard').classList.toggle('flipped'); // テスト専用カードを回転
-  }
-
-  function answerTestCard(isPassed) {
-    const filtered = getFilteredTests();
-    if (filtered.length === 0) return;
-
-    const tp = filtered[currentTestIndex];
-    tp.reviews += 1;
-
-    if (isPassed) {
-      addLeaf(50);
-      addXP(10);
-      showToast('PASSED! (+50 LEAF / +10 XP)');
-    } else {
-      showToast('REVIEW AGAIN');
-    }
-
-    currentTestIndex = (currentTestIndex + 1) % filtered.length;
-    saveState();
-    renderTests();
-  }
-
-  function toggleTestArchive() {
-    const filtered = getFilteredTests();
-    if (filtered.length === 0) return;
-    const tp = filtered[currentTestIndex];
-    
-    tp.archived = !tp.archived;
-    showToast(tp.archived ? 'ARCHIVED (覚えたテストへ移動)' : 'RESTORED (学習中へ戻す)');
-    saveState();
-    renderTests();
-  }
-
-  // --- モーダル編集（CARD & TEST 兼用） ---
-  function openCardModal(cardId) {
-    editingCardId = cardId;
-    editingType = 'card';
-    const card = state.cards.find(c => c.id === cardId);
-    if (!card) return;
-
-    document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA';
-    document.getElementById('modal-label-front').textContent = '表面 (FRONT)';
-    document.getElementById('modal-label-back').textContent = '裏面 (BACK)';
-    document.getElementById('modal-card-front').value = card.front;
-    document.getElementById('modal-card-back').value = card.back;
-    document.getElementById('modal-card-category').value = card.category || '一般';
-    document.getElementById('card-modal').classList.add('show');
-  }
-
-  function openTestModal(testId) {
-    editingCardId = testId;
-    editingType = 'test';
-    const tp = state.testProblems.find(t => t.id === testId);
-    if (!tp) return;
-
-    document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM';
-    document.getElementById('modal-label-front').textContent = '問題文 (QUESTION)';
-    document.getElementById('modal-label-back').textContent = '解答・解説 (ANSWER)';
-    document.getElementById('modal-card-front').value = tp.question;
-    document.getElementById('modal-card-back').value = tp.answer;
-    document.getElementById('modal-card-category').value = tp.category || '一般';
-    document.getElementById('card-modal').classList.add('show');
-  }
-
-  function closeCardModal() {
-    document.getElementById('card-modal').classList.remove('show');
-    editingCardId = null;
-  }
-
-  function saveCardModal() {
-    const f = document.getElementById('modal-card-front').value.trim();
-    const b = document.getElementById('modal-card-back').value.trim();
-    const cat = document.getElementById('modal-card-category').value.trim() || '一般';
-
-    if (!f || !b) {
-      showToast('ERROR: BOTH FIELDS REQUIRED');
-      return;
-    }
-
-    if (editingType === 'card') {
-      const card = state.cards.find(c => c.id === editingCardId);
-      if (card) {
-        card.front = f;
-        card.back = b;
-        card.category = cat;
-        showToast('CARD UPDATED');
-        saveState();
-        updateCategoryFilterDropdown();
-        renderCards();
-      }
-    } else {
-      const tp = state.testProblems.find(t => t.id === editingCardId);
-      if (tp) {
-        tp.question = f;
-        tp.answer = b;
-        tp.category = cat;
-        showToast('TEST UPDATED');
-        saveState();
-        updateTestCategoryFilterDropdown();
-        renderTests();
-      }
-    }
-    closeCardModal();
-  }
-
-  function deleteCardModal() {
-    if (editingType === 'card') {
-      const card = state.cards.find(c => c.id === editingCardId);
-      if (card && confirm(`「${card.front}」の単語カードを削除しますか？`)) {
-        state.cards = state.cards.filter(c => c.id !== editingCardId);
-        showToast('CARD DELETED');
-        saveState();
-        updateCategoryFilterDropdown();
-        renderCards();
-        closeCardModal();
-      }
-    } else {
-      const tp = state.testProblems.find(t => t.id === editingCardId);
-      if (tp && confirm(`このテスト問題を削除しますか？`)) {
-        state.testProblems = state.testProblems.filter(t => t.id !== editingCardId);
-        showToast('TEST DELETED');
-        saveState();
-        updateTestCategoryFilterDropdown();
-        renderTests();
-        closeCardModal();
-      }
-    }
-  }
-
-  // メモ管理
-  function addMemo() {
-    const input = document.getElementById('memo-input');
-    const text = input.value.trim();
-    if (text) {
-      state.memos.push(`LOG. - 「${text}」`);
-      input.value = '';
-      showToast('RECORD ADDED');
-      saveState();
-      renderMemos();
-    }
-  }
-
   function renderMemos() {
-    const list = document.getElementById('memo-list');
-    list.innerHTML = '';
-    state.memos.forEach((memo, index) => {
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `
-        <span class="item-text" style="flex:1;">${memo}</span>
-        <button class="action-badge-btn" onclick="editMemo(${index})" title="編集 / 削除">EDIT</button>
-      `;
-      list.appendChild(item);
+    const list = document.getElementById('memo-list'); list.innerHTML = '';
+    state.memos.forEach((m, idx) => {
+      list.innerHTML += `<div class="list-item"><span class="item-text">${m}</span><button class="action-badge-btn" onclick="state.memos.splice(${idx},1);saveState();renderMemos();">DEL</button></div>`;
     });
   }
-
-  function editMemo(index) {
-    const currentText = state.memos[index].replace(/^LOG\. - 「|」$/g, '');
-    const newText = prompt('メモの内容を編集してください（空欄にしてOKを押すと削除できます）:', currentText);
-    
-    if (newText === '') {
-      if (confirm('このメモを削除しますか？')) {
-        state.memos.splice(index, 1);
-        showToast('RECORD DELETED');
-        saveState();
-        renderMemos();
-      }
-    } else if (newText !== null && newText.trim() !== '') {
-      state.memos[index] = `LOG. - 「${newText.trim()}」`;
-      showToast('RECORD UPDATED');
-      saveState();
-      renderMemos();
-    }
-  }
-
-  // 購買部 & ストア管理
   function renderShop() {
-    const shopList = document.getElementById('shop-item-list');
-    shopList.innerHTML = '';
-
+    const list = document.getElementById('shop-item-list'); list.innerHTML = '';
     shopItems.forEach(item => {
-      const isThemeUnlocked = item.type === 'theme' && state.unlockedThemes.includes(item.color || item.id.replace('theme_', ''));
-      const listItem = document.createElement('div');
-      listItem.className = 'list-item';
-      
-      listItem.innerHTML = `
-        <div class="item-content-click">
-          <span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span>
-        </div>
-        <span class="item-reward">${item.price.toLocaleString()} LEAF</span>
-        <button class="action-badge-btn" onclick="buyShopItem('${item.id}')">${isUnlocked(item) ? 'UNLOCKED' : 'BUY'}</button>
-      `;
-      shopList.appendChild(listItem);
-    });
+      list.innerHTML += `<div class="list-item"><div class="item-content-click"><span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span></div><span class="item-reward">${item.price.toLocaleString()} LEAF</span><button class="action-badge-btn" onclick="buyShopItem('${item.id}')">BUY</button></div>`; }); } function buyShopItem(id) { const item = shopItems.find(i => i.id === id); if (state.leaf >= item.price) { state.leaf -= item.price; if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] \vert{}\vert{} 0) + 1; saveState(); showToast(`PURCHASED: ${item.name}`);
+    } else { showToast('ERROR: INSUFFICIENT LEAF'); }
   }
-
-  function isUnlocked(item) {
-    if (item.type === 'theme') {
-      const key = item.id.replace('theme_', '');
-      return state.unlockedThemes.includes(key);
-    }
-    return false;
-  }
-
-  function buyShopItem(itemId) {
-    const item = shopItems.find(i => i.id === itemId);
-    if (!item) return;
-
-    if (item.type === 'theme') {
-      const key = item.id.replace('theme_', '');
-      if (state.unlockedThemes.includes(key)) {
-        showToast('ALREADY UNLOCKED');
-        return;
-      }
-      if (state.leaf >= item.price) {
-        state.leaf -= item.price;
-        state.unlockedThemes.push(key);
-        applyTheme(key);
-        showToast(`UNLOCKED & APPLIED: ${item.name}`);
-        saveState();
-      } else {
-        showToast('ERROR: INSUFFICIENT LEAF');
-      }
-    } else if (item.type === 'item') {
-      if (state.leaf >= item.price) {
-        state.leaf -= item.price;
-        state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
-        showToast(`PURCHASED: ${item.name}`);
-        saveState();
-      } else {
-        showToast('ERROR: INSUFFICIENT LEAF');
-      }
-    }
-  }
-
   function renderInventory() {
-    const container = document.getElementById('inventory-container');
-    container.innerHTML = '';
+    const c = document.getElementById('inventory-container'); c.innerHTML = '';
     for (const [name, count] of Object.entries(state.inventory)) {
-      const chip = document.createElement('div');
-      chip.className = 'inventory-chip';
-      chip.textContent = `${name} x${count}`;
-      container.appendChild(chip);
-    }
-  }
-
-  // バックアップ
-  function exportData() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `sylvarena_backup_${new Date().toISOString().slice(0,10)}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-    showToast('DATA EXPORTED');
-  }
-
-  function importData(event) {
-    const fileReader = new FileReader();
-    fileReader.onload = function(e) {
-      try {
-        const importedState = JSON.parse(e.target.result);
-        state = { ...state, ...importedState };
-        applyTheme(state.currentTheme || 'yellow');
-        saveState();
-        renderDailyTasks();
-        updateCategoryFilterDropdown();
-        renderCards();
-        updateTestCategoryFilterDropdown();
-        renderTests();
-        renderMemos();
-        showToast('DATA IMPORTED SUCCESSFULLY');
-      } catch (err) {
-        showToast('ERROR: INVALID JSON FILE');
-      }
-    };
-    fileReader.readAsText(event.target.files[0]);
-  }
-
-  // Web Audio
-  let audioCtx = null;
-  let activeNodes = {};
-
-  function toggleSound(type) {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const btn = document.getElementById(`snd-${type}`);
-
+      c.innerHTML += `<div class="inventory-chip">${name} x${count}</div>`; } } function exportData() { const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sylvarena_backup.json'; a.click(); } function importData(e) { const reader = new FileReader(); reader.onload = function(evt) { state = JSON.parse(evt.target.result); saveState(); location.reload(); }; reader.readAsText(e.target.files[0]); }  let audioCtx = null, activeNodes = {}; function toggleSound(type) { if (!audioCtx) audioCtx = new (window.AudioContext \vert{}\vert{} window.webkitAudioContext)(); const btn = document.getElementById(`snd-${type}`);
     if (activeNodes[type]) {
-      activeNodes[type].stop();
-      delete activeNodes[type];
-      btn.classList.remove('active');
+      activeNodes[type].stop(); delete activeNodes[type]; btn.classList.remove('active');
     } else {
-      const bufferSize = audioCtx.sampleRate * 2;
-      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
-      }
-
-      const whiteNoise = audioCtx.createBufferSource();
-      whiteNoise.buffer = noiseBuffer;
-      whiteNoise.loop = true;
-
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = type === 'fire' ? 'bandpass' : 'lowpass';
-      filter.frequency.value = type === 'fire' ? 800 : 350;
-
-      const gain = audioCtx.createGain();
-      gain.gain.value = 0.04;
-
-      whiteNoise.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      whiteNoise.start();
-      activeNodes[type] = whiteNoise;
-      btn.classList.add('active');
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+      const out = buf.getChannelData(0);
+      for (let i = 0; i < buf.length; i++) out[i] = Math.random() * 2 - 1;
+      const src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const filt = audioCtx.createBiquadFilter(); filt.type = type === 'fire' ? 'bandpass' : 'lowpass'; filt.frequency.value = type === 'fire' ? 800 : 350;
+      const gain = audioCtx.createGain(); gain.gain.value = 0.04;
+      src.connect(filt); filt.connect(gain); gain.connect(audioCtx.destination);
+      src.start(); activeNodes[type] = src; btn.classList.add('active');
     }
   }
 </script>
 
 </body>
 </html>
+
