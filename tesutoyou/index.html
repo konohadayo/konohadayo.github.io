@@ -1573,7 +1573,7 @@
     saveState();
   }
 
-  function renderStoryList() {
+    function renderStoryList() {
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
 
@@ -1583,20 +1583,33 @@
     }
 
     for (const [id, story] of Object.entries(gameStories)) {
-      if (id === 'ep_0') continue;
-      const isUnlocked = state.unlockedStories.includes(id) || id === 'ep_1';
+      if (id === 'ep_0') continue; // プロローグは除外
+
+      const reqLv = story.reqLevel || 1;
+      // すでに見たことがある（既読）か、現在のレベルが必要レベル以上なら解放！
+      const isUnlocked = state.unlockedStories.includes(id) || state.totalLevel >= reqLv;
 
       const item = document.createElement('div');
       item.className = 'list-item';
+      item.style.opacity = isUnlocked ? '1' : '0.5';
+
       item.innerHTML = `
         <div class="item-content-click" ${isUnlocked ? `onclick="startStory('${id}')"` : ''}>
-          <span class="item-text"><b>${story.title}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${isUnlocked ? '通信記録閲覧可能' : '[LOCKED]'}</span></span>
+          <span class="item-text">
+            <b>${story.title}</b><br>
+            <span style="font-size:0.7rem; color:${isUnlocked ? 'var(--ak-yellow)' : 'var(--text-muted)'};">
+              ${isUnlocked ? '通信記録閲覧可能' : `[LOCKED - Req. Lv.${reqLv}]`}
+            </span>
+          </span>
         </div>
-        <button class="action-badge-btn" ${isUnlocked ? `onclick="startStory('${id}')"` : 'disabled'}>PLAY</button>
+        <button class="action-badge-btn" ${isUnlocked ? `onclick="startStory('${id}')"` : 'disabled'}>
+          ${isUnlocked ? 'PLAY' : 'LOCK'}
+        </button>
       `;
       list.appendChild(item);
     }
   }
+
 
   // --- ARCHIVE ---
   function renderArchiveList() {
