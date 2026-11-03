@@ -1420,7 +1420,7 @@
 
   function addDailyTask() {
     const text = document.getElementById('new-daily-text').value.trim();
-    const reward = parseInt(document.getElementById('new-daily-reward').value) || 1000;
+    const reward = parseInt(document.getElementById('new-daily-reward').value) || 25;
     if (text) {
       state.dailyTasks.push({ id: Date.now(), text, reward, completed: false });
       document.getElementById('new-daily-text').value = '';
