@@ -4,7 +4,7 @@ const gameStories = {
     id: "ep_0",
     title: "EPISODE.000 — 接続",
     type: "prologue", // 初回強制起動用
-    reqLevel: 1, //解放レベル
+    reqTotalLevel: 1, //解放レベル
     dialogues: [
       { speaker: "SYSTEM", text: "PRTS TERMINAL SYSTEM\n\nSYSTEM BOOTING...\n\nCORE INITIALIZED\nLOCAL DATA ACCESS: READY\nUSER SESSION: NEW\n\nSYSTEM ONLINE." },
       { speaker: "SYSTEM", text: "USER SESSION\n\nNEW USER DETECTED.\n\nINITIALIZING USER PROFILE..." },
@@ -19,7 +19,7 @@ const gameStories = {
     id: "ep_1",
     title: "EPISODE.001 — ルセリア到着",
     chapter: "LUCERIA",
-    reqLevel: 5,
+    reqTotalLevel: 5,
     speaker: "Se",
     dialogues: [
       "こんにちは。\n先ほど、ルセリアという街に到着しました。\nこの地域は、なだらかな丘と広い草原に囲まれています。",
