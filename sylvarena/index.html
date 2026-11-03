@@ -1587,6 +1587,7 @@
   }
 
   // --- ストーリーリスト描画関数（累計レベル  // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
+    // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
   function renderStoryList() {
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
@@ -1602,12 +1603,8 @@
       if (id === 'ep_0') continue; // プロローグは除外
 
       const reqTotalLv = story.reqTotalLevel || 1;
-      
-      // 💡 修正ポイント：累計レベルが必要レベル以上、またはすでに開く許可が出ているか
-      // レベル制限を厳密にするため、基本は totalLevel >= reqTotalLv で判定します！
       const isUnlocked = state.totalLevel >= reqTotalLv;
 
-      // 未開放のエピソードは表示しない（スキップ）
       if (!isUnlocked) continue;
 
       unlockedCount++;
@@ -1628,7 +1625,6 @@
       list.appendChild(item);
     }
 
-    // もし一つも解放されていない場合のメッセージ
     if (unlockedCount === 0) {
       const emptyMsg = document.createElement('div');
       emptyMsg.style.cssText = 'color:var(--text-muted); font-size:0.8rem; padding:10px; text-align:center;';
@@ -1637,7 +1633,29 @@
     }
   }
 
+  // 💡 ここが抜けていたため構文エラーになっていました！
+  // --- ARCHIVE リスト描画関数 ---
+  function renderArchiveList() {
+    const container = document.getElementById('archive-list-container');
+    container.innerHTML = '';
 
+    if (state.unlockedArchives.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">現在解放されている資料はありません。ストーリーを進めてください。</div>';
+      return;
+    }
+
+    state.unlockedArchives.forEach(arch => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="item-content-click" onclick="openArchiveModal('${arch.id}')">
+          <span class="item-text"><b>[${arch.category}] ${arch.title}</b></span>
+        </div>
+        <button class="action-badge-btn" onclick="openArchiveModal('${arch.id}')">VIEW</button>
+      `;
+      container.appendChild(item);
+    });
+  }
 
   function openArchiveModal(archId) {
     const arch = state.unlockedArchives.find(a => a.id === archId);
