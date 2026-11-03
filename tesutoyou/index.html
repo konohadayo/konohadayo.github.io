@@ -598,7 +598,7 @@
       filter: drop-shadow(-5px 0px 15px rgba(0,0,0,0.8));
     }
 
-    /* 画像3風の右上テックフレーム */
+    /* テックフレーム */
     .story-tech-frame {
       position: absolute;
       top: 25px;
@@ -1021,7 +1021,7 @@
     </div>
   </div>
 
-  <!-- タブ4: STORY（解放されたエピソードの選択・再読） -->
+  <!-- タブ4: STORY -->
   <div id="tab-story" class="tab-content">
     <div class="section-panel">
       <div class="section-title">COMMUNICATION RECORDS (STORY)</div>
@@ -1032,7 +1032,7 @@
     </div>
   </div>
 
-  <!-- タブ5: ARCHIVE（資料解放リスト） -->
+  <!-- タブ5: ARCHIVE -->
   <div id="tab-archive" class="tab-content">
     <div class="section-panel">
       <div class="section-title">ARCHIVE & DATABASE</div>
@@ -1098,7 +1098,7 @@
 
 </div>
 
-<!-- ストーリー演出用オーバーレイ（アドベンチャーパート） -->
+<!-- ストーリー演出用オーバーレイ -->
 <div id="story-overlay" onclick="onStoryScreenClick()">
   <div id="story-log-box"></div>
   <button id="story-skip-btn" onclick="skipStory(event)">SKIP</button>
@@ -1144,7 +1144,7 @@
 <!-- トースト -->
 <div id="toast" class="toast">SYSTEM NOTIFICATION</div>
 
-<!-- 100話などのストーリーデータを読み込む別ファイル -->
+<!-- ストーリーデータファイルの読み込み -->
 <script src="story.js"></script>
 
 <script>
@@ -1175,8 +1175,8 @@
       { id: 2, text: '返却データの整合性チェック', reward: 1000, completed: false },
       { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 1500, completed: false }
     ],
-    unlockedStories: [], // 解放済みのストーリーID
-    unlockedArchives: [] // 解放済みのアーカイブデータ
+    unlockedStories: [],
+    unlockedArchives: []
   };
 
   let currentCardIndex = 0;
@@ -1187,14 +1187,14 @@
   let timeLeft = 25 * 60;
   let isRunning = false;
 
-  // ストーリー再生用変数
+  // ストーリー再生用
   let activeStoryDialogues = [];
   let currentDialogueIndex = 0;
   let activeStoryId = null;
   let isTyping = false;
   let typingTimer = null;
   let currentFullText = "";
-  let prologueStep = 0; // プロローグのステップ管理
+  let prologueStep = 0;
 
   window.onload = () => {
     loadState();
@@ -1211,8 +1211,8 @@
     renderStoryList();
     renderArchiveList();
 
-    // 初回起動チェック (プロローグ未読なら自動再生)
-    if (!state.unlockedStories.includes("ep_0")) {
+    // 初回起動チェック
+    if (typeof gameStories !== 'undefined' && !state.unlockedStories.includes("ep_0")) {
       startStory("ep_0");
     }
   };
@@ -1255,7 +1255,8 @@
   }
 
   function updateUI() {
-    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`; document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
+    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
+    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
 
     const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
     let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
@@ -1265,12 +1266,33 @@
     let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
     if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
 
-    const rankName = `${ranks[rankTierIndex]} -${romanSub[subIndex]}`;
+    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
     const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
 
     document.getElementById('rank-badge').textContent = rankName;
-    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;  const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100); document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
-    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;  renderInventory(); renderShop(); }  function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2200); }  function switchTab(tabId, btnEl) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));  if (btnEl) btnEl.classList.add('active'); document.getElementById(`tab-${tabId}`).classList.add('active');
+    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+
+    const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
+    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
+    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
+
+    renderInventory();
+    renderShop();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    if (btnEl) btnEl.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
 
     if (tabId === 'story') renderStoryList();
     if (tabId === 'archive') renderArchiveList();
@@ -1409,8 +1431,9 @@
     renderDailyTasks();
   }
 
-  // --- STORY（アドベンチャーシステム） ---
+  // --- STORY ---
   function startStory(storyId) {
+    if (typeof gameStories === 'undefined') return;
     const story = gameStories[storyId];
     if (!story) return;
 
@@ -1447,9 +1470,8 @@
     } else if (prologueStep === 1) {
       typeWriterEffect(activeStoryDialogues[1].text, logBox, () => { prologueStep = 2; });
     } else if (prologueStep === 2) {
-      // プロローグの黒画面ログが終わったら、Seとの通信画面（立ち絵＆ダイアログ）へ切り替え
       prologueStep = 3;
-      currentDialogueIndex = 2; // 3番目のセリフ(Seのセリフ)から開始
+      currentDialogueIndex = 2;
       logBox.style.display = 'none';
       document.getElementById('story-chara-img').style.display = 'block';
       document.getElementById('story-dialog-ui').style.display = 'flex';
@@ -1495,10 +1517,12 @@
   }
 
   function onStoryScreenClick() {
+    if (typeof gameStories === 'undefined') return;
     const story = gameStories[activeStoryId];
+    if (!story) return;
+
     if (story.type === 'prologue' && prologueStep < 2) {
       if (isTyping) {
-        // タイピング中なら一瞬で全文表示
         if (typingTimer) clearTimeout(typingTimer);
         isTyping = false;
         document.getElementById('story-log-box').textContent = activeStoryDialogues[prologueStep === 0 ? 0 : 1].text;
@@ -1512,7 +1536,6 @@
       return;
     }
 
-    // 通常通信パート
     if (isTyping) {
       if (typingTimer) clearTimeout(typingTimer);
       isTyping = false;
@@ -1531,18 +1554,18 @@
     if (typingTimer) clearTimeout(typingTimer);
     document.getElementById('story-overlay').classList.remove('show');
 
-    // 初回プロローグ完了処理
     if (!state.unlockedStories.includes(activeStoryId)) {
       state.unlockedStories.push(activeStoryId);
     }
 
-    // エピソード完了によるアーカイブ自動解放の処理
-    const story = gameStories[activeStoryId];
-    if (story && story.unlockArchive) {
-      const arch = story.unlockArchive;
-      if (!state.unlockedArchives.some(a => a.id === arch.id)) {
-        state.unlockedArchives.push(arch);
-        showToast(`ARCHIVE UNLOCKED: ${arch.title}`);
+    if (typeof gameStories !== 'undefined') {
+      const story = gameStories[activeStoryId];
+      if (story && story.unlockArchive) {
+        const arch = story.unlockArchive;
+        if (!state.unlockedArchives.some(a => a.id === arch.id)) {
+          state.unlockedArchives.push(arch);
+          showToast(`ARCHIVE UNLOCKED: ${arch.title}`);
+        }
       }
     }
     saveState();
@@ -1552,10 +1575,14 @@
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
 
-    // すべてのエピソードを一覧表示（未読はタイトルやステータスを変更可能）
+    if (typeof gameStories === 'undefined') {
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">story.js の読み込みに失敗しているかファイルが存在しません。</div>';
+      return;
+    }
+
     for (const [id, story] of Object.entries(gameStories)) {
-      if (id === 'ep_0') continue; // プロローグは除外するかお好みで
-      const isUnlocked = state.unlockedStories.includes(id) || id === 'ep_1'; // ep_1は初期開放テスト用
+      if (id === 'ep_0') continue;
+      const isUnlocked = state.unlockedStories.includes(id) || id === 'ep_1';
 
       const item = document.createElement('div');
       item.className = 'list-item';
@@ -1569,7 +1596,7 @@
     }
   }
 
-  // --- ARCHIVE（資料解放リスト） ---
+  // --- ARCHIVE ---
   function renderArchiveList() {
     const container = document.getElementById('archive-list-container');
     container.innerHTML = '';
@@ -1584,7 +1611,7 @@
       item.className = 'list-item';
       item.innerHTML = `
         <div class="item-content-click" onclick="openArchiveModal('${arch.id}')">
-          <span class="item-text"><b>[${arch.category}]${arch.title}</b></span>
+          <span class="item-text"><b>[${arch.category}] ${arch.title}</b></span>
         </div>
         <button class="action-badge-btn" onclick="openArchiveModal('${arch.id}')">VIEW</button>
       `;
@@ -1604,7 +1631,7 @@
     document.getElementById('archive-modal').classList.remove('show');
   }
 
-  // --- カード・テスト・メモ等の基本関数 ---
+  // --- カード・テスト・メモ機能 ---
   function updateCategoryFilterDropdown() {
     const select = document.getElementById('card-category-filter');
     const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
@@ -1650,9 +1677,23 @@
     const registeredList = document.getElementById('card-registered-list');
     const filtered = getFilteredCards();
 
-    countLabel.textContent = `${filtered.length} CARDS`; if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentCardIndex >= filtered.length) currentCardIndex = 0; updateCardView(filtered); }  registeredList.innerHTML = ''; state.cards.forEach(card => { const item = document.createElement('div'); item.className = `list-item ${card.archived ? 'checked' : ''}`;
+    countLabel.textContent = `${filtered.length} CARDS`;
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+      updateCardView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.cards.forEach(card => {
+      const item = document.createElement('div');
+      item.className = `list-item ${card.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} /${card.back}</span>
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
         <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
         <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
       `;
@@ -1692,7 +1733,6 @@
     renderCards();
   }
 
-  // テスト用関数
   function updateTestCategoryFilterDropdown() {
     const select = document.getElementById('test-category-filter');
     const categories = [...new Set(state.testProblems.map(tp => tp.category || '一般'))];
@@ -1738,9 +1778,23 @@
     const registeredList = document.getElementById('test-registered-list');
     const filtered = getFilteredTests();
 
-    countLabel.textContent = `${filtered.length} TESTS`; if (filtered.length === 0) { displayArea.style.display = 'none'; emptyMsg.style.display = 'block'; } else { displayArea.style.display = 'flex'; emptyMsg.style.display = 'none'; if (currentTestIndex >= filtered.length) currentTestIndex = 0; updateTestView(filtered); }  registeredList.innerHTML = ''; state.testProblems.forEach(tp => { const item = document.createElement('div'); item.className = `list-item ${tp.archived ? 'checked' : ''}`;
+    countLabel.textContent = `${filtered.length} TESTS`;
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentTestIndex >= filtered.length) currentTestIndex = 0;
+      updateTestView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.testProblems.forEach(tp => {
+      const item = document.createElement('div');
+      item.className = `list-item ${tp.archived ? 'checked' : ''}`;
       item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${tp.category}]${tp.question}</span>
+        <span class="item-text" style="flex:1;">[${tp.category}] ${tp.question}</span>
         <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
         <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
       `;
@@ -1754,7 +1808,84 @@
     document.getElementById('test-front-text').textContent = tp.question;
     document.getElementById('test-back-text').textContent = tp.answer;
     document.getElementById('test-category-tag').textContent = tp.category;
-    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`; document.getElementById('test-flashcard').classList.remove('flipped'); document.getElementById('toggle-test-archive-btn').textContent = tp.archived ? '学習中へ戻す' : '覚えたテストへ移動'; }  function flipTestCard() { document.getElementById('test-flashcard').classList.toggle('flipped'); }  function answerTestCard(isPassed) { const filtered = getFilteredTests(); if (filtered.length === 0) return; const tp = filtered[currentTestIndex]; tp.reviews += 1; if (isPassed) { addLeaf(50); addXP(10); } currentTestIndex = (currentTestIndex + 1) \% filtered.length; saveState(); renderTests(); }  function toggleTestArchive() { const filtered = getFilteredTests(); if (filtered.length === 0) return; filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived; saveState(); renderTests(); }  // モーダル function openCardModal(cardId) { editingCardId = cardId; editingType = 'card'; const c = state.cards.find(x => x.id === cardId); document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA'; document.getElementById('modal-card-front').value = c.front; document.getElementById('modal-card-back').value = c.back; document.getElementById('modal-card-category').value = c.category; document.getElementById('card-modal').classList.add('show'); } function openTestModal(testId) { editingCardId = testId; editingType = 'test'; const tp = state.testProblems.find(x => x.id === testId); document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM'; document.getElementById('modal-card-front').value = tp.question; document.getElementById('modal-card-back').value = tp.answer; document.getElementById('modal-card-category').value = tp.category; document.getElementById('card-modal').classList.add('show'); } function closeCardModal() { document.getElementById('card-modal').classList.remove('show'); } function saveCardModal() { const f = document.getElementById('modal-card-front').value.trim(); const b = document.getElementById('modal-card-back').value.trim(); const cat = document.getElementById('modal-card-category').value.trim() \vert{}\vert{} '一般'; if (editingType === 'card') { const c = state.cards.find(x => x.id === editingCardId); c.front = f; c.back = b; c.category = cat; updateCategoryFilterDropdown(); renderCards(); } else { const tp = state.testProblems.find(x => x.id === editingCardId); tp.question = f; tp.answer = b; tp.category = cat; updateTestCategoryFilterDropdown(); renderTests(); } saveState(); closeCardModal(); } function deleteCardModal() { if (editingType === 'card') { state.cards = state.cards.filter(x => x.id !== editingCardId); updateCategoryFilterDropdown(); renderCards(); } else { state.testProblems = state.testProblems.filter(x => x.id !== editingCardId); updateTestCategoryFilterDropdown(); renderTests(); } saveState(); closeCardModal(); }  // メモ、ショップ、オーディオ、バックアップ function addMemo() { const text = document.getElementById('memo-input').value.trim(); if (text) { state.memos.push(`LOG. - 「${text}」`); document.getElementById('memo-input').value = ''; saveState(); renderMemos(); }
+    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`;
+    document.getElementById('test-flashcard').classList.remove('flipped');
+    document.getElementById('toggle-test-archive-btn').textContent = tp.archived ? '学習中へ戻す' : '覚えたテストへ移動';
+  }
+
+  function flipTestCard() { document.getElementById('test-flashcard').classList.toggle('flipped'); }
+
+  function answerTestCard(isPassed) {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+    const tp = filtered[currentTestIndex];
+    tp.reviews += 1;
+    if (isPassed) { addLeaf(50); addXP(10); }
+    currentTestIndex = (currentTestIndex + 1) % filtered.length;
+    saveState();
+    renderTests();
+  }
+
+  function toggleTestArchive() {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+    filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived;
+    saveState();
+    renderTests();
+  }
+
+  // モーダル処理
+  function openCardModal(cardId) {
+    editingCardId = cardId; editingType = 'card';
+    const c = state.cards.find(x => x.id === cardId);
+    if (!c) return;
+    document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA';
+    document.getElementById('modal-card-front').value = c.front;
+    document.getElementById('modal-card-back').value = c.back;
+    document.getElementById('modal-card-category').value = c.category;
+    document.getElementById('card-modal').classList.add('show');
+  }
+  function openTestModal(testId) {
+    editingCardId = testId; editingType = 'test';
+    const tp = state.testProblems.find(x => x.id === testId);
+    if (!tp) return;
+    document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM';
+    document.getElementById('modal-card-front').value = tp.question;
+    document.getElementById('modal-card-back').value = tp.answer;
+    document.getElementById('modal-card-category').value = tp.category;
+    document.getElementById('card-modal').classList.add('show');
+  }
+  function closeCardModal() { document.getElementById('card-modal').classList.remove('show'); }
+  function saveCardModal() {
+    const f = document.getElementById('modal-card-front').value.trim();
+    const b = document.getElementById('modal-card-back').value.trim();
+    const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+    if (editingType === 'card') {
+      const c = state.cards.find(x => x.id === editingCardId);
+      if (c) { c.front = f; c.back = b; c.category = cat; }
+      updateCategoryFilterDropdown(); renderCards();
+    } else {
+      const tp = state.testProblems.find(x => x.id === editingCardId);
+      if (tp) { tp.question = f; tp.answer = b; tp.category = cat; }
+      updateTestCategoryFilterDropdown(); renderTests();
+    }
+    saveState(); closeCardModal();
+  }
+  function deleteCardModal() {
+    if (editingType === 'card') {
+      state.cards = state.cards.filter(x => x.id !== editingCardId);
+      updateCategoryFilterDropdown(); renderCards();
+    } else {
+      state.testProblems = state.testProblems.filter(x => x.id !== editingCardId);
+      updateTestCategoryFilterDropdown(); renderTests();
+    }
+    saveState(); closeCardModal();
+  }
+
+  // メモ、ショップ、データバックアップ
+  function addMemo() {
+    const text = document.getElementById('memo-input').value.trim();
+    if (text) { state.memos.push(`LOG. - 「${text}」`); document.getElementById('memo-input').value = ''; saveState(); renderMemos(); }
   }
   function renderMemos() {
     const list = document.getElementById('memo-list'); list.innerHTML = '';
@@ -1765,13 +1896,47 @@
   function renderShop() {
     const list = document.getElementById('shop-item-list'); list.innerHTML = '';
     shopItems.forEach(item => {
-      list.innerHTML += `<div class="list-item"><div class="item-content-click"><span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span></div><span class="item-reward">${item.price.toLocaleString()} LEAF</span><button class="action-badge-btn" onclick="buyShopItem('${item.id}')">BUY</button></div>`; }); } function buyShopItem(id) { const item = shopItems.find(i => i.id === id); if (state.leaf >= item.price) { state.leaf -= item.price; if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] \vert{}\vert{} 0) + 1; saveState(); showToast(`PURCHASED: ${item.name}`);
+      list.innerHTML += `<div class="list-item"><div class="item-content-click"><span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span></div><span class="item-reward">${item.price.toLocaleString()} LEAF</span><button class="action-badge-btn" onclick="buyShopItem('${item.id}')">BUY</button></div>`;
+    });
+  }
+  function buyShopItem(id) {
+    const item = shopItems.find(i => i.id === id);
+    if (!item) return;
+    if (state.leaf >= item.price) {
+      state.leaf -= item.price;
+      if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+      saveState(); showToast(`PURCHASED: ${item.name}`);
     } else { showToast('ERROR: INSUFFICIENT LEAF'); }
   }
   function renderInventory() {
     const c = document.getElementById('inventory-container'); c.innerHTML = '';
     for (const [name, count] of Object.entries(state.inventory)) {
-      c.innerHTML += `<div class="inventory-chip">${name} x${count}</div>`; } } function exportData() { const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sylvarena_backup.json'; a.click(); } function importData(e) { const reader = new FileReader(); reader.onload = function(evt) { state = JSON.parse(evt.target.result); saveState(); location.reload(); }; reader.readAsText(e.target.files[0]); }  let audioCtx = null, activeNodes = {}; function toggleSound(type) { if (!audioCtx) audioCtx = new (window.AudioContext \vert{}\vert{} window.webkitAudioContext)(); const btn = document.getElementById(`snd-${type}`);
+      c.innerHTML += `<div class="inventory-chip">${name} x${count}</div>`;
+    }
+  }
+  function exportData() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'sylvarena_backup.json'; a.click();
+  }
+  function importData(e) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        state = JSON.parse(evt.target.result);
+        saveState(); location.reload();
+      } catch (err) {
+        showToast('ERROR: INVALID JSON');
+      }
+    };
+    reader.readAsText(e.target.files[0]);
+  }
+
+  // Web Audio API
+  let audioCtx = null, activeNodes = {};
+  function toggleSound(type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const btn = document.getElementById(`snd-${type}`);
     if (activeNodes[type]) {
       activeNodes[type].stop(); delete activeNodes[type]; btn.classList.remove('active');
     } else {
@@ -1789,4 +1954,3 @@
 
 </body>
 </html>
-
