@@ -1256,23 +1256,36 @@
     }
   }
 
+   // --- ランクとレベルを自動計算する関数（Lv2000超え・無限拡張対応） ---
+  function getRankAndLevel(totalLevel) {
+    const levelsPerRank = 100;
+    // 0始まりのランクインデックス (0: NOVICE-I, 1: NOVICE-II ... 4: NOVICE-V, 5: OPERATOR-I ...)
+    const rankIndex = Math.floor((totalLevel - 1) / levelsPerRank);
+    const currentLv = ((totalLevel - 1) % levelsPerRank) + 1;
+
+    const baseRanks = ["NOVICE", "OPERATOR", "ELITE", "HEAD", "MASTER", "LEGEND", "MYTHIC"];
+    const subRanks = ["I", "II", "III", "IV", "V"];
+
+    const baseIndex = Math.floor(rankIndex / subRanks.length);
+    const subIndex = rankIndex % subRanks.length;
+
+    // 定義を超えてレベルが上がった場合も自動でランク名を拡張
+    const baseName = baseRanks[baseIndex] || `RANK-${baseIndex + 1}`;
+    const rankName = `${baseName} - ${subRanks[subIndex]}`;
+
+    return { rankName, level: currentLv };
+  }
+
+  // --- UI更新関数 ---
   function updateUI() {
     document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
     document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
 
-    const ranks = ['NOVICE', 'OPERATOR', 'ELITE', 'HEAD'];
-    let rankTierIndex = Math.floor((state.totalLevel - 1) / 100);
-    if (rankTierIndex >= ranks.length) rankTierIndex = ranks.length - 1;
-    
-    const romanSub = ['I', 'II', 'III', 'IV'];
-    let subIndex = Math.floor(((state.totalLevel - 1) % 100) / 25);
-    if (subIndex >= romanSub.length) subIndex = romanSub.length - 1;
+    // ランクとレベルを自動計算
+    const rankData = getRankAndLevel(state.totalLevel);
 
-    const rankName = `${ranks[rankTierIndex]} - ${romanSub[subIndex]}`;
-    const currentLvInTier = ((state.totalLevel - 1) % 100) + 1;
-
-    document.getElementById('rank-badge').textContent = rankName;
-    document.getElementById('level-val').textContent = `Lv.${currentLvInTier}`;
+    document.getElementById('rank-badge').textContent = rankData.rankName;
+    document.getElementById('level-val').textContent = `Lv.${rankData.level}`;
 
     const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
     document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
@@ -1573,7 +1586,8 @@
     saveState();
   }
 
-    function renderStoryList() {
+  // --- ストーリーリスト描画関数（累計レベル連動） ---
+  function renderStoryList() {
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
 
@@ -1585,9 +1599,13 @@
     for (const [id, story] of Object.entries(gameStories)) {
       if (id === 'ep_0') continue; // プロローグは除外
 
-      const reqLv = story.reqLevel || 1;
-      // すでに見たことがある（既読）か、現在のレベルが必要レベル以上なら解放！
-      const isUnlocked = state.unlockedStories.includes(id) || state.totalLevel >= reqLv;
+      const reqTotalLv = story.reqTotalLevel || 1;
+      // 既読、または現在の累計レベルが必要レベルに達していれば解放！
+      const isUnlocked = state.unlockedStories.includes(id) || state.totalLevel >= reqTotalLv;
+
+      // 必要レベルがどのランクの何Lvか文字列を作る（例: NOVICE-I Lv.5）
+      const reqRankData = getRankAndLevel(reqTotalLv);
+      const reqLabel = `${reqRankData.rankName} Lv.${reqRankData.level}`;
 
       const item = document.createElement('div');
       item.className = 'list-item';
@@ -1598,7 +1616,7 @@
           <span class="item-text">
             <b>${story.title}</b><br>
             <span style="font-size:0.7rem; color:${isUnlocked ? 'var(--ak-yellow)' : 'var(--text-muted)'};">
-              ${isUnlocked ? '通信記録閲覧可能' : `[LOCKED - Req. Lv.${reqLv}]`}
+              ${isUnlocked ? '通信記録閲覧可能' : `[LOCKED - 解放条件: ${reqLabel}]`}
             </span>
           </span>
         </div>
@@ -1608,6 +1626,8 @@
       `;
       list.appendChild(item);
     }
+  }
+
   }
 
 
