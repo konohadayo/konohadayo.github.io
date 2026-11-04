@@ -6,8 +6,8 @@ const gameStories = {
     type: "prologue", // 初回強制起動用
     reqTotalLevel: 1, //解放レベル
     dialogues: [
-      { speaker: "SYSTEM", text: "PRTS TERMINAL SYSTEM\n\nSYSTEM BOOTING...\n\nCORE INITIALIZED\nLOCAL DATA ACCESS: READY\nUSER SESSION: NEW\n\nSYSTEM ONLINE." },
-      { speaker: "SYSTEM", text: "USER SESSION\n\nNEW USER DETECTED.\n\nINITIALIZING USER PROFILE..." },
+      { speaker: "SYSTEM", text: "\n\nPRTS TERMINAL SYSTEM\n\nSYSTEM BOOTING...\n\nCORE INITIALIZED\nLOCAL DATA ACCESS: READY\nUSER SESSION: NEW\n\nSYSTEM ONLINE." },
+      { speaker: "SYSTEM", text: "\n\nUSER SESSION\n\nNEW USER DETECTED.\n\nINITIALIZING USER PROFILE..." },
       { speaker: "???", text: "通信状態を確認しています……" },
       { speaker: "???", text: "……接続を確認しました。\n……初回、接続、ですね。\n……この端末の利用は初めてでしょうか。" },
       { speaker: "Se", text: "……私はSe。現在、ある地域を訪れています。\nこちらから端末の基本的な機能について\nご案内することができますが……「習うより慣れろ」、先ずは触ってみることをおすすめします。"},
@@ -20,13 +20,14 @@ const gameStories = {
     title: "EPISODE.001 — ルセリア到着",
     chapter: "LUCERIA",
     reqTotalLevel: 5,
-    speaker: "Se",
     dialogues: [
-      "こんにちは。\n先ほど、ルセリアという街に到着しました。\nこの地域は、なだらかな丘と広い草原に囲まれています。",
-      "街の規模はそれほど大きくありませんが、周辺にはいくつかの集落があり、街道も比較的よく整備されているようです。",
-      "今のところ、目立った問題は見当たりません。\n……少なくとも、街の中は。",
-      "人通りも多く、露店からは食べ物の良い匂いがしています。少し歩いただけでも、住民の方々が日常的に魔法を使っているのが分かりました。\nこの地域では、魔法は特別な技術というより、生活の一部なのでしょうね。",
-      "しばらく滞在して、周辺の様子も確認してみようと思います。\n何か分かったことがあれば、またご連絡しますね。"
+      { speaker : "SYSTEM" , text: "\n\nnankaiikanzinomozi<h1>CHAPTER-1: LUCERIA</h1>"
+      { speaker : "Se" , text: "こんにちは。\n先ほど、ルセリアという街に到着しました。\nこの地域は、なだらかな丘と広い草原に囲まれています。"},
+      { speaker : "Se" , text: "街の規模はそれほど大きくありませんが、周辺にはいくつかの集落があり、街道も比較的よく整備されているようです。"},
+      { speaker : "Se" , text: "今のところ、目立った問題は見当たりません。\n……少なくとも、街の中は。"},
+      { speaker : "Se" , text: "人通りも多く、露店からは食べ物の良い匂いがしています。"},
+      { speaker : "Se" , text: "少し歩いただけでも、住民の方々が日常的に魔法を使っているのが分かりました。\nこの地域では、魔法は特別な技術というより、生活の一部なのでしょうね。"},
+      { speaker : "Se" , text: "しばらく滞在して、周辺の様子も確認してみようと思います。\n何か分かったことがあれば、またご連絡しますね。"}
     ],
     unlockArchive: {
       id: "arc_1",
