@@ -19,6 +19,7 @@ const gameStories = {
     id: "ep_1",
     title: "EPISODE.001 — ルセリア到着",
     chapter: "LUCERIA",
+    reqTotalLevel: 5,
     speaker: "Se",
     dialogues: [
       "こんにちは。\n先ほど、ルセリアという街に到着しました。\nこの地域は、なだらかな丘と広い草原に囲まれています。街の規模はそれほど大きくありませんが、周辺にはいくつかの集落があり、街道も比較的よく整備されているようです。",
