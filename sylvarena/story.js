@@ -21,7 +21,7 @@ const gameStories = {
     chapter: "LUCERIA",
     reqTotalLevel: 5,
     dialogues: [
-      { speaker : "SYSTEM" , text: "\n\nnankaiikanzinomozi<h1>CHAPTER-1: LUCERIA</h1>"
+      { speaker : "SYSTEM" , text: "\n\nnankaiikanzinomozi<h1>CHAPTER-1: LUCERIA</h1>"},
       { speaker : "Se" , text: "こんにちは。\n先ほど、ルセリアという街に到着しました。\nこの地域は、なだらかな丘と広い草原に囲まれています。"},
       { speaker : "Se" , text: "街の規模はそれほど大きくありませんが、周辺にはいくつかの集落があり、街道も比較的よく整備されているようです。"},
       { speaker : "Se" , text: "今のところ、目立った問題は見当たりません。\n……少なくとも、街の中は。"},
