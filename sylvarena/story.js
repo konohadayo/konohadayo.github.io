@@ -56,7 +56,7 @@ const gameStories = {
       "どうやら、しばらく市場を歩くだけでも退屈しなさそうです。"
     ],
     unlockArchive: null
-  }
+  },
   "ep_3": {
     id: "ep_3",
     title: "EPISODE.003 — 市場の案内",
