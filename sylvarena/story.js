@@ -367,7 +367,6 @@ const gameStories = {
     ],
     unlockArchive: null
   }
-};
 
 };
 //
