@@ -1759,6 +1759,7 @@
     card.reviews += 1;
     if (isCorrect) { addLeaf(5); addXP(1); }
     currentCardIndex = (currentCardIndex + 1) % filtered.length;
+    document.getElementById('flashcard').classList.remove('flipped');
     saveState();
     renderCards();
   }
@@ -1767,6 +1768,7 @@
     const filtered = getFilteredCards();
     if (filtered.length === 0) return;
     filtered[currentCardIndex].archived = !filtered[currentCardIndex].archived;
+    document.getElementById('flashcard').classList.remove('flipped');
     saveState();
     renderCards();
   }
@@ -1860,6 +1862,7 @@
     tp.reviews += 1;
     if (isPassed) { addLeaf(10); addXP(2); }
     currentTestIndex = (currentTestIndex + 1) % filtered.length;
+    document.getElementById('test-flashcard').classList.remove('flipped');
     saveState();
     renderTests();
   }
@@ -1868,6 +1871,7 @@
     const filtered = getFilteredTests();
     if (filtered.length === 0) return;
     filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived;
+    document.getElementById('test-flashcard').classList.remove('flipped');
     saveState();
     renderTests();
   }
