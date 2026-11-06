@@ -423,6 +423,11 @@
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+        /* 💡 追加：切り替え時のアニメーションを強制オフにするクラス */
+    .flashcard.no-anim {
+      transition: none !important;
+    }
+
     .flashcard.flipped {
       transform: rotateY(180deg);
     }
@@ -504,6 +509,11 @@
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        /* 💡 追加：切り替え時のアニメーションを強制オフにするクラス */
+    .test-card.no-anim {
+      transition: none !important;
     }
 
     .test-card.flipped {
@@ -1752,6 +1762,7 @@
 
   function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
 
+    // ① 単語カードの判定 (answerCard)
   function answerCard(isCorrect) {
     const filtered = getFilteredCards();
     if (filtered.length === 0) return;
@@ -1759,16 +1770,29 @@
     card.reviews += 1;
     if (isCorrect) { addLeaf(5); addXP(1); }
     currentCardIndex = (currentCardIndex + 1) % filtered.length;
-    document.getElementById('flashcard').classList.remove('flipped');
+    
+    // 💡 ここを書き換え
+    const fCard = document.getElementById('flashcard');
+    fCard.classList.add('no-anim');                  // アニメーションを消す
+    fCard.classList.remove('flipped');               // 表面に戻す
+    setTimeout(() => fCard.classList.remove('no-anim'), 50); // 少し経ってからアニメーションを復活
+    
     saveState();
     renderCards();
   }
 
+  // ② 単語カードの移動ボタン (toggleCardArchive)
   function toggleCardArchive() {
     const filtered = getFilteredCards();
     if (filtered.length === 0) return;
     filtered[currentCardIndex].archived = !filtered[currentCardIndex].archived;
-    document.getElementById('flashcard').classList.remove('flipped');
+    
+    // 💡 ここを書き換え
+    const fCard = document.getElementById('flashcard');
+    fCard.classList.add('no-anim');
+    fCard.classList.remove('flipped');
+    setTimeout(() => fCard.classList.remove('no-anim'), 50);
+    
     saveState();
     renderCards();
   }
@@ -1855,6 +1879,7 @@
 
   function flipTestCard() { document.getElementById('test-flashcard').classList.toggle('flipped'); }
 
+  // ③ テストカードの判定 (answerTestCard)
   function answerTestCard(isPassed) {
     const filtered = getFilteredTests();
     if (filtered.length === 0) return;
@@ -1862,19 +1887,33 @@
     tp.reviews += 1;
     if (isPassed) { addLeaf(10); addXP(2); }
     currentTestIndex = (currentTestIndex + 1) % filtered.length;
-    document.getElementById('test-flashcard').classList.remove('flipped');
+    
+    // 💡 テストカード用を書き換え
+    const tCard = document.getElementById('test-flashcard');
+    tCard.classList.add('no-anim');
+    tCard.classList.remove('flipped');
+    setTimeout(() => tCard.classList.remove('no-anim'), 50);
+    
     saveState();
     renderTests();
   }
 
+  // ④ テストカードの移動ボタン (toggleTestArchive)
   function toggleTestArchive() {
     const filtered = getFilteredTests();
     if (filtered.length === 0) return;
     filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived;
-    document.getElementById('test-flashcard').classList.remove('flipped');
+    
+    // 💡 テストカード用を書き換え
+    const tCard = document.getElementById('test-flashcard');
+    tCard.classList.add('no-anim');
+    tCard.classList.remove('flipped');
+    setTimeout(() => tCard.classList.remove('no-anim'), 50);
+    
     saveState();
     renderTests();
   }
+
 
   // モーダル処理
   function openCardModal(cardId) {
