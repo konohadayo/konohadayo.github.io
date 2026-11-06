@@ -23,7 +23,8 @@ const gameStories = {
     reqTotalLevel: 5,
     speaker: "Se",
     dialogues: [
-      { speaker: "SYSTEM" , text: "CHAPTER: [ I ] LUCERIA"},
+      { speaker: "SYSTEM" , text: "\n\nLoading......"},
+      { speaker: "SYSTEM" , text: "\n\nChapter-I: LUCERIA"},
       { speaker: "Se" , text: "……先ほど、ルセリアという街に到着しました。"},
       { speaker: "Se" , text: "この地域は、なだらかな丘と広い草原に囲まれています。\n街の規模はそれほど大きくはありませんが、周辺にはいくつかの集落があり、街道も比較的よく整備されています。"},
       { speaker: "Se" , text: "今のところ、目立った問題は見当たりません。\n……少なくとも、私が訪れたこの街の中は。"},
