@@ -27,7 +27,7 @@ const gameStories = {
       { speaker: "SYSTEM" , text: "\n\nLoading......"},
       { speaker: "SYSTEM" , text: "\n\nChapter-I: LUCERIA"},
       { speaker: "Se" , text: "こちら、Seです。\n……先ほど、《ルセリア》に到着しました。"},
-      { speaker: "Se" , text: "この街──ルセリアは、それなりに高い標高にあり、なだらかな丘と広い草原に囲まれています。},
+      { speaker: "Se" , text: "この街──ルセリアは、それなりに高い標高にあり、なだらかな丘と広い草原に囲まれています。"},
       { speaker: "Se" , text: "街の規模はそれほど大きくはありませんが、周辺にはいくつかの集落がありましたし、街道も比較的よく整備されているようにみえました。"},
       { speaker: "Se" , text: "今のところ、目立った問題は見当たりません。\nこの世界にしては、比較的平和と言えるでしょう。"},
       { speaker: "Se" , text: "人通りも多く、露店からは食べ物の良い匂いがしています。"},
