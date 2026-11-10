@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sylvarena Terminal - PRTS</title>
+  
+  <meta name="theme-color" content="#121212">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <link rel="apple-touch-icon" href="44E6F93B-FD1C-4EFD-9963-42F939BFBBEC.png">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+    :root {
+      --bg-main: #121212;
+      --bg-panel: #1e1e1e;
+      --bg-card: rgba(35, 35, 35, 0.9);
+      --ak-yellow: #ffc107;
+      --ak-orange: #ff9800;
+      --ak-cyan: #00bcd4;
+      --ak-red: #ff5252;
+      --text-main: #ffffff;
+      --text-muted: #888888;
+      --border-color: rgba(255, 255, 255, 0.15);
+      --font-tech: 'Chakra Petch', sans-serif;
+      --font-jp: 'Noto Sans JP', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        linear-gradient(135deg, rgba(255,255,255,0.02) 25%, transparent 25%), 
+        linear-gradient(225deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+        linear-gradient(315deg, rgba(255,255,255,0.02) 25%, #121212 25%);
+      background-size: 40px 40px;
+      color: var(--text-main);
+      font-family: var(--font-jp);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px 12px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 30px;
+    }
+
+    /* ヘッダー端末エリア */
+    .terminal-header {
+      background: var(--bg-panel);
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px;
+      position: relative;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .system-title {
+      font-family: var(--font-tech);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .system-title::before {
+      content: '//';
+      color: var(--ak-yellow);
+    }
+
+    .system-sub {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--ak-yellow);
+      letter-spacing: 0.15em;
+      margin-top: -2px;
+    }
+
+    .leaf-tag {
+      font-family: var(--font-tech);
+      background: var(--ak-yellow);
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 3px 10px;
+      letter-spacing: 0.05em;
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .status-cell {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cell-label {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    .cell-value {
+      font-family: var(--font-tech);
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+
+    .cell-value.highlight {
+      color: var(--ak-yellow);
+    }
+
+    /* XPバー */
+    .xp-bar-container {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid var(--border-color);
+      height: 6px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: var(--ak-yellow);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .xp-text {
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+    }
+
+    /* メインタイマー */
+    .mission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .mission-card::before {
+      content: 'MISSION TIMER';
+      position: absolute;
+      top: 6px;
+      left: 10px;
+      font-family: var(--font-tech);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .timer-display {
+      font-family: var(--font-tech);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+      text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+
+    .ak-btn-group {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .ak-btn {
+      font-family: var(--font-tech);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+
+    .ak-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .ak-btn-primary {
+      flex: 2;
+      background: var(--ak-yellow);
+      border-color: var(--ak-yellow);
+      color: #000;
+    }
+
+    .ak-btn-primary:hover {
+      background: var(--ak-orange);
+      border-color: var(--ak-orange);
+    }
+
+    .ak-btn-danger {
+      background: rgba(255, 82, 82, 0.1);
+      border-color: var(--ak-red);
+      color: var(--ak-red);
+    }
+    .ak-btn-danger:hover {
+      background: rgba(255, 82, 82, 0.25);
+    }
+
+    /* タブ切り替えバー */
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      background: #000;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 40px;
+      font-family: var(--font-tech);
+      padding: 8px 2px;
+      border: none;
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      font-size: 0.55rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--ak-yellow);
+      color: #000;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    .section-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ak-yellow);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .ak-input, .ak-select, .ak-textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      font-family: var(--font-jp);
+    }
+
+    .ak-input:focus, .ak-select:focus, .ak-textarea:focus {
+      border-color: var(--ak-yellow);
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 2px solid var(--border-color);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-right: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.2s ease;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .list-item:hover {
+      border-left-color: var(--ak-yellow);
+      background: rgba(255, 193, 7, 0.05);
+    }
+
+    .list-item.checked {
+      opacity: 0.35;
+      text-decoration: line-through;
+    }
+
+    .item-content-click {
+      flex: 1;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .item-text {
+      font-size: 0.8rem;
+      word-break: break-word;
+    }
+
+    .item-reward {
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      font-weight: bold;
+      white-space: nowrap;
+      margin-left: 6px;
+    }
+
+    .action-badge-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      padding: 3px 6px;
+      cursor: pointer;
+      font-family: var(--font-tech);
+    }
+    .action-badge-btn:hover {
+      border-color: var(--ak-yellow);
+      color: var(--ak-yellow);
+    }
+
+    /* 3Dフリップカード（CARD & TEST 共通） */
+    .flashcard-container {
+      perspective: 1000px;
+      width: 100%;
+      min-height: 170px;
+      cursor: pointer;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      min-height: 170px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        /* 💡 追加：切り替え時のアニメーションを強制オフにするクラス */
+    .flashcard.no-anim {
+      transition: none !important;
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 170px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+      box-sizing: border-box;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .card-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+      z-index: 1;
+    }
+
+    .card-label {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      position: absolute;
+      top: 8px;
+      left: 10px;
+    }
+
+    .card-category-tag {
+      font-family: var(--font-tech);
+      font-size: 0.65rem;
+      background: rgba(0, 188, 212, 0.2);
+      color: var(--ak-cyan);
+      padding: 1px 6px;
+      position: absolute;
+      top: 8px;
+      right: 10px;
+    }
+
+    .card-content {
+      font-size: 1rem;
+      font-weight: bold;
+      word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    .card-stats {
+      font-family: var(--font-tech);
+      font-size: 0.7rem;
+      color: var(--ak-yellow);
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+    }
+
+    /* テストカード専用CSS */
+    .test-card-container {
+      perspective: 1000px;
+      width: 100%;
+      min-height: 200px;
+      cursor: pointer;
+    }
+
+    .test-card {
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        /* 💡 追加：切り替え時のアニメーションを強制オフにするクラス */
+    .test-card.no-anim {
+      transition: none !important;
+    }
+
+    .test-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .test-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      background: #000;
+      border: 1px solid var(--ak-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 24px 16px 16px 16px;
+      box-sizing: border-box;
+      text-align: left;
+      z-index: 2;
+    }
+
+    .test-face.back {
+      transform: rotateY(180deg);
+      border-color: var(--ak-cyan);
+      z-index: 1;
+    }
+
+    .test-content {
+      font-size: 0.9rem;
+      font-weight: normal;
+      word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      width: 100%;
+      max-height: 140px;
+      overflow-y: auto;
+    }
+
+    /* --- アドベンチャーゲーム / ストーリー演出用オーバーレイ --- */
+    #story-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 10, 10, 0.92);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 16px;
+      box-sizing: border-box;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    #story-overlay.show {
+      display: flex;
+    }
+
+    /* 初回ログ画面用プレーン黒背景 */
+    #story-log-box {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #00ffcc;
+      font-family: var(--font-tech);
+      font-size: 0.95rem;
+      padding: 30px 20px;
+      white-space: pre-wrap;
+      display: none;
+      z-index: 10000;
+      line-height: 1.6;
+    }
+
+    /* Seの立ち絵画像 */
+    #story-chara-img {
+      position: absolute;
+      right: -10px;
+      bottom: 120px;
+      height: 60vh;
+      max-height: 420px;
+      object-fit: contain;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(-5px 0px 15px rgba(0,0,0,0.8));
+    }
+
+    /* テックフレーム */
+    .story-tech-frame {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-right: 2px solid var(--ak-yellow);
+      padding-right: 8px;
+      text-align: right;
+    }
+    .story-tech-frame::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -40px;
+      width: 35px;
+      height: 1px;
+      background: var(--text-muted);
+      transform: rotate(-30deg);
+    }
+
+    /* スキップボタン */
+    #story-skip-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      padding: 6px 14px;
+      cursor: pointer;
+      z-index: 10001;
+    }
+    #story-skip-btn:hover {
+      border-color: var(--ak-yellow);
+      color: var(--ak-yellow);
+    }
+
+    /* 下部ダイアログボックス */
+    .story-dialog-box {
+      background: rgba(18, 18, 18, 0.95);
+      border-top: 3px solid var(--ak-yellow);
+      border-left: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 18px 24px 18px;
+      position: relative;
+      min-height: 140px;
+      max-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .story-speaker-name {
+      font-family: var(--font-tech);
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--ak-yellow);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .story-dialog-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .story-next-indicator {
+      position: absolute;
+      bottom: 8px;
+      right: 14px;
+      font-family: var(--font-tech);
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* サウンド・インベントリ等 */
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .sound-btn {
+      font-family: var(--font-tech);
+      padding: 8px;
+      background: #000;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .sound-btn.active {
+      border-color: var(--ak-cyan);
+      color: var(--ak-cyan);
+      background: rgba(0, 188, 212, 0.1);
+    }
+
+    .inventory-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .inventory-chip {
+      font-family: var(--font-tech);
+      background: rgba(255, 193, 7, 0.1);
+      border: 1px solid var(--ak-yellow);
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      color: var(--ak-yellow);
+      word-break: break-all;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--ak-yellow);
+      width: 100%;
+      max-width: 400px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #000;
+      border-left: 4px solid var(--ak-yellow);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 16px;
+      font-size: 0.8rem;
+      font-family: var(--font-tech);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+      transition: transform 0.25s ease;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ヘッダー端末 -->
+  <header class="terminal-header">
+    <div class="header-top">
+      <div>
+        <div class="system-title">SYLVARENA</div>
+        <div class="system-sub">PRTS TERMINAL SYSTEM v3.6</div>
+      </div>
+      <div class="leaf-tag" id="leaf-val">LEAF: 1,200</div>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-cell">
+        <span class="cell-label">OPERATOR RANK</span>
+        <span class="cell-value highlight" id="rank-badge">NOVICE - I</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">LEVEL (TIER)</span>
+        <span class="cell-value" id="level-val">Lv.1</span>
+      </div>
+      <div class="status-cell">
+        <span class="cell-label">FOCUS TIME</span>
+        <span class="cell-value" id="focus-val">0m</span>
+      </div>
+    </div>
+
+    <div class="xp-bar-container">
+      <div class="xp-bar-fill" id="xp-bar-fill"></div>
+    </div>
+    <div class="xp-text">
+      <span id="xp-current-text">XP: 0 / 100</span>
+      <span id="next-rank-text">TIER MAX: 100Lv</span>
+    </div>
+  </header>
+
+  <!-- タイマーセクション -->
+  <section class="mission-card">
+    <div class="timer-display" id="timer-display">25:00</div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" id="timer-btn" onclick="toggleTimer()">START MISSION</button>
+      <button class="ak-btn" onclick="resetTimer()">RESET</button>
+    </div>
+  </section>
+
+  <!-- サウンド機能 -->
+  <section class="section-panel">
+    <div class="section-title">AMBIENT SOUNDS</div>
+    <div class="sound-grid">
+      <button class="sound-btn" id="snd-fire" onclick="toggleSound('fire')">WHITE NOISE (FIRE)</button>
+      <button class="sound-btn" id="snd-rain" onclick="toggleSound('rain')">WHITE NOISE (RAIN)</button>
+    </div>
+  </section>
+
+  <!-- タブナビゲーション（STORYタブ追加） -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('tasks', this)">MISSIONS</button>
+    <button class="tab-btn" onclick="switchTab('cards', this)">CARDS</button>
+    <button class="tab-btn" onclick="switchTab('test', this)">TEST</button>
+    <button class="tab-btn" onclick="switchTab('story', this)">STORY</button>
+    <button class="tab-btn" onclick="switchTab('archive', this)">ARCHIVE</button>
+    <button class="tab-btn" onclick="switchTab('shop', this)">STORE</button>
+    <button class="tab-btn" onclick="switchTab('system', this)">SYSTEM</button>
+  </nav>
+
+  <!-- タブ1: ミッション -->
+  <div id="tab-tasks" class="tab-content active">
+    <div class="section-panel">
+      <div class="section-title">MAIN QUEST</div>
+      <div class="input-group">
+        <input type="text" id="quest-input" class="ak-input" value="主要書類整理の完了" placeholder="最重要目標...">
+        <button class="ak-btn ak-btn-primary" id="quest-btn" onclick="completeMainQuest()">EXECUTE</button>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">DAILY ROUTINE</div>
+      <div class="item-list" id="daily-task-list"></div>
+      
+      <div class="input-group" style="margin-top: 6px;">
+        <input type="text" id="new-daily-text" class="ak-input" placeholder="新しい日課の内容...">
+        <div style="display:flex; gap:6px;">
+          <input type="number" id="new-daily-reward" class="ak-input" value="1000" placeholder="報酬" style="width: 90px;">
+          <button class="ak-btn ak-btn-primary" onclick="addDailyTask()">ADD ROUTINE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タブ2: 単語カード -->
+  <div id="tab-cards" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">
+        <span>MEMORIZATION TERMINAL</span>
+        <span id="card-count-label">0 CARDS</span>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="card-filter-select" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたカード</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="card-category-filter" class="ak-select" onchange="filterCards()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
+        </select>
+      </div>
+
+      <div id="card-display-area" style="display:none; flex-direction:column; gap:10px;">
+        <div class="flashcard-container" onclick="flipCard()">
+          <div class="flashcard" id="flashcard">
+            <div class="card-face front">
+              <span class="card-label">QUESTION (FRONT)</span>
+              <span class="card-category-tag" id="card-category-tag">GENERAL</span>
+              <div class="card-content" id="card-front-text">Front Text</div>
+              <span class="card-stats" id="card-review-count">REVIEW: 0</span>
+            </div>
+            <div class="card-face back">
+              <span class="card-label">ANSWER (BACK)</span>
+              <div class="card-content" id="card-back-text">Back Text</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerCard(false)">INCORRECT</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerCard(true)">CORRECT (+5 LEAF)</button>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; gap:6px;">
+          <button class="ak-btn" id="toggle-archive-btn" onclick="toggleCardArchive()" style="font-size:0.75rem; width:100%;">覚えたカードへ移動</button>
+        </div>
+      </div>
+
+      <div id="card-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
+        条件に一致するカードがありません。下のフォームから作成してください。
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">CREATE NEW CARD</div>
+      <div class="input-group">
+        <input type="text" id="card-front-input" class="ak-input" placeholder="表面（単語・問題など）">
+        <input type="text" id="card-back-input" class="ak-input" placeholder="裏面（意味・解答など）">
+        <input type="text" id="card-category-input" class="ak-input" value="一般" placeholder="ジャンル / タグ (例: 英語, 歴史)">
+        <button class="ak-btn ak-btn-primary" onclick="addCard()">ADD FLASHCARD</button>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">CARD REGISTERED LIST</div>
+      <div class="item-list" id="card-registered-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ3: TEST -->
+  <div id="tab-test" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">
+        <span>MEMO TEST SHEET</span>
+        <span id="test-count-label">0 TESTS</span>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">FILTER:</span>
+        <select id="test-filter-select" class="ak-select" onchange="filterTests()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべて表示</option>
+          <option value="学習中">学習中（未完了）</option>
+          <option value="覚えたカード">覚えたテスト</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:6px; align-items:center;">
+        <span style="font-family:var(--font-tech); font-size:0.7rem; color:var(--text-muted);">CATEGORY:</span>
+        <select id="test-category-filter" class="ak-select" onchange="filterTests()" style="font-size:0.75rem; padding:4px;">
+          <option value="ALL">すべてのジャンル</option>
+        </select>
+      </div>
+
+      <div id="test-display-area" style="display:none; flex-direction:column; gap:10px;">
+        <div class="test-card-container" onclick="flipTestCard()">
+          <div class="test-card" id="test-flashcard">
+            <div class="test-face front">
+              <span class="card-label">QUESTION / PROBLEM</span>
+              <span class="card-category-tag" id="test-category-tag">GENERAL</span>
+              <div class="test-content" id="test-front-text">Question Text</div>
+              <span class="card-stats" id="test-review-count">REVIEW: 0</span>
+            </div>
+            <div class="test-face back">
+              <span class="card-label">ANSWER & EXPLANATION</span>
+              <div class="test-content" id="test-back-text">Answer Text</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ak-btn-group">
+          <button class="ak-btn" onclick="answerTestCard(false)" style="flex:1;">RETRY (もう一度)</button>
+          <button class="ak-btn ak-btn-primary" onclick="answerTestCard(true)" style="flex:1;">PASSED (+10 LEAF)</button>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; gap:6px;">
+          <button class="ak-btn" id="toggle-test-archive-btn" onclick="toggleTestArchive()" style="font-size:0.75rem; width:100%;">覚えたテストへ移動</button>
+        </div>
+      </div>
+
+      <div id="test-empty-msg" style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">
+        条件に一致するテスト問題がありません。下のフォームから作成してください。
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">CREATE TEST PROBLEM</div>
+      <div class="input-group">
+        <label style="font-size:0.7rem; color:var(--text-muted);">問題文</label>
+        <textarea id="test-question-input" class="ak-textarea" rows="3" placeholder="問題文を入力..."></textarea>
+        <label style="font-size:0.7rem; color:var(--text-muted);">解答・解説</label>
+        <textarea id="test-answer-input" class="ak-textarea" rows="3" placeholder="解答や解説を入力..."></textarea>
+        <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
+        <input type="text" id="test-category-input" class="ak-input" value="一般" placeholder="ジャンル (例: 専門科目, 歴史)">
+        <button class="ak-btn ak-btn-primary" onclick="addTestProblem()">ADD TEST PROBLEM</button>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">TEST PROBLEMS LIST</div>
+      <div class="item-list" id="test-registered-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ4: STORY -->
+  <div id="tab-story" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">COMMUNICATION RECORDS (STORY)</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        これまでに受信したSeとの通信および記録を再確認できます。
+      </div>
+      <div class="item-list" id="story-list-container"></div>
+    </div>
+  </div>
+
+  <!-- タブ5: ARCHIVE -->
+  <div id="tab-archive" class="tab-content">
+
+    <div class="section-panel">
+      <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
+      <div class="input-group">
+        <input type="text" id="memo-input" class="ak-input" placeholder="新しい研究メモを追加...">
+        <button class="ak-btn" onclick="addMemo()">RECORD</button>
+      </div>
+      <div class="item-list" id="memo-list"></div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">STORAGE (COLLECTED ITEMS)</div>
+      <div class="inventory-grid" id="inventory-container"></div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">ARCHIVE & DATABASE</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        ストーリーの進行に伴い、解放された資料がここに格納されます。
+      </div>
+      <div class="item-list" id="archive-list-container"></div>
+    </div>
+    
+  </div>
+
+  <!-- タブ6: 購買部 -->
+  <div id="tab-shop" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">SUPPLY STORE</div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
+        LEAFを消費して収集品や着せ替えアイテムを獲得できます。
+      </div>
+      <div class="item-list" id="shop-item-list"></div>
+    </div>
+  </div>
+
+  <!-- タブ7: システム設定 -->
+  <div id="tab-system" class="tab-content">
+    <div class="section-panel">
+      <div class="section-title">TERMINAL CUSTOMIZE</div>
+      <div class="input-group">
+        <label style="font-size:0.75rem; color:var(--text-muted);">アクセントカラー選択 (要購入)</label>
+        <select id="theme-color-select" class="ak-select" onchange="changeThemeColor(this.value)">
+          <option value="yellow">PRTSイエロー (デフォルト)</option>
+          <option value="cyan">サイバーシアン</option>
+          <option value="emerald">エメラルドグリーン</option>
+          <option value="crimson">クリムゾンレッド</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-panel">
+      <div class="section-title">DATA MANAGEMENT</div>
+      <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
+        アプリの全データを保存・復元できます。
+      </div>
+      <div class="ak-btn-group" style="flex-direction:column;">
+        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
+        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT DATA (JSON)</button>
+        <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ストーリー演出用オーバーレイ -->
+<div id="story-overlay" onclick="onStoryScreenClick()">
+  <div id="story-log-box"></div>
+  <button id="story-skip-btn" onclick="skipStory(event)">SKIP</button>
+  <div class="story-tech-frame">COMMS INTERCEPTED<br><span style="font-size:0.55rem; color:var(--ak-yellow);">SIGNAL: STABLE</span></div>
+  <img id="story-chara-img" src="無題152_20261103233653.png" alt="Se" style="display:none;">
+  
+  <div class="story-dialog-box" id="story-dialog-ui" style="display:none;">
+    <div class="story-speaker-name" id="story-speaker">Se</div>
+    <div class="story-dialog-text" id="story-text"></div>
+    <div class="story-next-indicator">▼</div>
+  </div>
+</div>
+
+<!-- アーカイブ閲覧用モーダル -->
+<div id="archive-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="section-title" id="archive-modal-title">ARCHIVE DATA</div>
+    <div class="test-content" id="archive-modal-text" style="max-height:250px; overflow-y:auto; padding:6px; background:#000; border:1px solid var(--border-color);"></div>
+    <button class="ak-btn" onclick="closeArchiveModal()">CLOSE</button>
+  </div>
+</div>
+
+<!-- 共通編集モーダル -->
+<div id="card-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="section-title" id="modal-title-text">EDIT CARD DATA</div>
+    <div class="input-group">
+      <label style="font-size:0.7rem; color:var(--text-muted);" id="modal-label-front">表面 (FRONT)</label>
+      <textarea id="modal-card-front" class="ak-textarea" rows="2"></textarea>
+      <label style="font-size:0.7rem; color:var(--text-muted);" id="modal-label-back">裏面 (BACK)</label>
+      <textarea id="modal-card-back" class="ak-textarea" rows="2"></textarea>
+      <label style="font-size:0.7rem; color:var(--text-muted);">ジャンル / タグ (CATEGORY)</label>
+      <input type="text" id="modal-card-category" class="ak-input">
+    </div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" onclick="saveCardModal()">SAVE</button>
+      <button class="ak-btn ak-btn-danger" onclick="deleteCardModal()">DELETE</button>
+    </div>
+    <button class="ak-btn" onclick="closeCardModal()">CANCEL</button>
+  </div>
+</div>
+
+<!-- トースト -->
+<div id="toast" class="toast">SYSTEM NOTIFICATION</div>
+
+<!-- ストーリーデータファイルの読み込み -->
+<script src="story.js"></script>
+
+<script>
+  const shopItems = [
+    { id: 'item_note', name: '羊皮紙ノート', price: 500, type: 'item', desc: '古びた記録用ノート' },
+    { id: 'item_tea', name: 'ハーブティーセット', price: 400, type: 'item', desc: '心を落ち着かせるお茶' },
+    { id: 'item_pen', name: 'タクティカル万年筆', price: 1200, type: 'item', desc: '特務仕様の高級万年筆' },
+    { id: 'item_tree_leaf', name: '世界樹の黄金の葉', price: 500000, type: 'item', desc: '極めて希少な世界樹の断片' },
+    { id: 'theme_cyan', name: 'テーマ: サイバーシアン', price: 100000, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_emerald', name: 'テーマ: エメラルド', price: 100000, type: 'theme', color: '#4caf50', desc: '端末のアクセントカラーを変更' },
+    { id: 'theme_crimson', name: 'テーマ: クリムゾン', price: 150000, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
+  ];
+
+  let state = {
+    leaf: 1200,
+    xp: 0,
+    totalLevel: 1,
+    focusMinutes: 0,
+    lastDate: new Date().toDateString(),
+    inventory: { 'ハーブティーセット': 1 },
+    unlockedThemes: ['yellow'],
+    currentTheme: 'yellow',
+    cards: [],
+    testProblems: [],
+    memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
+    dailyTasks: [
+      { id: 1, text: '端末起動および定期メンテナンス', reward: 500, completed: false },
+      { id: 2, text: '返却データの整合性チェック', reward: 500, completed: false },
+      { id: 3, text: 'メンタルデトックス (15分休憩)', reward: 750, completed: false }
+    ],
+    unlockedStories: [],
+    unlockedArchives: []
+  };
+
+  let currentCardIndex = 0;
+  let currentTestIndex = 0;
+  let editingCardId = null;
+  let editingType = 'card';
+  let timerInterval = null;
+  let timeLeft = 25 * 60;
+  let isRunning = false;
+
+  // ストーリー再生用
+  let activeStoryDialogues = [];
+  let currentDialogueIndex = 0;
+  let activeStoryId = null;
+  let isTyping = false;
+  let typingTimer = null;
+  let currentFullText = "";
+  let prologueStep = 0;
+
+  window.onload = () => {
+    loadState();
+    checkDailyReset();
+    applyTheme(state.currentTheme);
+    updateUI();
+    renderDailyTasks();
+    renderShop();
+    updateCategoryFilterDropdown();
+    renderCards();
+    updateTestCategoryFilterDropdown();
+    renderTests();
+    renderMemos();
+    renderStoryList();
+    renderArchiveList();
+
+    // 初回起動チェック
+    if (typeof gameStories !== 'undefined' && !state.unlockedStories.includes("ep_0")) {
+      startStory("ep_0");
+    }
+  };
+
+  function loadState() {
+    try {
+      let saved = localStorage.getItem('sylvarena_ak_state_v4');
+      if (!saved) {
+        saved = localStorage.getItem('sylvarena_ak_state_v6') ||
+                localStorage.getItem('sylvarena_ak_state_v5') ||
+                localStorage.getItem('sylvarena_state');
+      }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state = { ...state, ...parsed };
+        if (state.unlockedStories === undefined) state.unlockedStories = [];
+        if (state.unlockedArchives === undefined) state.unlockedArchives = [];
+      }
+    } catch (e) {
+      console.error('Data load error:', e);
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem('sylvarena_ak_state_v4', JSON.stringify(state));
+    } catch (e) {
+      console.error('Data save error:', e);
+    }
+    updateUI();
+  }
+
+  function checkDailyReset() {
+    const today = new Date().toDateString();
+    if (state.lastDate !== today) {
+      state.lastDate = today;
+      state.dailyTasks.forEach(t => t.completed = false);
+      saveState();
+    }
+  }
+
+   // --- ランクとレベルを自動計算する関数（Lv2000超え・無限拡張対応） ---
+  function getRankAndLevel(totalLevel) {
+    const levelsPerRank = 100;
+    // 0始まりのランクインデックス (0: NOVICE-I, 1: NOVICE-II ... 4: NOVICE-V, 5: OPERATOR-I ...)
+    const rankIndex = Math.floor((totalLevel - 1) / levelsPerRank);
+    const currentLv = ((totalLevel - 1) % levelsPerRank) + 1;
+
+    const baseRanks = ["NOVICE", "OPERATOR", "ELITE", "HEAD", "MASTER", "LEGEND", "MYTHIC"];
+    const subRanks = ["I", "II", "III", "IV", "V"];
+
+    const baseIndex = Math.floor(rankIndex / subRanks.length);
+    const subIndex = rankIndex % subRanks.length;
+
+    // 定義を超えてレベルが上がった場合も自動でランク名を拡張
+    const baseName = baseRanks[baseIndex] || `RANK-${baseIndex + 1}`;
+    const rankName = `${baseName} - ${subRanks[subIndex]}`;
+
+    return { rankName, level: currentLv };
+  }
+
+  // --- UI更新関数 ---
+  function updateUI() {
+    document.getElementById('leaf-val').textContent = `LEAF: ${state.leaf.toLocaleString()}`;
+    document.getElementById('focus-val').textContent = `${state.focusMinutes}m`;
+
+    // ランクとレベルを自動計算
+    const rankData = getRankAndLevel(state.totalLevel);
+
+    document.getElementById('rank-badge').textContent = rankData.rankName;
+    document.getElementById('level-val').textContent = `Lv.${rankData.level}`;
+
+    const xpPercent = Math.min(Math.floor((state.xp / 100) * 100), 100);
+    document.getElementById('xp-bar-fill').style.width = `${xpPercent}%`;
+    document.getElementById('xp-current-text').textContent = `XP: ${state.xp} / 100`;
+
+    renderInventory();
+    renderShop();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function switchTab(tabId, btnEl) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    if (btnEl) btnEl.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+
+    if (tabId === 'story') renderStoryList();
+    if (tabId === 'archive') renderArchiveList();
+  }
+
+  function applyTheme(themeKey) {
+    state.currentTheme = themeKey;
+    let colorHex = '#ffc107';
+    if (themeKey === 'cyan') colorHex = '#00bcd4';
+    if (themeKey === 'emerald') colorHex = '#4caf50';
+    if (themeKey === 'crimson') colorHex = '#ff5252';
+
+    document.documentElement.style.setProperty('--ak-yellow', colorHex);
+    document.getElementById('theme-color-select').value = themeKey;
+    saveState();
+  }
+
+  function changeThemeColor(val) {
+    if (val === 'yellow' || state.unlockedThemes.includes(val)) {
+      applyTheme(val);
+      showToast(`THEME CHANGED: ${val.toUpperCase()}`);
+    } else {
+      showToast('ERROR: THEME NOT UNLOCKED IN STORE');
+      document.getElementById('theme-color-select').value = state.currentTheme;
+    }
+  }
+
+  // --- タイマー ---
+  function toggleTimer() {
+    const btn = document.getElementById('timer-btn');
+    if (isRunning) {
+      clearInterval(timerInterval);
+      btn.textContent = 'RESUME MISSION';
+      isRunning = false;
+    } else {
+      isRunning = true;
+      btn.textContent = 'PAUSE';
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          isRunning = false;
+          timeLeft = 25 * 60;
+          btn.textContent = 'START MISSION';
+          
+          addXP(50);
+          addLeaf(500);
+          state.focusMinutes += 25;
+          showToast('MISSION ACCOMPLISHED (+500 LEAF / +50 XP)');
+          saveState();
+        }
+      }, 1000);
+    }
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    timeLeft = 25 * 60;
+    document.getElementById('timer-btn').textContent = 'START MISSION';
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const s = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-display').textContent = `${m}:${s}`;
+  }
+
+  function addLeaf(amt) { state.leaf += amt; saveState(); }
+  function addXP(amt) {
+    state.xp += amt;
+    while (state.xp >= 100) {
+      state.xp -= 100;
+      state.totalLevel += 1;
+      state.leaf += 1000;
+      showToast(`LEVEL UP! (+1,000 LEAF BONUS!)`);
+    }
+    saveState();
+  }
+
+  function completeMainQuest() {
+    const btn = document.getElementById('quest-btn');
+    if (!btn.disabled) {
+      btn.disabled = true;
+      btn.textContent = 'COMPLETED';
+      addLeaf(2000);
+      addXP(40);
+      showToast('MAIN QUEST COMPLETED (+2,000 LEAF / +40 XP)');
+    }
+  }
+
+  function renderDailyTasks() {
+    const list = document.getElementById('daily-task-list');
+    list.innerHTML = '';
+    state.dailyTasks.forEach(task => {
+      const item = document.createElement('div');
+      item.className = `list-item ${task.completed ? 'checked' : ''}`;
+      item.innerHTML = `
+        <div class="item-content-click" onclick="completeDailyTask(${task.id})">
+          <span class="item-text">${task.text}</span>
+          <span class="item-reward">+${task.reward.toLocaleString()} LEAF</span>
+        </div>
+        <button class="action-badge-btn" onclick="deleteDailyTask(${task.id})">DEL</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function addDailyTask() {
+    const text = document.getElementById('new-daily-text').value.trim();
+    const reward = parseInt(document.getElementById('new-daily-reward').value) || 25;
+    if (text) {
+      state.dailyTasks.push({ id: Date.now(), text, reward, completed: false });
+      document.getElementById('new-daily-text').value = '';
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  function completeDailyTask(id) {
+    const task = state.dailyTasks.find(t => t.id === id);
+    if (task && !task.completed) {
+      task.completed = true;
+      addLeaf(task.reward);
+      addXP(15);
+      saveState();
+      renderDailyTasks();
+    }
+  }
+
+  function deleteDailyTask(id) {
+    state.dailyTasks = state.dailyTasks.filter(t => t.id !== id);
+    saveState();
+    renderDailyTasks();
+  }
+
+  // --- STORY ---
+  function startStory(storyId) {
+    if (typeof gameStories === 'undefined') return;
+    const story = gameStories[storyId];
+    if (!story) return;
+
+    activeStoryId = storyId;
+    activeStoryDialogues = story.dialogues;
+    currentDialogueIndex = 0;
+
+    const overlay = document.getElementById('story-overlay');
+    const logBox = document.getElementById('story-log-box');
+    const charaImg = document.getElementById('story-chara-img');
+    const dialogUi = document.getElementById('story-dialog-ui');
+
+    overlay.classList.add('show');
+
+    if (story.type === 'prologue') {
+      prologueStep = 0;
+      logBox.style.display = 'block';
+      charaImg.style.display = 'none';
+      dialogUi.style.display = 'none';
+      runPrologueLog();
+    } else {
+      logBox.style.display = 'none';
+      charaImg.style.display = 'block';
+      dialogUi.style.display = 'flex';
+      document.getElementById('story-speaker').textContent = story.speaker || "Se";
+      showNextDialogue();
+    }
+  }
+
+  function runPrologueLog() {
+    const logBox = document.getElementById('story-log-box');
+    if (prologueStep === 0) {
+      typeWriterEffect(activeStoryDialogues[0].text, logBox, () => { prologueStep = 1; });
+    } else if (prologueStep === 1) {
+      typeWriterEffect(activeStoryDialogues[1].text, logBox, () => { prologueStep = 2; });
+    } else if (prologueStep === 2) {
+      prologueStep = 3;
+      currentDialogueIndex = 2;
+      logBox.style.display = 'none';
+      document.getElementById('story-chara-img').style.display = 'block';
+      document.getElementById('story-dialog-ui').style.display = 'flex';
+      showNextDialogue();
+    }
+  }
+
+  function showNextDialogue() {
+    if (currentDialogueIndex >= activeStoryDialogues.length) {
+      endStory();
+      return;
+    }
+
+    const item = activeStoryDialogues[currentDialogueIndex];
+    const textEl = document.getElementById('story-text');
+    let textStr = typeof item === 'string' ? item : item.text;
+    if (item.speaker) {
+      document.getElementById('story-speaker').textContent = item.speaker;
+    }
+
+    currentDialogueIndex++;
+    typeWriterEffect(textStr, textEl, null);
+  }
+
+  function typeWriterEffect(text, element, callback) {
+    if (typingTimer) clearTimeout(typingTimer);
+    isTyping = true;
+    currentFullText = text;
+    element.textContent = "";
+    let i = 0;
+
+    function type() {
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        i++;
+        typingTimer = setTimeout(type, 25);
+      } else {
+        isTyping = false;
+        if (callback) callback();
+      }
+    }
+    type();
+  }
+
+  function onStoryScreenClick() {
+    if (typeof gameStories === 'undefined') return;
+    const story = gameStories[activeStoryId];
+    if (!story) return;
+
+    if (story.type === 'prologue' && prologueStep < 2) {
+      if (isTyping) {
+        if (typingTimer) clearTimeout(typingTimer);
+        isTyping = false;
+        document.getElementById('story-log-box').textContent = activeStoryDialogues[prologueStep === 0 ? 0 : 1].text;
+        prologueStep++;
+      } else {
+        runPrologueLog();
+      }
+      return;
+    } else if (story.type === 'prologue' && prologueStep === 2) {
+      runPrologueLog();
+      return;
+    }
+
+    if (isTyping) {
+      if (typingTimer) clearTimeout(typingTimer);
+      isTyping = false;
+      document.getElementById('story-text').textContent = currentFullText;
+    } else {
+      showNextDialogue();
+    }
+  }
+
+  function skipStory(event) {
+    event.stopPropagation();
+    endStory();
+  }
+
+  function endStory() {
+    if (typingTimer) clearTimeout(typingTimer);
+    document.getElementById('story-overlay').classList.remove('show');
+
+    if (!state.unlockedStories.includes(activeStoryId)) {
+      state.unlockedStories.push(activeStoryId);
+    }
+
+    if (typeof gameStories !== 'undefined') {
+      const story = gameStories[activeStoryId];
+      if (story && story.unlockArchive) {
+        const arch = story.unlockArchive;
+        if (!state.unlockedArchives.some(a => a.id === arch.id)) {
+          state.unlockedArchives.push(arch);
+          showToast(`ARCHIVE UNLOCKED: ${arch.title}`);
+        }
+      }
+    }
+    saveState();
+  }
+
+  // --- ストーリーリスト描画関数（累計レベル  // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
+    // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
+  function renderStoryList() {
+    const list = document.getElementById('story-list-container');
+    list.innerHTML = '';
+
+    if (typeof gameStories === 'undefined') {
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">story.js の読み込みに失敗しているかファイルが存在しません。</div>';
+      return;
+    }
+
+    let unlockedCount = 0;
+
+    for (const [id, story] of Object.entries(gameStories)) {
+      if (id === 'ep_0') continue; // プロローグは除外
+
+      const reqTotalLv = story.reqTotalLevel || 1;
+      const isUnlocked = state.totalLevel >= reqTotalLv;
+
+      if (!isUnlocked) continue;
+
+      unlockedCount++;
+      const item = document.createElement('div');
+      item.className = 'list-item';
+
+      item.innerHTML = `
+        <div class="item-content-click" onclick="startStory('${id}')">
+          <span class="item-text">
+            <b>${story.title}</b><br>
+            <span style="font-size:0.7rem; color:var(--ak-yellow);">
+              通信記録閲覧可能
+            </span>
+          </span>
+        </div>
+        <button class="action-badge-btn" onclick="startStory('${id}')">PLAY</button>
+      `;
+      list.appendChild(item);
+    }
+
+    if (unlockedCount === 0) {
+      const emptyMsg = document.createElement('div');
+      emptyMsg.style.cssText = 'color:var(--text-muted); font-size:0.8rem; padding:10px; text-align:center;';
+      emptyMsg.textContent = '現在、受信している通信記録はありません。レベルを上げて通信を待ちましょう。';
+      list.appendChild(emptyMsg);
+    }
+  }
+
+  // 💡 ここが抜けていたため構文エラーになっていました！
+  // --- ARCHIVE リスト描画関数 ---
+  function renderArchiveList() {
+    const container = document.getElementById('archive-list-container');
+    container.innerHTML = '';
+
+    if (state.unlockedArchives.length === 0) {
+      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">現在解放されている資料はありません。ストーリーを進めてください。</div>';
+      return;
+    }
+
+    state.unlockedArchives.forEach(arch => {
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="item-content-click" onclick="openArchiveModal('${arch.id}')">
+          <span class="item-text"><b>[${arch.category}] ${arch.title}</b></span>
+        </div>
+        <button class="action-badge-btn" onclick="openArchiveModal('${arch.id}')">VIEW</button>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  function openArchiveModal(archId) {
+    const arch = state.unlockedArchives.find(a => a.id === archId);
+    if (!arch) return;
+    document.getElementById('archive-modal-title').textContent = arch.title;
+    document.getElementById('archive-modal-text').textContent = arch.content;
+    document.getElementById('archive-modal').classList.add('show');
+  }
+
+  function closeArchiveModal() {
+    document.getElementById('archive-modal').classList.remove('show');
+  }
+
+  // --- カード・テスト・メモ機能 ---
+  function updateCategoryFilterDropdown() {
+    const select = document.getElementById('card-category-filter');
+    const categories = [...new Set(state.cards.map(c => c.category || '一般'))];
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+
+  function getFilteredCards() {
+    const statusFilter = document.getElementById('card-filter-select').value;
+    const categoryFilter = document.getElementById('card-category-filter').value;
+    return state.cards.filter(card => {
+      let matchStatus = statusFilter === 'ALL' ? true : (statusFilter === '学習中' ? !card.archived : card.archived);
+      let matchCategory = categoryFilter === 'ALL' ? true : (card.category || '一般') === categoryFilter;
+      return matchStatus && matchCategory;
+    });
+  }
+
+  function addCard() {
+    const front = document.getElementById('card-front-input').value.trim();
+    const back = document.getElementById('card-back-input').value.trim();
+    const category = document.getElementById('card-category-input').value.trim() || '一般';
+    if (front && back) {
+      state.cards.push({ id: Date.now(), front, back, category, reviews: 0, archived: false });
+      document.getElementById('card-front-input').value = '';
+      document.getElementById('card-back-input').value = '';
+      saveState();
+      updateCategoryFilterDropdown();
+      renderCards();
+    }
+  }
+
+  function filterCards() { currentCardIndex = 0; renderCards(); }
+
+  function renderCards() {
+    const countLabel = document.getElementById('card-count-label');
+    const displayArea = document.getElementById('card-display-area');
+    const emptyMsg = document.getElementById('card-empty-msg');
+    const registeredList = document.getElementById('card-registered-list');
+    const filtered = getFilteredCards();
+
+    countLabel.textContent = `${filtered.length} CARDS`;
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentCardIndex >= filtered.length) currentCardIndex = 0;
+      updateCardView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.cards.forEach(card => {
+      const item = document.createElement('div');
+      item.className = `list-item ${card.archived ? 'checked' : ''}`;
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
+        <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
+        <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
+      `;
+      registeredList.appendChild(item);
+    });
+  }
+
+  function updateCardView(filtered) {
+    const card = filtered[currentCardIndex];
+    if (!card) return;
+    document.getElementById('card-front-text').textContent = card.front;
+    document.getElementById('card-back-text').textContent = card.back;
+    document.getElementById('card-category-tag').textContent = card.category;
+    document.getElementById('card-review-count').textContent = `REVIEW: ${card.reviews}`;
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('toggle-archive-btn').textContent = card.archived ? '学習中へ戻す' : '覚えたカードへ移動';
+  }
+
+  function flipCard() { document.getElementById('flashcard').classList.toggle('flipped'); }
+
+    // ① 単語カードの判定 (answerCard)
+  function answerCard(isCorrect) {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    const card = filtered[currentCardIndex];
+    card.reviews += 1;
+    if (isCorrect) { addLeaf(5); addXP(1); }
+    currentCardIndex = (currentCardIndex + 1) % filtered.length;
+    
+    // 💡 ここを書き換え
+    const fCard = document.getElementById('flashcard');
+    fCard.classList.add('no-anim');                  // アニメーションを消す
+    fCard.classList.remove('flipped');               // 表面に戻す
+    setTimeout(() => fCard.classList.remove('no-anim'), 50); // 少し経ってからアニメーションを復活
+    
+    saveState();
+    renderCards();
+  }
+
+  // ② 単語カードの移動ボタン (toggleCardArchive)
+  function toggleCardArchive() {
+    const filtered = getFilteredCards();
+    if (filtered.length === 0) return;
+    filtered[currentCardIndex].archived = !filtered[currentCardIndex].archived;
+    
+    // 💡 ここを書き換え
+    const fCard = document.getElementById('flashcard');
+    fCard.classList.add('no-anim');
+    fCard.classList.remove('flipped');
+    setTimeout(() => fCard.classList.remove('no-anim'), 50);
+    
+    saveState();
+    renderCards();
+  }
+
+  function updateTestCategoryFilterDropdown() {
+    const select = document.getElementById('test-category-filter');
+    const categories = [...new Set(state.testProblems.map(tp => tp.category || '一般'))];
+    select.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+    categories.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat;
+      opt.textContent = cat;
+      select.appendChild(opt);
+    });
+  }
+
+  function getFilteredTests() {
+    const statusFilter = document.getElementById('test-filter-select').value;
+    const categoryFilter = document.getElementById('test-category-filter').value;
+    return state.testProblems.filter(tp => {
+      let matchStatus = statusFilter === 'ALL' ? true : (statusFilter === '学習中' ? !tp.archived : tp.archived);
+      let matchCategory = categoryFilter === 'ALL' ? true : (tp.category || '一般') === categoryFilter;
+      return matchStatus && matchCategory;
+    });
+  }
+
+  function addTestProblem() {
+    const q = document.getElementById('test-question-input').value.trim();
+    const a = document.getElementById('test-answer-input').value.trim();
+    const category = document.getElementById('test-category-input').value.trim() || '一般';
+    if (q && a) {
+      state.testProblems.push({ id: Date.now(), question: q, answer: a, category, reviews: 0, archived: false });
+      document.getElementById('test-question-input').value = '';
+      document.getElementById('test-answer-input').value = '';
+      saveState();
+      updateTestCategoryFilterDropdown();
+      renderTests();
+    }
+  }
+
+  function filterTests() { currentTestIndex = 0; renderTests(); }
+
+  function renderTests() {
+    const countLabel = document.getElementById('test-count-label');
+    const displayArea = document.getElementById('test-display-area');
+    const emptyMsg = document.getElementById('test-empty-msg');
+    const registeredList = document.getElementById('test-registered-list');
+    const filtered = getFilteredTests();
+
+    countLabel.textContent = `${filtered.length} TESTS`;
+    if (filtered.length === 0) {
+      displayArea.style.display = 'none';
+      emptyMsg.style.display = 'block';
+    } else {
+      displayArea.style.display = 'flex';
+      emptyMsg.style.display = 'none';
+      if (currentTestIndex >= filtered.length) currentTestIndex = 0;
+      updateTestView(filtered);
+    }
+
+    registeredList.innerHTML = '';
+    state.testProblems.forEach(tp => {
+      const item = document.createElement('div');
+      item.className = `list-item ${tp.archived ? 'checked' : ''}`;
+      item.innerHTML = `
+        <span class="item-text" style="flex:1;">[${tp.category}] ${tp.question}</span>
+        <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
+        <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
+      `;
+      registeredList.appendChild(item);
+    });
+  }
+
+  function updateTestView(filtered) {
+    const tp = filtered[currentTestIndex];
+    if (!tp) return;
+    document.getElementById('test-front-text').textContent = tp.question;
+    document.getElementById('test-back-text').textContent = tp.answer;
+    document.getElementById('test-category-tag').textContent = tp.category;
+    document.getElementById('test-review-count').textContent = `REVIEW: ${tp.reviews}`;
+    document.getElementById('test-flashcard').classList.remove('flipped');
+    document.getElementById('toggle-test-archive-btn').textContent = tp.archived ? '学習中へ戻す' : '覚えたテストへ移動';
+  }
+
+  function flipTestCard() { document.getElementById('test-flashcard').classList.toggle('flipped'); }
+
+  // ③ テストカードの判定 (answerTestCard)
+  function answerTestCard(isPassed) {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+    const tp = filtered[currentTestIndex];
+    tp.reviews += 1;
+    if (isPassed) { addLeaf(10); addXP(2); }
+    currentTestIndex = (currentTestIndex + 1) % filtered.length;
+    
+    // 💡 テストカード用を書き換え
+    const tCard = document.getElementById('test-flashcard');
+    tCard.classList.add('no-anim');
+    tCard.classList.remove('flipped');
+    setTimeout(() => tCard.classList.remove('no-anim'), 50);
+    
+    saveState();
+    renderTests();
+  }
+
+  // ④ テストカードの移動ボタン (toggleTestArchive)
+  function toggleTestArchive() {
+    const filtered = getFilteredTests();
+    if (filtered.length === 0) return;
+    filtered[currentTestIndex].archived = !filtered[currentTestIndex].archived;
+    
+    // 💡 テストカード用を書き換え
+    const tCard = document.getElementById('test-flashcard');
+    tCard.classList.add('no-anim');
+    tCard.classList.remove('flipped');
+    setTimeout(() => tCard.classList.remove('no-anim'), 50);
+    
+    saveState();
+    renderTests();
+  }
+
+
+  // モーダル処理
+  function openCardModal(cardId) {
+    editingCardId = cardId; editingType = 'card';
+    const c = state.cards.find(x => x.id === cardId);
+    if (!c) return;
+    document.getElementById('modal-title-text').textContent = 'EDIT CARD DATA';
+    document.getElementById('modal-card-front').value = c.front;
+    document.getElementById('modal-card-back').value = c.back;
+    document.getElementById('modal-card-category').value = c.category;
+    document.getElementById('card-modal').classList.add('show');
+  }
+  function openTestModal(testId) {
+    editingCardId = testId; editingType = 'test';
+    const tp = state.testProblems.find(x => x.id === testId);
+    if (!tp) return;
+    document.getElementById('modal-title-text').textContent = 'EDIT TEST PROBLEM';
+    document.getElementById('modal-card-front').value = tp.question;
+    document.getElementById('modal-card-back').value = tp.answer;
+    document.getElementById('modal-card-category').value = tp.category;
+    document.getElementById('card-modal').classList.add('show');
+  }
+  function closeCardModal() { document.getElementById('card-modal').classList.remove('show'); }
+  function saveCardModal() {
+    const f = document.getElementById('modal-card-front').value.trim();
+    const b = document.getElementById('modal-card-back').value.trim();
+    const cat = document.getElementById('modal-card-category').value.trim() || '一般';
+    if (editingType === 'card') {
+      const c = state.cards.find(x => x.id === editingCardId);
+      if (c) { c.front = f; c.back = b; c.category = cat; }
+      updateCategoryFilterDropdown(); renderCards();
+    } else {
+      const tp = state.testProblems.find(x => x.id === editingCardId);
+      if (tp) { tp.question = f; tp.answer = b; tp.category = cat; }
+      updateTestCategoryFilterDropdown(); renderTests();
+    }
+    saveState(); closeCardModal();
+  }
+  function deleteCardModal() {
+    if (editingType === 'card') {
+      state.cards = state.cards.filter(x => x.id !== editingCardId);
+      updateCategoryFilterDropdown(); renderCards();
+    } else {
+      state.testProblems = state.testProblems.filter(x => x.id !== editingCardId);
+      updateTestCategoryFilterDropdown(); renderTests();
+    }
+    saveState(); closeCardModal();
+  }
+
+  // メモ、ショップ、データバックアップ
+  function addMemo() {
+    const text = document.getElementById('memo-input').value.trim();
+    if (text) { state.memos.push(`LOG. - 「${text}」`); document.getElementById('memo-input').value = ''; saveState(); renderMemos(); }
+  }
+  function renderMemos() {
+    const list = document.getElementById('memo-list'); list.innerHTML = '';
+    state.memos.forEach((m, idx) => {
+      list.innerHTML += `<div class="list-item"><span class="item-text">${m}</span><button class="action-badge-btn" onclick="state.memos.splice(${idx},1);saveState();renderMemos();">DEL</button></div>`;
+    });
+  }
+  function renderShop() {
+    const list = document.getElementById('shop-item-list'); list.innerHTML = '';
+    shopItems.forEach(item => {
+      list.innerHTML += `<div class="list-item"><div class="item-content-click"><span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span></div><span class="item-reward">${item.price.toLocaleString()} LEAF</span><button class="action-badge-btn" onclick="buyShopItem('${item.id}')">BUY</button></div>`;
+    });
+  }
+  function buyShopItem(id) {
+    const item = shopItems.find(i => i.id === id);
+    if (!item) return;
+    if (state.leaf >= item.price) {
+      state.leaf -= item.price;
+      if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+      saveState(); showToast(`PURCHASED: ${item.name}`);
+    } else { showToast('ERROR: INSUFFICIENT LEAF'); }
+  }
+  function renderInventory() {
+    const c = document.getElementById('inventory-container'); c.innerHTML = '';
+    for (const [name, count] of Object.entries(state.inventory)) {
+      c.innerHTML += `<div class="inventory-chip">${name} x${count}</div>`;
+    }
+  }
+  function exportData() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'sylvarena_backup.json'; a.click();
+  }
+  function importData(e) {
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        state = JSON.parse(evt.target.result);
+        saveState(); location.reload();
+      } catch (err) {
+        showToast('ERROR: INVALID JSON');
+      }
+    };
+    reader.readAsText(e.target.files[0]);
+  }
+
+  // Web Audio API
+  let audioCtx = null, activeNodes = {};
+  function toggleSound(type) {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const btn = document.getElementById(`snd-${type}`);
+    if (activeNodes[type]) {
+      activeNodes[type].stop(); delete activeNodes[type]; btn.classList.remove('active');
+    } else {
+      const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 2, audioCtx.sampleRate);
+      const out = buf.getChannelData(0);
+      for (let i = 0; i < buf.length; i++) out[i] = Math.random() * 2 - 1;
+      const src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const filt = audioCtx.createBiquadFilter(); filt.type = type === 'fire' ? 'bandpass' : 'lowpass'; filt.frequency.value = type === 'fire' ? 800 : 350;
+      const gain = audioCtx.createGain(); gain.gain.value = 0.04;
+      src.connect(filt); filt.connect(gain); gain.connect(audioCtx.destination);
+      src.start(); activeNodes[type] = src; btn.classList.add('active');
+    }
+  }
+</script>
+
+</body>
+</html>
