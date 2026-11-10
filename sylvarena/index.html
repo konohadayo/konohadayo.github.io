@@ -511,7 +511,7 @@
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-        /* 💡 追加：切り替え時のアニメーションを強制オフにするクラス */
+    /* 切り替え時のアニメーションを強制オフにするクラス */
     .test-card.no-anim {
       transition: none !important;
     }
@@ -620,6 +620,7 @@
       padding-right: 8px;
       text-align: right;
     }
+    
     .story-tech-frame::before {
       content: '';
       position: absolute;
@@ -1718,7 +1719,7 @@
 
   function filterCards() { currentCardIndex = 0; renderCards(); }
 
-  function renderCards() {
+    function renderCards() {
     const countLabel = document.getElementById('card-count-label');
     const displayArea = document.getElementById('card-display-area');
     const emptyMsg = document.getElementById('card-empty-msg');
@@ -1736,18 +1737,42 @@
       updateCardView(filtered);
     }
 
+    // 💡 カテゴリーごとにグループ分けしてリストに描画
     registeredList.innerHTML = '';
+    
+    if (state.cards.length === 0) {
+      registeredList.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px; text-align:center;">登録されたカードはありません。</div>';
+      return;
+    }
+
+    // カテゴリーごとにカードを分類する
+    const grouped = {};
     state.cards.forEach(card => {
-      const item = document.createElement('div');
-      item.className = `list-item ${card.archived ? 'checked' : ''}`;
-      item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${card.category}] ${card.front} / ${card.back}</span>
-        <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
-        <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
-      `;
-      registeredList.appendChild(item);
+      const cat = card.category || '一般';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(card);
     });
+
+    // カテゴリーごとに見出しとアイテムを出力
+    for (const [cat, cards] of Object.entries(grouped)) {
+      const catHeader = document.createElement('div');
+      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:8px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;';
+      catHeader.textContent = `■ ${cat} (${cards.length})` ;
+      registeredList.appendChild(catHeader);
+
+      cards.forEach(card => {
+        const item = document.createElement('div');
+        item.className = `list-item ${card.archived ? 'checked' : ''}`;
+        item.innerHTML = `
+          <span class="item-text" style="flex:1;">${card.front} / ${card.back}</span>
+          <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
+          <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
+        `;
+        registeredList.appendChild(item);
+      });
+    }
   }
+
 
   function updateCardView(filtered) {
     const card = filtered[currentCardIndex];
@@ -1835,7 +1860,7 @@
 
   function filterTests() { currentTestIndex = 0; renderTests(); }
 
-  function renderTests() {
+    function renderTests() {
     const countLabel = document.getElementById('test-count-label');
     const displayArea = document.getElementById('test-display-area');
     const emptyMsg = document.getElementById('test-empty-msg');
@@ -1853,18 +1878,40 @@
       updateTestView(filtered);
     }
 
+    // 💡 テストもカテゴリーごとにグループ分けして描画
     registeredList.innerHTML = '';
+
+    if (state.testProblems.length === 0) {
+      registeredList.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px; text-align:center;">登録されたテスト問題はありません。</div>';
+      return;
+    }
+
+    const grouped = {};
     state.testProblems.forEach(tp => {
-      const item = document.createElement('div');
-      item.className = `list-item ${tp.archived ? 'checked' : ''}`;
-      item.innerHTML = `
-        <span class="item-text" style="flex:1;">[${tp.category}] ${tp.question}</span>
-        <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
-        <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
-      `;
-      registeredList.appendChild(item);
+      const cat = tp.category || '一般';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(tp);
     });
+
+    for (const [cat, problems] of Object.entries(grouped)) {
+      const catHeader = document.createElement('div');
+      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:8px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;';
+      catHeader.textContent = `■ ${cat} (${problems.length})`;
+      registeredList.appendChild(catHeader);
+
+      problems.forEach(tp => {
+        const item = document.createElement('div');
+        item.className = `list-item ${tp.archived ? 'checked' : ''}`;
+        item.innerHTML = `
+          <span class="item-text" style="flex:1;">${tp.question}</span>
+          <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
+          <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
+        `;
+        registeredList.appendChild(item);
+      });
+    }
   }
+
 
   function updateTestView(filtered) {
     const tp = filtered[currentTestIndex];
