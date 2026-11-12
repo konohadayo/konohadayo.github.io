@@ -1674,37 +1674,59 @@
     }
   }
 
-  // 💡 ここが抜けていたため構文エラーになっていました！
-  // --- ARCHIVE リスト描画関数 ---
+    // --- ARCHIVE リスト描画関数（常に最新の story.js を参照するように修正） ---
   function renderArchiveList() {
     const container = document.getElementById('archive-list-container');
     container.innerHTML = '';
 
-    if (state.unlockedArchives.length === 0) {
+    // 解放済みのストーリーID一覧をチェック
+    const unlockedStoryIds = state.unlockedStories;
+
+    if (unlockedStoryIds.length === 0 || typeof gameStories === 'undefined') {
       container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">現在解放されている資料はありません。ストーリーを進めてください。</div>';
       return;
     }
 
-    state.unlockedArchives.forEach(arch => {
-      const item = document.createElement('div');
-      item.className = 'list-item';
-      item.innerHTML = `
-        <div class="item-content-click" onclick="openArchiveModal('${arch.id}')">
-          <span class="item-text"><b>[${arch.category}] ${arch.title}</b></span>
-        </div>
-        <button class="action-badge-btn" onclick="openArchiveModal('${arch.id}')">VIEW</button>
-      `;
-      container.appendChild(item);
-    });
+    let hasArchive = false;
+
+    // story.js に定義されている中から、解放済みストーリーのアーカイブを動的に取得する
+    for (const [id, story] of Object.entries(gameStories)) {
+      if (unlockedStoryIds.includes(id) && story.unlockArchive) {
+        hasArchive = true;
+        const arch = story.unlockArchive;
+
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+          <div class="item-content-click" onclick="openArchiveModal('${id}')">
+            <span class="item-text"><b>[${arch.category}] ${arch.title}</b></span>
+          </div>
+          <button class="action-badge-btn" onclick="openArchiveModal('${id}')">VIEW</button>
+        `;
+        container.appendChild(item);
+      }
+    }
+
+    if (!hasArchive) {
+      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:10px;">現在解放されている資料はありません。ストーリーを進めてください。</div>';
+    }
   }
 
-  function openArchiveModal(archId) {
-    const arch = state.unlockedArchives.find(a => a.id === archId);
-    if (!arch) return;
+    // --- アーカイブ閲覧モーダル（story.jsから直接最新文章を読み込む） ---
+  function openArchiveModal(storyId) {
+    if (typeof gameStories === 'undefined') return;
+    const story = gameStories[storyId];
+    if (!story || !story.unlockArchive) return;
+
+    const arch = story.unlockArchive;
     document.getElementById('archive-modal-title').textContent = arch.title;
-    document.getElementById('archive-modal-text').textContent = arch.content;
+    
+    // 💡 色付きタグ（[y], [c], [r] など）にも対応させるため innerHTML を使用
+    document.getElementById('archive-modal-text').innerHTML = parseStoryText(arch.content);
+    
     document.getElementById('archive-modal').classList.add('show');
   }
+
 
   function closeArchiveModal() {
     document.getElementById('archive-modal').classList.remove('show');
