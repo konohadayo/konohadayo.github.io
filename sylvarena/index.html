@@ -1192,6 +1192,10 @@
     unlockedArchives: []
   };
 
+  //ジャンルの折りたたみ状態を保存するオブジェクト
+  let foldedCategories = {};
+
+
   let currentCardIndex = 0;
   let currentTestIndex = 0;
   let editingCardId = null;
@@ -1597,8 +1601,8 @@
     saveState();
   }
 
-  // --- ストーリーリスト描画関数（累計レベル  // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
-    // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
+  // --- ストーリーリスト描画関数 ---
+  // --- ストーリーリスト描画関数（未開放のものを非表示にする完全修正版） ---
   function renderStoryList() {
     const list = document.getElementById('story-list-container');
     list.innerHTML = '';
@@ -1719,7 +1723,7 @@
 
   function filterCards() { currentCardIndex = 0; renderCards(); }
 
-    function renderCards() {
+      function renderCards() {
     const countLabel = document.getElementById('card-count-label');
     const displayArea = document.getElementById('card-display-area');
     const emptyMsg = document.getElementById('card-empty-msg');
@@ -1737,7 +1741,6 @@
       updateCardView(filtered);
     }
 
-    // 💡 カテゴリーごとにグループ分けしてリストに描画
     registeredList.innerHTML = '';
     
     if (state.cards.length === 0) {
@@ -1745,7 +1748,6 @@
       return;
     }
 
-    // カテゴリーごとにカードを分類する
     const grouped = {};
     state.cards.forEach(card => {
       const cat = card.category || '一般';
@@ -1753,25 +1755,37 @@
       grouped[cat].push(card);
     });
 
-    // カテゴリーごとに見出しとアイテムを出力
     for (const [cat, cards] of Object.entries(grouped)) {
+      const isFolded = foldedCategories[cat] || false;
+
+      // 見出し（クリックで開閉）
       const catHeader = document.createElement('div');
-      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:8px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;';
-      catHeader.textContent = `■ ${cat} (${cards.length})` ;
+      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:10px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:3px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;';
+      catHeader.innerHTML = `<span>■ ${cat} (${cards.length})</span><span style="font-size:0.65rem; color:var(--text-muted);">${isFolded ? '▼ OPEN' : '▲ FOLD'}</span>`;
+      
+      // 見出しをクリックしたときの処理
+      catHeader.onclick = () => {
+        foldedCategories[cat] = !isFolded;
+        renderCards();
+      };
       registeredList.appendChild(catHeader);
 
-      cards.forEach(card => {
-        const item = document.createElement('div');
-        item.className = `list-item ${card.archived ? 'checked' : ''}`;
-        item.innerHTML = `
-          <span class="item-text" style="flex:1;">${card.front} / ${card.back}</span>
-          <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
-          <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
-        `;
-        registeredList.appendChild(item);
-      });
+      // 折りたたまれていなければ中のリストを表示
+      if (!isFolded) {
+        cards.forEach(card => {
+          const item = document.createElement('div');
+          item.className = `list-item ${card.archived ? 'checked' : ''}`;
+          item.innerHTML = `
+            <span class="item-text" style="flex:1;">${card.front} / ${card.back}</span>
+            <span class="item-reward" style="margin-right:6px;">REV: ${card.reviews}</span>
+            <button class="action-badge-btn" onclick="openCardModal(${card.id})">EDIT</button>
+          `;
+          registeredList.appendChild(item);
+        });
+      }
     }
   }
+
 
 
   function updateCardView(filtered) {
@@ -1860,7 +1874,7 @@
 
   function filterTests() { currentTestIndex = 0; renderTests(); }
 
-    function renderTests() {
+      function renderTests() {
     const countLabel = document.getElementById('test-count-label');
     const displayArea = document.getElementById('test-display-area');
     const emptyMsg = document.getElementById('test-empty-msg');
@@ -1878,7 +1892,6 @@
       updateTestView(filtered);
     }
 
-    // 💡 テストもカテゴリーごとにグループ分けして描画
     registeredList.innerHTML = '';
 
     if (state.testProblems.length === 0) {
@@ -1894,23 +1907,33 @@
     });
 
     for (const [cat, problems] of Object.entries(grouped)) {
+      const isFolded = foldedCategories['test_' + cat] || false;
+
       const catHeader = document.createElement('div');
-      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:8px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:2px;';
-      catHeader.textContent = `■ ${cat} (${problems.length})`;
+      catHeader.style.cssText = 'font-family:var(--font-tech); font-size:0.75rem; color:var(--ak-yellow); margin-top:10px; margin-bottom:4px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:3px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;';
+      catHeader.innerHTML = `<span>■ ${cat} (${problems.length})</span><span style="font-size:0.65rem; color:var(--text-muted);">${isFolded ? '▼ OPEN' : '▲ FOLD'}</span>`;
+      
+      catHeader.onclick = () => {
+        foldedCategories['test_' + cat] = !isFolded;
+        renderTests();
+      };
       registeredList.appendChild(catHeader);
 
-      problems.forEach(tp => {
-        const item = document.createElement('div');
-        item.className = `list-item ${tp.archived ? 'checked' : ''}`;
-        item.innerHTML = `
-          <span class="item-text" style="flex:1;">${tp.question}</span>
-          <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
-          <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
-        `;
-        registeredList.appendChild(item);
-      });
+      if (!isFolded) {
+        problems.forEach(tp => {
+          const item = document.createElement('div');
+          item.className = `list-item ${tp.archived ? 'checked' : ''}`;
+          item.innerHTML = `
+            <span class="item-text" style="flex:1;">${tp.question}</span>
+            <span class="item-reward" style="margin-right:6px;">REV: ${tp.reviews}</span>
+            <button class="action-badge-btn" onclick="openTestModal(${tp.id})">EDIT</button>
+          `;
+          registeredList.appendChild(item);
+        });
+      }
     }
   }
+
 
 
   function updateTestView(filtered) {
