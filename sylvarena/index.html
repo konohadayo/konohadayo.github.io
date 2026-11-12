@@ -1526,18 +1526,42 @@
     typeWriterEffect(textStr, textEl, null);
   }
 
-  function typeWriterEffect(text, element, callback) {
+    // 💡 独自タグをHTMLの色付きタグに変換する関数
+  function parseStoryText(rawText) {
+    return rawText
+      .replace(/\[y\](.*?)\[\/y\]/g, '<span style="color: var(--ak-yellow); font-weight: bold;">$1</span>') // 黄色（端末カラー）
+      .replace(/\[c\](.*?)\[\/c\]/g, '<span style="color: var(--ak-cyan); font-weight: bold;">$1</span>')   // シアン（水色）
+      .replace(/\[r\](.*?)\[\/r\]/g, '<span style="color: var(--ak-red); font-weight: bold;">$1</span>')    // 赤色（警告・重要）
+      .replace(/\[b\](.*?)\[\/b\]/g, '<strong style="font-weight: bold; text-decoration: underline;">$1</strong>'); // 太字＋下線
+  }
+
+  // 💡 HTMLタグ対応版のタイプライター演出
+  function typeWriterEffect(rawText, element, callback) {
     if (typingTimer) clearTimeout(typingTimer);
     isTyping = true;
-    currentFullText = text;
-    element.textContent = "";
+    const htmlText = parseStoryText(rawText);
+    currentFullText = htmlText;
+    element.innerHTML = "";
+    
     let i = 0;
+    let isTag = false;
+    let currentStr = "";
 
     function type() {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
+      if (i < htmlText.length) {
+        const char = htmlText.charAt(i);
+        currentStr += char;
+        if (char === '<') isTag = true;
+        if (char === '>') isTag = false;
+        
         i++;
-        typingTimer = setTimeout(type, 25);
+        // タグの途中は待たずに一気に読み込むことでタグ崩れを防ぐ
+        if (isTag) {
+          type();
+        } else {
+          element.innerHTML = currentStr;
+          typingTimer = setTimeout(type, 25);
+        }
       } else {
         isTyping = false;
         if (callback) callback();
@@ -1546,6 +1570,7 @@
     type();
   }
 
+  // 💡 画面タップ時のスキップ（早送り）処理も innerHTML に対応させる
   function onStoryScreenClick() {
     if (typeof gameStories === 'undefined') return;
     const story = gameStories[activeStoryId];
@@ -1555,7 +1580,7 @@
       if (isTyping) {
         if (typingTimer) clearTimeout(typingTimer);
         isTyping = false;
-        document.getElementById('story-log-box').textContent = activeStoryDialogues[prologueStep === 0 ? 0 : 1].text;
+        document.getElementById('story-log-box').innerHTML = parseStoryText(activeStoryDialogues[prologueStep === 0 ? 0 : 1].text);
         prologueStep++;
       } else {
         runPrologueLog();
@@ -1569,11 +1594,12 @@
     if (isTyping) {
       if (typingTimer) clearTimeout(typingTimer);
       isTyping = false;
-      document.getElementById('story-text').textContent = currentFullText;
+      document.getElementById('story-text').innerHTML = currentFullText;
     } else {
       showNextDialogue();
     }
   }
+
 
   function skipStory(event) {
     event.stopPropagation();
