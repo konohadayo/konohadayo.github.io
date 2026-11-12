@@ -1529,9 +1529,9 @@
     // 💡 独自タグをHTMLの色付きタグに変換する関数
   function parseStoryText(rawText) {
     return rawText
-      .replace(/\[y\](.*?)\[\/y\]/g, '<span style="color: var(--ak-yellow); font-weight: bold;">$1</span>') // 黄色（端末カラー）
-      .replace(/\[c\](.*?)\[\/c\]/g, '<span style="color: var(--ak-cyan); font-weight: bold;">$1</span>')   // シアン（水色）
-      .replace(/\[r\](.*?)\[\/r\]/g, '<span style="color: var(--ak-red); font-weight: bold;">$1</span>')    // 赤色（警告・重要）
+      .replace(/\[y\](.*?)\[\/y\]/g, '<span style="color: var(--ak-yellow);">$1</span>') // 黄色（端末カラー）
+      .replace(/\[c\](.*?)\[\/c\]/g, '<span style="color: var(--ak-cyan);">$1</span>')   // シアン（水色）
+      .replace(/\[r\](.*?)\[\/r\]/g, '<span style="color: var(--ak-red);">$1</span>')    // 赤色（警告・重要）
       .replace(/\[b\](.*?)\[\/b\]/g, '<strong style="font-weight: bold; text-decoration: underline;">$1</strong>'); // 太字＋下線
   }
 
