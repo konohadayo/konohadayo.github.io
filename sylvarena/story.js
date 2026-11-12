@@ -10,9 +10,9 @@ const gameStories = {
       { speaker: "SYSTEM", text: "\n\nUSER SESSION\n\nNEW USER DETECTED.\n\nINITIALIZING USER PROFILE..." },
       { speaker: "???", text: "通信状態を確認しています……" },
       { speaker: "???", text: "……接続を確認しました。\n……初回、接続、ですね。\nこの端末の利用は初めてでしょうか。" },
-      { speaker: "Se", text: "……私はSe。この世界を巡る旅をしている、ちょっとした記録者です。"},
+      { speaker: "Se", text: "……私は[y]Se[/y]。この世界を巡る旅をしている、ちょっとした記録者です。"},
       { speaker: "Se", text: "私の方から端末の基本機能についてご案内することができますが……「習うより慣れろ」、先ずは触ってみることをおすすめします。"},
-      { speaker: "Se", text: "また何かありましたらご連絡いたします。そうですね────そちらでLv.5になる頃には、次の目的地に着きますので、またその時に。それでは。" }
+      { speaker: "Se", text: "また何かありましたらご連絡いたします。そうですね────そちらで[y]Lv.5[/y]になる頃には、次の目的地に着きますので、またその時に。それでは。" }
     ],
     unlockArchive: null
   },
