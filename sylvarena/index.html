@@ -1371,10 +1371,10 @@
           timeLeft = 25 * 60;
           btn.textContent = 'START MISSION';
           
-          addXP(50);
-          addLeaf(500);
+          addXP(250);
+          addLeaf(1500);
           state.focusMinutes += 25;
-          showToast('MISSION ACCOMPLISHED (+500 LEAF / +50 XP)');
+          showToast('MISSION ACCOMPLISHED (+1500 LEAF / +250 XP)');
           saveState();
         }
       }, 1000);
@@ -1773,7 +1773,7 @@
 
   function filterCards() { currentCardIndex = 0; renderCards(); }
 
-      function renderCards() {
+  function renderCards() {
     const countLabel = document.getElementById('card-count-label');
     const displayArea = document.getElementById('card-display-area');
     const emptyMsg = document.getElementById('card-empty-msg');
@@ -1924,7 +1924,7 @@
 
   function filterTests() { currentTestIndex = 0; renderTests(); }
 
-      function renderTests() {
+  function renderTests() {
     const countLabel = document.getElementById('test-count-label');
     const displayArea = document.getElementById('test-display-area');
     const emptyMsg = document.getElementById('test-empty-msg');
