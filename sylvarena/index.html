@@ -836,14 +836,21 @@
     </div>
   </header>
 
-  <!-- タイマーセクション -->
+    <!-- タイマーセクション -->
   <section class="mission-card">
     <div class="timer-display" id="timer-display">25:00</div>
     <div class="ak-btn-group">
       <button class="ak-btn ak-btn-primary" id="timer-btn" onclick="toggleTimer()">START MISSION</button>
       <button class="ak-btn" onclick="resetTimer()">RESET</button>
     </div>
+
+    <!-- 💡 追加：後から時間を手動入力して反映するエリア -->
+    <div style="display:flex; gap:6px; width:100%; margin-top:6px; border-top:1px solid var(--border-color); padding-top:10px;">
+      <input type="number" id="manual-min-input" class="ak-input" placeholder="分数 (例: 30)" style="flex:1; font-size:0.8rem; padding:6px 8px;">
+      <button class="ak-btn" onclick="addManualTime()" style="font-size:0.75rem; white-space:nowrap; padding:6px 10px;">手動で追加</button>
+    </div>
   </section>
+
 
   <!-- サウンド機能 -->
   <section class="section-panel">
@@ -1388,6 +1395,32 @@
     document.getElementById('timer-btn').textContent = 'START MISSION';
     updateTimerDisplay();
   }
+
+    // 💡 外部で測っていた時間を手動で追加する関数
+  function addManualTime() {
+    const inputEl = document.getElementById('manual-min-input');
+    const mins = parseInt(inputEl.value);
+
+    if (isNaN(mins) || mins <= 0) {
+      showToast('ERROR: 有効な分数を入力してください');
+      return;
+    }
+
+    // フォーカス時間に加算
+    state.focusMinutes += mins;
+
+    // 1分あたり換算でXPとLEAFも少しボーナス付与（25分で50XP/500LEAFの比率に合わせる場合）
+    const earnedXp = Math.floor(mins * 2);
+    const earnedLeaf = mins * 20;
+
+    addXP(earnedXp);
+    addLeaf(earnedLeaf);
+
+    inputEl.value = ''; // 入力欄をクリア
+    showToast(`MANUAL LOG: +${mins}分記録しました (+${earnedLeaf} LEAF / +${earnedXp} XP)`);
+    saveState();
+  }
+
 
   function updateTimerDisplay() {
     const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
