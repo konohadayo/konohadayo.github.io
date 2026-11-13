@@ -961,20 +961,22 @@
       </div>
     </div>
 
-    <div class="section-panel">
+        <div class="section-panel">
       <div class="section-title">CARD REGISTERED LIST</div>
       <div class="item-list" id="card-registered-list"></div>
     </div>
-  </div>
 
-  <div class="section-panel">
+    <!-- 💡 IMPORT CARDS を #tab-cards の「中」に移動 -->
+    <div class="section-panel">
       <div class="section-title">IMPORT CARDS (JSON)</div>
       <div class="input-group">
-        <div style="font-size:0.7rem; color:var(--text-muted);">外部ファイルから単語カードのデータのみをインポートします。</div>
+        <div style="font-size:0.7rem; color:var(--text-muted);">外部ファイルから単語カードのデータのみをインポートします（REVは0に初期化されます）。</div>
         <button class="ak-btn" onclick="document.getElementById('import-cards-file').click()">SELECT CARDS JSON</button>
         <input type="file" id="import-cards-file" accept=".json" onchange="importCardsOnly(event)">
       </div>
     </div>
+  </div> <!-- ← ここで #tab-cards を閉じる -->
+
 
   <!-- タブ3: TEST -->
   <div id="tab-test" class="tab-content">
@@ -1044,20 +1046,22 @@
       </div>
     </div>
 
-    <div class="section-panel">
+        <div class="section-panel">
       <div class="section-title">TEST PROBLEMS LIST</div>
       <div class="item-list" id="test-registered-list"></div>
     </div>
-  </div>
 
-      <div class="section-panel">
+    <!-- 💡 IMPORT TESTS を #tab-test の「中」に移動 -->
+    <div class="section-panel">
       <div class="section-title">IMPORT TESTS (JSON)</div>
       <div class="input-group">
-        <div style="font-size:0.7rem; color:var(--text-muted);">外部ファイルからテスト問題のデータのみをインポートします。</div>
+        <div style="font-size:0.7rem; color:var(--text-muted);">外部ファイルからテスト問題のデータのみをインポートします（REVは0に初期化されます）。</div>
         <button class="ak-btn" onclick="document.getElementById('import-tests-file').click()">SELECT TESTS JSON</button>
         <input type="file" id="import-tests-file" accept=".json" onchange="importTestsOnly(event)">
       </div>
     </div>
+  </div> <!-- ← ここで #tab-test を閉じる -->
+
 
 
   <!-- タブ4: STORY -->
@@ -1124,17 +1128,25 @@
       </div>
     </div>
 
-    <div class="section-panel">
+        <div class="section-panel">
       <div class="section-title">DATA MANAGEMENT</div>
       <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
-        アプリの全データを保存・復元できます。
+        アプリの全データ、またはカード・テスト個別のデータを保存・復元できます。
       </div>
       <div class="ak-btn-group" style="flex-direction:column;">
-        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT DATA (JSON)</button>
-        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT DATA (JSON)</button>
+        <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT ALL DATA (JSON)</button>
+        <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT ALL DATA (JSON)</button>
+        
+        <!-- 💡 追加：SYSTEMタブからもカード・テストを個別インポート -->
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <button class="ak-btn" style="flex:1; font-size:0.75rem;" onclick="document.getElementById('import-cards-file').click()">IMPORT CARDS</button>
+          <button class="ak-btn" style="flex:1; font-size:0.75rem;" onclick="document.getElementById('import-tests-file').click()">IMPORT TESTS</button>
+        </div>
+
         <input type="file" id="import-file" accept=".json" onchange="importData(event)">
       </div>
     </div>
+
   </div>
 
 </div>
@@ -2185,33 +2197,42 @@
     reader.readAsText(e.target.files[0]);
   }
 
-    // 💡 単語カードデータのみをインポートする関数
+    // 💡 単語カードデータのみをインポートする関数（REVと完了状態を自動リセット）
   function importCardsOnly(e) {
+    if (!e.target.files[0]) return;
     const reader = new FileReader();
     reader.onload = function(evt) {
       try {
         const imported = JSON.parse(evt.target.result);
-        // 配列データ、または cards プロパティを持つオブジェクトに対応
-        const newCards = Array.isArray(imported) ? imported : (imported.cards || []);
+        const rawCards = Array.isArray(imported) ? imported : (imported.cards || []);
 
-        if (newCards.length === 0) {
+        if (rawCards.length === 0) {
           showToast('ERROR: 有効なカードデータが見つかりません');
           return;
         }
 
-        // 既存のカードに追加するか確認
-        const overwrite = confirm(`読み込み成功: ${newCards.length}件のカードが見つました。\n\n【OK】既存のカードに「追加」する\n【キャンセル】既存を消して「上書き」する`);
+        // 💡 REV(reviews)を0に、archivedをfalseに初期化し、IDも新しく割り当て直す
+        const cleanedCards = rawCards.map((c, idx) => ({
+          id: Date.now() + idx,
+          front: c.front || '',
+          back: c.back || '',
+          category: c.category || '一般',
+          reviews: 0,
+          archived: false
+        }));
+
+        const overwrite = confirm(`読み込み成功: ${cleanedCards.length}件のカードが見つかりました。\n（※復習回数REVと習得状態はすべてリセットされます）\n\n【OK】既存のカードに「追加」する\n【キャンセル】既存を消して「上書き」する`);
 
         if (overwrite) {
-          state.cards = state.cards.concat(newCards);
+          state.cards = state.cards.concat(cleanedCards);
         } else {
-          state.cards = newCards;
+          state.cards = cleanedCards;
         }
 
         saveState();
         updateCategoryFilterDropdown();
         renderCards();
-        showToast(`SUCCESS: ${newCards.length}件のカードを読み込みました`);
+        showToast(`SUCCESS: ${cleanedCards.length}件のカードを初期状態で読み込みました`);
       } catch (err) {
         showToast('ERROR: JSONファイルの読み込みに失敗しました');
       }
@@ -2220,31 +2241,42 @@
     reader.readAsText(e.target.files[0]);
   }
 
-  // 💡 テスト問題データのみをインポートする関数
+  // 💡 テスト問題データのみをインポートする関数（REVと完了状態を自動リセット）
   function importTestsOnly(e) {
+    if (!e.target.files[0]) return;
     const reader = new FileReader();
     reader.onload = function(evt) {
       try {
         const imported = JSON.parse(evt.target.result);
-        const newTests = Array.isArray(imported) ? imported : (imported.testProblems || []);
+        const rawTests = Array.isArray(imported) ? imported : (imported.testProblems || []);
 
-        if (newTests.length === 0) {
+        if (rawTests.length === 0) {
           showToast('ERROR: 有効なテストデータが見つかりません');
           return;
         }
 
-        const overwrite = confirm(`読み込み成功: ${newTests.length}件のテストが見つかりました。\n\n【OK】既存のテストに「追加」する\n【キャンセル】既存を消して「上書き」する`);
+        // 💡 REV(reviews)を0に、archivedをfalseに初期化し、IDも新しく割り当て直す
+        const cleanedTests = rawTests.map((tp, idx) => ({
+          id: Date.now() + idx,
+          question: tp.question || '',
+          answer: tp.answer || '',
+          category: tp.category || '一般',
+          reviews: 0,
+          archived: false
+        }));
+
+        const overwrite = confirm(`読み込み成功: ${cleanedTests.length}件のテストが見つかりました。\n（※復習回数REVと習得状態はすべてリセットされます）\n\n【OK】既存のテストに「追加」する\n【キャンセル】既存を消して「上書き」する`);
 
         if (overwrite) {
-          state.testProblems = state.testProblems.concat(newTests);
+          state.testProblems = state.testProblems.concat(cleanedTests);
         } else {
-          state.testProblems = newTests;
+          state.testProblems = cleanedTests;
         }
 
         saveState();
         updateTestCategoryFilterDropdown();
         renderTests();
-        showToast(`SUCCESS: ${newTests.length}件のテストを読み込みました`);
+        showToast(`SUCCESS: ${cleanedTests.length}件のテストを初期状態で読み込みました`);
       } catch (err) {
         showToast('ERROR: JSONファイルの読み込みに失敗しました');
       }
@@ -2252,6 +2284,7 @@
     };
     reader.readAsText(e.target.files[0]);
   }
+
 
 
   // Web Audio API
