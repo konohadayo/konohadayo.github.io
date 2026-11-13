@@ -966,7 +966,21 @@
       <div class="item-list" id="card-registered-list"></div>
     </div>
 
-    <!-- 💡 IMPORT CARDS を #tab-cards の「中」に移動 -->
+        <!-- 💡 先にエクスポート（上） -->
+    <div class="section-panel">
+      <div class="section-title">EXPORT CARDS (JSON)</div>
+      <div class="input-group">
+        <div style="font-size:0.7rem; color:var(--text-muted);">特定のジャンル、またはすべてのカードをエクスポートします。</div>
+        <div style="display:flex; gap:6px;">
+          <select id="export-card-category-select" class="ak-select" style="font-size:0.75rem; padding:4px;">
+            <option value="ALL">すべてのジャンル</option>
+          </select>
+          <button class="ak-btn ak-btn-primary" onclick="exportCardsByCategory()" style="white-space:nowrap; font-size:0.75rem;">EXPORT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 💡 後からインポート（下） -->
     <div class="section-panel">
       <div class="section-title">IMPORT CARDS (JSON)</div>
       <div class="input-group">
@@ -975,7 +989,7 @@
         <input type="file" id="import-cards-file" accept=".json" onchange="importCardsOnly(event)">
       </div>
     </div>
-  </div> <!-- ← ここで #tab-cards を閉じる -->
+
 
 
   <!-- タブ3: TEST -->
@@ -1051,7 +1065,21 @@
       <div class="item-list" id="test-registered-list"></div>
     </div>
 
-    <!-- 💡 IMPORT TESTS を #tab-test の「中」に移動 -->
+        <!-- 💡 先にエクスポート（上） -->
+    <div class="section-panel">
+      <div class="section-title">EXPORT TESTS (JSON)</div>
+      <div class="input-group">
+        <div style="font-size:0.7rem; color:var(--text-muted);">特定のジャンル、またはすべてのテスト問題をエクスポートします。</div>
+        <div style="display:flex; gap:6px;">
+          <select id="export-test-category-select" class="ak-select" style="font-size:0.75rem; padding:4px;">
+            <option value="ALL">すべてのジャンル</option>
+          </select>
+          <button class="ak-btn ak-btn-primary" onclick="exportTestsByCategory()" style="white-space:nowrap; font-size:0.75rem;">EXPORT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 💡 後からインポート（下） -->
     <div class="section-panel">
       <div class="section-title">IMPORT TESTS (JSON)</div>
       <div class="input-group">
@@ -1060,7 +1088,7 @@
         <input type="file" id="import-tests-file" accept=".json" onchange="importTestsOnly(event)">
       </div>
     </div>
-  </div> <!-- ← ここで #tab-test を閉じる -->
+
 
 
 
@@ -1809,6 +1837,7 @@
       opt.textContent = cat;
       select.appendChild(opt);
     });
+    updateExportCategoryDropdowns();
   }
 
   function getFilteredCards() {
@@ -1960,6 +1989,7 @@
       opt.textContent = cat;
       select.appendChild(opt);
     });
+    updateExportCategoryDropdowns();
   }
 
   function getFilteredTests() {
@@ -2197,6 +2227,94 @@
     reader.readAsText(e.target.files[0]);
   }
 
+    // 💡 エクスポート用のジャンル選択プルダウンを更新する関数
+  function updateExportCategoryDropdowns() {
+    // カード用
+    const cardSelect = document.getElementById('export-card-category-select');
+    if (cardSelect) {
+      const cardCategories = [...new Set(state.cards.map(c => c.category || '一般'))];
+      cardSelect.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+      cardCategories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        cardSelect.appendChild(opt);
+      });
+    }
+
+    // テスト用
+    const testSelect = document.getElementById('export-test-category-select');
+    if (testSelect) {
+      const testCategories = [...new Set(state.testProblems.map(tp => tp.category || '一般'))];
+      testSelect.innerHTML = '<option value="ALL">すべてのジャンル</option>';
+      testCategories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        testSelect.appendChild(opt);
+      });
+    }
+  }
+
+  // 💡 単語カードをジャンル別にエクスポート（書き出し）する関数
+  function exportCardsByCategory() {
+    const selectedCat = document.getElementById('export-card-category-select').value;
+    
+    // 選択されたジャンルで絞り込む（「すべて」なら全部）
+    const targetCards = selectedCat === 'ALL' 
+      ? state.cards 
+      : state.cards.filter(c => (c.category || 'general') === selectedCat);
+
+    if (targetCards.length === 0) {
+      showToast('ERROR: エクスポートするカードがありません');
+      return;
+    }
+
+    // 他の人に配る用なので、REVやarchivedを綺麗にリセットした状態で書き出す
+    const exportDataClean = targetCards.map(c => ({
+      front: c.front,
+      back: c.back,
+      category: c.category || '一般'
+    }));
+
+    const blob = new Blob([JSON.stringify(exportDataClean, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sylvarena_cards_${selectedCat}.json`;
+    a.click();
+    showToast(`SUCCESS: ${targetCards.length}件のカードを書き出しました`);
+  }
+
+  // 💡 テスト問題をジャンル別にエクスポート（書き出し）する関数
+  function exportTestsByCategory() {
+    const selectedCat = document.getElementById('export-test-category-select').value;
+    
+    const targetTests = selectedCat === 'ALL' 
+      ? state.testProblems 
+      : state.testProblems.filter(tp => (tp.category || 'general') === selectedCat);
+
+    if (targetTests.length === 0) {
+      showToast('ERROR: エクスポートするテストがありません');
+      return;
+    }
+
+    const exportDataClean = targetTests.map(tp => ({
+      question: tp.question,
+      answer: tp.answer,
+      category: tp.category || '一般'
+    }));
+
+    const blob = new Blob([JSON.stringify(exportDataClean, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sylvarena_tests_${selectedCat}.json`;
+    a.click();
+    showToast(`SUCCESS: ${targetTests.length}件のテストを書き出しました`);
+  }
+
+
     // 💡 単語カードデータのみをインポートする関数（REVと完了状態を自動リセット）
   function importCardsOnly(e) {
     if (!e.target.files[0]) return;
@@ -2284,8 +2402,6 @@
     };
     reader.readAsText(e.target.files[0]);
   }
-
-
 
   // Web Audio API
   let audioCtx = null, activeNodes = {};
