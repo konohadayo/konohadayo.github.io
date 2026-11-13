@@ -1,0 +1,1775 @@
+{
+  "leaf": 1200,
+  "xp": 30,
+  "totalLevel": 1,
+  "focusMinutes": 0,
+  "lastDate": "Fri Nov 13 2026",
+  "inventory": {
+    "HERB TEA SET": 1
+  },
+  "unlockedThemes": [
+    "yellow"
+  ],
+  "currentTheme": "yellow",
+  "cards": [
+    {
+      "id": 1793438253162,
+      "front": "immortality",
+      "back": "不死，不滅",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881735869,
+      "front": "researcher",
+      "back": "研究者",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881754288,
+      "front": "argue",
+      "back": "…だと主張する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881793696,
+      "front": "everlasting",
+      "back": "永遠の，永久に続く",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881814166,
+      "front": "unlikely",
+      "back": "ありそうもない",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881836882,
+      "front": "factor",
+      "back": "要因，要素",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881868165,
+      "front": "activate",
+      "back": "…を活性化する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881903009,
+      "front": "longevity",
+      "back": "長寿，寿命",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881919349,
+      "front": "calorie",
+      "back": "カロリー",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881939038,
+      "front": "intake",
+      "back": "摂取(量)",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881956430,
+      "front": "cell",
+      "back": "細胞",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881973867,
+      "front": "recover",
+      "back": "回復する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793881992405,
+      "front": "extend",
+      "back": "…を延ばす",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882014223,
+      "front": "span",
+      "back": "期間，長さ",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882036290,
+      "front": "retire",
+      "back": "退職する，引退する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882059878,
+      "front": "centenarian",
+      "back": "100歳の",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882160301,
+      "front": "tunnel",
+      "back": "トンネル",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882173935,
+      "front": "novel",
+      "back": "小説",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882222059,
+      "front": "Edward George Seidensticker",
+      "back": "エドワード・ジョージ・サイデンステッカー",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882242130,
+      "front": "scholar",
+      "back": "学者",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882257019,
+      "front": "literature",
+      "back": "文学",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882280403,
+      "front": "explicit",
+      "back": "明確な，明白な",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882302237,
+      "front": "scenery",
+      "back": "風景，景色",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882319447,
+      "front": "objectively",
+      "back": "客観的に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882343395,
+      "front": "subjectively",
+      "back": "主観的に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882356737,
+      "front": "observe",
+      "back": "…に気づく",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882386098,
+      "front": "compared with …",
+      "back": "…と比べて",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793882407096,
+      "front": "compare A with B",
+      "back": "AをBと比較する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928039519,
+      "front": "but",
+      "back": "しかし",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928089659,
+      "front": "however",
+      "back": "しかしながら",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928138371,
+      "front": "nevertheless",
+      "back": "それにもかかわらず",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928205374,
+      "front": "on the other hand",
+      "back": "他方",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928282684,
+      "front": "in contrast",
+      "back": "対照的に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928315641,
+      "front": "on the contrary",
+      "back": "それどころか",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928405514,
+      "front": "though",
+      "back": "だけれども",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928524254,
+      "front": "while",
+      "back": "〜の一方で（並列、軽い対比）",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928546850,
+      "front": "whereas",
+      "back": "〜に対して（明確な対比）",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928856942,
+      "front": "orphanage",
+      "back": "孤児院",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928875091,
+      "front": "miserable",
+      "back": "不幸な",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928899391,
+      "front": "aware",
+      "back": "…を知っている，…に気づいている",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928914367,
+      "front": "entrepreneur",
+      "back": "起業家",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928936418,
+      "front": "pursue",
+      "back": "…を追い求める",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928953878,
+      "front": "distinguished",
+      "back": "優れた，有名な",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928968905,
+      "front": "talented",
+      "back": "才能のある，有能な",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793928990912,
+      "front": "conscious",
+      "back": "自覚している，意識している",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929010624,
+      "front": "be aware of …",
+      "back": "…に気づく",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929033758,
+      "front": "be conscious of …",
+      "back": "…を自覚している",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929051380,
+      "front": "in need",
+      "back": "困っている",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929062588,
+      "front": "virtual",
+      "back": "仮想の",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929083073,
+      "front": "mounted",
+      "back": "…に固定した，…に取り付けた",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929103693,
+      "front": "goggle",
+      "back": "ゴーグル",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929121180,
+      "front": "dive",
+      "back": "飛び込む，潜る",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929190246,
+      "front": "heroine",
+      "back": "ヒロイン",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929213496,
+      "front": "apply",
+      "back": "…を応用する，…を利用する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929227700,
+      "front": "surgeon",
+      "back": "外科医",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929247235,
+      "front": "rehearse",
+      "back": "…を練習する，…のリハーサルをする",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929262766,
+      "front": "complex",
+      "back": "複雑な",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929279707,
+      "front": "operation",
+      "back": "手術",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929299869,
+      "front": "globe",
+      "back": "(the ~ ) 世界，地球",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929313065,
+      "front": "dive into …",
+      "back": "…に飛び込む",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929329207,
+      "front": "in addition to …",
+      "back": "…に加えて",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929343915,
+      "front": "apply A to B",
+      "back": "AをBに応用する",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929364316,
+      "front": "prepare against …",
+      "back": "…に備える",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793929382571,
+      "front": "keep on ~ing",
+      "back": "…し続ける",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931125659,
+      "front": "first",
+      "back": "第一に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931150104,
+      "front": "first of all",
+      "back": "まず第一に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931189693,
+      "front": "to begin with",
+      "back": "初めに",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931215421,
+      "front": "next",
+      "back": "次に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931287928,
+      "front": "second",
+      "back": "第二に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931305738,
+      "front": "third",
+      "back": "第三に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    },
+    {
+      "id": 1793931314988,
+      "front": "lastly",
+      "back": "最後に",
+      "category": "英語CII",
+      "reviews": 11,
+      "archived": false
+    }
+  ],
+  "testProblems": [
+    {
+      "id": 1793624755151,
+      "question": "This course is ideal for [ students ] (         ) want to improve their English skills.  \n（このコースは、英語力を高めたい生徒にとって理想的です。）",
+      "answer": "who / [that]\n\nThis course is ideal for [ students ] ( who ) want to improve their English skills.  \n（このコースは、英語力を高めたい生徒にとって理想的です。）",
+      "reviews": 12,
+      "archived": true,
+      "category": "英語表現BII"
+    },
+    {
+      "id": 1793624855161,
+      "question": "[ The ] [ woman ]  (        ) we met yesterday invited us to lunch.  \n（昨日会った女性が、私たちを昼食に招待してくれました。）",
+      "answer": "who / [that]\n\n[ The ] [ woman ]  ( who ) we met yesterday invited us to lunch.  \n（昨日会った女性が、私たちを昼食に招待してくれました。）",
+      "reviews": 12,
+      "archived": true,
+      "category": "英語表現BII"
+    },
+    {
+      "id": 1793625307890,
+      "question": "Have you read [ the ] [ book ] (          ) I gave you the other day?  \n（先日あなたにあげた本を読みましたか？）",
+      "answer": "that / [which]\n\nHave you read [ the ] [ book ] ( that ) I gave you the other day?  \n（先日あなたにあげた本を読みましたか？）",
+      "reviews": 12,
+      "archived": true,
+      "category": "英語表現BII"
+    },
+    {
+      "id": 1793625390687,
+      "question": "She is [ a ] [ famous ] [ writer ] (            ) books have been translated into many languages.  \n（彼女は、著書が多くの言語に翻訳されている有名な作家です。）",
+      "answer": "whose\n\nShe is [ a ] [ famous ] [ writer ] ( whose ) books have been translated into many languages.  \n（彼女は、著書が多くの言語に翻訳されている有名な作家です。）",
+      "reviews": 12,
+      "archived": true,
+      "category": "英語表現BII"
+    },
+    {
+      "id": 1793625442608,
+      "question": "You are responsible for (           ) you say.  \n（あなたは自分の言うことに責任があるのです。）",
+      "answer": "what\n\nYou are responsible for ( what ) you say.  \n（あなたは自分の言うことに責任があるのです。）",
+      "reviews": 12,
+      "archived": true,
+      "category": "英語表現BII"
+    },
+    {
+      "id": 1793691250129,
+      "question": "Is there [ any ] [ store ] (            )  I can get a used camera?  \n（中古のカメラを買える店はありますか。）",
+      "answer": "where\n\nIs there [ any ] [ store ] ( where )  I can get a used camera?  \n（中古のカメラを買える店はありますか。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793691616427,
+      "question": "Now is [ the ] [ time ]  (            ) we should make a decision.  \n（今こそ、私たちが決定をするべき時です。）",
+      "answer": "when\n\nNow is [ the ] [ time ]  ( when ) we should make a decision.  \n（今こそ、私たちが決定をするべき時です。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793692048119,
+      "question": "He has two sons, Tim and Joe, (            ) live in Mexico.  \n（彼には、ティムとジョーという二人の息子がいますが、その二人はメキシコに住んでいます。）",
+      "answer": "who\n\nHe has two sons, Tim and Joe, ( who ) live in Mexico.  \n（彼には、ティムとジョーという二人の息子がいますが、その二人はメキシコに住んでいます。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793692459430,
+      "question": "We went to the park, (              ) we played basketball.  \n（私たちは公園へ行き、そこでバスケットボールをしました。）",
+      "answer": "where\n\nWe went to the park, ( where ) we played basketball.  \n（私たちは公園へ行き、そこでバスケットボールをしました。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793692756795,
+      "question": "She spoke French very well, (               ) surprised me a lot.  \n（彼女はとても上手にフランス語を話し、そのことに私はたいへん驚きました。）",
+      "answer": "which\n\nShe spoke French very well, ( which )surprised me a lot.  \n（彼女はとても上手にフランス語を話し、そのことに私はたいへん驚きました。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793693079735,
+      "question": "This is the house (      ) (              ) Jack lives.  \n（これはジャックの住んでいる家です。）",
+      "answer": "in which/where\n\nThis is the house ( in ) ( which ) Jack lives.  \n（これはジャックの住んでいる家です。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793693328846,
+      "question": "I believe (                ) she says.  \n（私は、彼女が言うことなら何でも信じます。）",
+      "answer": "whatever\n\nI believe ( whatever ) she says.  \n（私は、彼女が言うことなら何でも信じます。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793693376520,
+      "question": "(                ) you go, please keep in touch with me.  \n（どこに行っても、私に連絡してください。）",
+      "answer": "Wherever\n\n( Wherever ) you go, please keep in touch with me.  \n（どこに行っても、私に連絡してください。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793693489177,
+      "question": "If I (      ) time, I (             ) (             ) how to dance.  \n（時間があれば、私はダンスのやり方を習うのに。）",
+      "answer": "had , would learn\n\nIf I ( had ) time, I ( would ) ( learn ) how to dance.  \n（時間があれば、私はダンスのやり方を習うのに。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793694269492,
+      "question": "If I (            ) you, I (               )n’t (              ) to him.  \n（もし私があなたならば、彼の言うことは聞かないよ。）",
+      "answer": "were , would , listen\n\nIf I ( were ) you, I ( would )n’t ( listen ) to him.  \n（もし私があなたならば、彼の言うことは聞かないよ。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696364371,
+      "question": "If we (         ) (         ) another minute, we (             ) (         ) (           ) the game. \n（あと1分あったら、私たちは試合に勝っていたのに。）",
+      "answer": "had had , would have won\n\nIf we ( had ) ( had ) another minute, we ( would ) ( have ) ( won ) the game. \n（あと1分あったら、私たちは試合に勝っていたのに。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696532091,
+      "question": "If I (          ) (             ) born in the U.S., I (               ) (          )  English well  now.\n（もしアメリカに生まれていたら、私は、今、英語を上手に話せるのに。）",
+      "answer": "had been , could speak\n\nIf I ( had ) ( been ) born in the U.S., I ( could ) ( speak )  English well now. \n（もしアメリカに生まれていたら、私は、今、英語を上手に話せるのに。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696586958,
+      "question": "I [ wish ] I (                ) (       ) like a bird.  \n（鳥のように飛べるといいのに。）",
+      "answer": "could fly\n\nI [ wish ] I ( could ) ( fly ) like a bird.  \n（鳥のように飛べるといいのに。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696643528,
+      "question": "I [ wish ]  I (         ) n’t (                  ) this coat.  \n（このコートを買わなければよかったのに。）",
+      "answer": "had , bought\n\nI [ wish ]  I ( had ) n’t ( bought ) this coat.  \n（このコートを買わなければよかったのに。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696675814,
+      "question": "If he (                 )  call me, I would tell him my feelings.  \n（万一彼が私に電話をしてくれば、私は彼に自分の気持ちを伝えるでしょう。）",
+      "answer": "should\n\nIf he ( should )  call me, I would tell him my feelings.  \n（万一彼が私に電話をしてくれば、私は彼に自分の気持ちを伝えるでしょう。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696746053,
+      "question": "If I (            ) (     ) win the lottery, I (              ) (              ) around the world. \n（仮に宝くじに当たるとすれば、私は世界一周旅行をするでしょう。）",
+      "answer": "were to , would travel\n\nIf I ( were ) ( to ) win the lottery, I ( would ) ( travel ) around the world. \n（仮に宝くじに当たるとすれば、私は世界一周旅行をするでしょう。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696815162,
+      "question": "He talks [ as ] [ if ] he (           ) a prince.  \n（彼は、まるで王子のように話します。）",
+      "answer": "were /  [is]\n\n He talks [ as ] [ if ] he ( were ) a prince.  \n（彼は、まるで王子のように話します。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696918815,
+      "question": "She talks [ as ] [ if ] she (          ) actually (        ) the actor. \n（彼女は、その俳優に実際に会ったかのように話します。）",
+      "answer": "had / [has] , met\n\nShe talks [ as ] [ if ] she ( had ) actually ( met ) the actor. \n（彼女は、その俳優に実際に会ったかのように話します。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793696970952,
+      "question": "[ Without ]  you, we (             ) not (             ) the project.  \n（あなたがいなければ、そのプロジェクトを終わらせることはできないでしょう。）",
+      "answer": "could , finish\n\n[ Without ]  you, we ( could ) not ( finish ) the project.  \n（あなたがいなければ、そのプロジェクトを終わらせることはできないでしょう。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793697020022,
+      "question": "We left early; [ otherwise ] , we (             ) (            ) (           ) the train.  \n（私たちは早く出発しました。さもなければ、電車に乗り遅れていたでしょう。）",
+      "answer": "would have missed\n\nWe left early; [ otherwise ] , we ( would ) ( have ) ( missed ) the train.  \n（私たちは早く出発しました。さもなければ、電車に乗り遅れていたでしょう。）",
+      "category": "英語表現BII",
+      "reviews": 12,
+      "archived": true
+    },
+    {
+      "id": 1793761726241,
+      "question": "あれが釣りの得意な少年ですか。\nIs that the boy ( who / which ) is good at fishing?",
+      "answer": "who\n\nあれが釣りの得意な少年ですか。\nIs that the boy ( who ) is good at fishing?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 1,
+      "archived": false
+    },
+    {
+      "id": 1793761802352,
+      "question": "私は自分が見たものが信じられませんでした。\nI couldn’t believe ( which / what ) I saw.",
+      "answer": "what\n\n私は自分が見たものが信じられませんでした。\nI couldn’t believe ( what ) I saw.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 1,
+      "archived": false
+    },
+    {
+      "id": 1793761915962,
+      "question": "あなたは彼がこの写真を撮った場所を知っていますか。\nDo you know the place ( which / where ) he took this picture?",
+      "answer": "where\n\nあなたは彼がこの写真を撮った場所を知っていますか。\nDo you know the place ( where ) he took this picture?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775024241,
+      "question": "私は、12歳のときの夏の日々を覚えています。\nI remember the summer days ( when / that ) I was twelve years old.",
+      "answer": "when\n\n私は、12歳のときの夏の日々を覚えています。\nI remember the summer days ( when ) I was twelve years old.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775106639,
+      "question": "あなたの子どもの世話をする人が誰か必要です。\nYou need someone ( who / which ) takes care of your children.",
+      "answer": "who\n\nあなたの子どもの世話をする人が誰か必要です。\nYou need someone ( who ) takes care of your children.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775172647,
+      "question": "あなたは彼が言ったことがわかりましたか。\nDid you understand ( that / what ) he said?",
+      "answer": "what\n\nあなたは彼が言ったことがわかりましたか。\nDid you understand ( what ) he said?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775215827,
+      "question": "ジムは、フランス部の本が買える書店にいます。\nJim is at the bookstore ( which / where ) he can buy French books.",
+      "answer": "where\n\nジムは、フランス部の本が買える書店にいます。\nJim is at the bookstore ( where ) he can buy French books.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775338183,
+      "question": "⭐︎表紙の赤い本は私のです。\nThe book ( which / whose ) cover is red is mine.",
+      "answer": "which\n\n表紙の赤い本は私のです。\nThe book ( which ) cover is red is mine.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793775371249,
+      "question": "彼女がするべきことは、彼らを助けることです。\n( Which / What ) she should do is to help them.",
+      "answer": "What\n\n彼女がするべきことは、彼らを助けることです。\n( What ) she should do is to help them.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793806776290,
+      "question": "私が図書館から借りた本はおもしろい。\n［ from / I / which / the book / the library / borrowed ] is interesting.",
+      "answer": "The book which I borrowed from the library\n\n私が図書館から借りた本はおもしろい。\n[ The book which I borrowed from the library ] is interesting.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793806879445,
+      "question": "それが私には理解できないことです。\n[ is / can't / I / that / understand / what ].",
+      "answer": "That is what I can’t understand\n\nそれが私には理解できないことです。\nThat is what I can’t understand.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793806958077,
+      "question": "彼女は私が映画館で見かけた女性です。\nShe [ the movie theater / is / in / I / the woman / saw ].",
+      "answer": "is the woman I saw in the movie theater \n\n彼女は私が映画館で見かけた女性です。\nShe [ is the woman I saw in the movie theater  ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793807062893,
+      "question": "彼女にはその国で見るほとんどすべてのものが新鮮に感じられた。\n[ the / everything / in / she / almost / country / saw ] seemed new to her.",
+      "answer": "Almost everything she saw in the country \n\n彼女にはその国で見るほとんどすべてのものが新鮮に感じられた。\n[ Almost everything she saw in the country ] seemed ner to her.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1793807193694,
+      "question": "あの窓が割れた建物は、使われていません。\n[ whose / used / are / isn't / windows / that / building / broken ].",
+      "answer": "That building whose windows are broken isn’t used\n\nあの窓が割れた建物は、使われていません。\n[ That building whose windows are broken isn’t used ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365424818,
+      "question": "ここは、私が1日散歩をした公園です。\n[ the park / is / a walk / I / where / took / this ] yesterday.",
+      "answer": "This is the park where I took a walk\n\nここは、私が1日散歩をした公園です。\n[ This is the park where I took a walk ] yesterday.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365592155,
+      "question": "彼は、ロンドンで見た人やものについて話しました。\nHe talked about [ the things / he / in / the people / saw / London / and / that ].",
+      "answer": "the people and the things that he saw in London\n\nHe talked about [ the people and the things that he saw in London ] .",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365680013,
+      "question": "私は海で泳いでいる少年と彼のイヌを見ました。\nI saw [ a boy / that / and / swimming / his dog / were ] in the sea.",
+      "answer": "a boy and his dog that were swimming \n\n私は海で泳いでいる少年と彼のイヌを見ました。\nI saw [ a boy and his dog that were swimming \n ] in the sea.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365709243,
+      "question": "これは私が生まれたときに母が買ったカメラです。\nThis is the camera (                ) my mother bought when i was born.",
+      "answer": "which\n\nこれは私が生まれたときに母が買ったカメラです。\nThis is the camera ( which ) my mother bought when i was born.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365784477,
+      "question": "私がパーティーで会った若い男性は工場で働いています。\nThe young man (             ) (       ) saw at the party works at a factory.",
+      "answer": "who I\n\n私がパーティーで会った若い男性は工場で働いています。\nThe young man ( who ) ( I ) saw at the party works at a factory.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365863266,
+      "question": "あげました。\nI gave her a doll (             ) (             ) (             ) in Okinawa.",
+      "answer": "which I bought\n\n私は彼女に、沖縄で買った人形をあげました。\nI gave her a doll ( which ) ( I ) (bought ) in Okinawa.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365928169,
+      "question": "私たちは、川で捕まえた魚を食べました。\nWe ate the fish (               ) (               ) in the river.",
+      "answer": "we caught\n\n私たちは、川で捕まえた魚を食べました。\nWe ate the fish ( we ) ( caught ) in the river.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794365994234,
+      "question": "私が好きな先生は、松本先生です。\nThe teacher (               ) (              ) (                ) is Ms. Matsumoto.",
+      "answer": "who I like\n\n私が好きな先生は、松本先生です。\nThe teacher ( who ) ( I ) ( like ) is Ms. Matsumoto",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366033875,
+      "question": "私には、父親が歌手の友達がいます。\nI have a friend (                ) (               ) is a singer.",
+      "answer": "whose father\n\n私には、父親が歌手の友達がいます。\nI have a friend ( whose ) ( father ) is a singer.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366068812,
+      "question": "ここは、あなたのお姉さんが生まれた病院です。\nThis is the (                 )(                ) your sister was born.",
+      "answer": "hospital where\n\nここは、あなたのお姉さんが生まれた病院です。\nThis is the ( hospital )( where ) your sister was born.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366110463,
+      "question": "あなたがバッグの中に持っているものを私に見せなさい。\nShow me (              ) (             ) (           ) in your bag.",
+      "answer": "what you have\n\nあなたがバッグの中に持っているものを私に見せなさい。\nShow me ( what ) ( you ) ( have ) in your bag.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366152041,
+      "question": "This is a famous restaurant. You can enjoy tempura here.［ほぼ同じ意味の文に］\nThis is a famous restaurant (               ) you can enjoy tempura.",
+      "answer": "where\n\nThis is a famous restaurant ( where ) you can enjoy tempura.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366250976,
+      "question": "I have a Mexican friend. His wife is a pianist.［ほぼ同じ意味の文に］\nI have a Mexican friend (            )(                )(               ) a pianist.",
+      "answer": "whose wife is\n\nI have a Mexican friend ( whose )( wife )( is ) a pianist.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366518521,
+      "question": "He is a popular photographer. Everyone knows him.  [ 関係代名詞を用いて、1文に ]\nHe is a popular photographer (                 ) (                   ) (                ).",
+      "answer": "who everyone knows\n\nHe is a popular photographer ( who ) ( everyone ) ( knows ).",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794366656066,
+      "question": "We have a long vacation in summer. [ ほぼ同じ意味の文に ] \nSummer is the season (              ) we have a long vacation.",
+      "answer": "when\n\nSummer is the season ( when ) we have a long vacation.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794377333993,
+      "question": "That boy is my cousin. He is walking a dog. [ ほぼ同じ意味の文に ]\nThat boy (            ) (           ) walking a dog is my cousin.",
+      "answer": "who is\n\nThat boy ( who ) ( is ) walking a dog is my cousin.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794377460492,
+      "question": "The watch is expensive. Tina bought it for Kana.[\nほぼ同じ意味の文に]\nThe watch (              )(           )(                 ) for Kana is expensive.",
+      "answer": "which Tina bought\n\nThe watch ( which )( Tina )( bought ) for Kana is expensive.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378387603,
+      "question": "The restaurant was expensive.\n［下線部を「私たちが昨日夕食を食べたレストラン」という意味に］\nThe restaurant (                 )(               ) ate dinner yesterday was expensive.",
+      "answer": "where we\n\nThe restaurant ( where )( we ) ate dinner yesterday was expensive.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378484758,
+      "question": "This was my favorite place. I often read books there in my childhood.\n［ほぼ同じ内容の文に］\nThis was my favorite place (               ) (              ) often read books in my childhood.",
+      "answer": "where I\n\nThis was my favorite place ( where ) ( I ) often read books in my childhood.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378525301,
+      "question": "Monday is an important day.\n［下線部を「会議が行われる大切な日」という意味に］\nMonday is an important (              )(             ) we have a meeting.",
+      "answer": "day when\n\nMonday is an important ( day )( when ) we have a meeting.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378675658,
+      "question": "これは私が友だちにすすめるレストランです。［recommend, friends］（9語）",
+      "answer": "This is the restaurant I recommend to my friends.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378742101,
+      "question": "彼女は私が貸していたすべての本を返しました。［returned, that, lent］（10話）",
+      "answer": "She returned all the books that I had lent her.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378862926,
+      "question": "この国で話されている言話は英語です。 [ language, is ]（10語）",
+      "answer": "The language which is spoken in the country is English.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794378977069,
+      "question": "彼は、黄色の屋根の家に住んでいます。［whose, roof］（9語）",
+      "answer": "He lives in the house whose roof is yellow.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794379018625,
+      "question": "これは、まさに私がほしかったものです。［ exactly, what ］（6語）",
+      "answer": "This is exactly what I want.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794379075798,
+      "question": "あなたがその石を見つけた場所に私たちを連れていきなさい。\n[ place, where ] (10語)",
+      "answer": "Take us to the place where you found the stone.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381305795,
+      "question": "私はその少年にクッキーをあげましたが、彼はすぐにそれらを食べてしまいました。\nI gave the boy some cookies, ( that / which )  he ate at once.",
+      "answer": "which\n\n私はその少年にクッキーをあげましたが、彼はすぐにそれらを食べてしまいました。\nI gave the boy some cookies, ( which )  he ate at once.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381440680,
+      "question": "去年、私たちは京都を訪れましたが、京都は冬はとても寒いです。\nLast year we visited Kyoto, ( which / where ) it is very cold in winter.",
+      "answer": "where\n\n去年、私たちは京都を訪れましたが、京都は冬はとても寒いです。\nLast year we visited Kyoto, ( where ) it is very cold in winter.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381502671,
+      "question": "あなたがほしいものを何でも買っていいですよ。\nYou can buy ( what / whatever ) you want.",
+      "answer": "whatever\n\nあなたがほしいものを何でも買っていいですよ。\nYou can buy ( whatever ) you want.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381568634,
+      "question": "彼女は健司を知らないと言いましたが、それは本当ではありませんでした。\nShe said she didn't know Kenji, ( what / which ) wasn't true.",
+      "answer": "which\n\n彼女は健司を知らないと言いましたが、それは本当ではありませんでした。\nShe said she didn't know Kenji, ( which ) wasn't true.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381671059,
+      "question": "私は去年、名古屋を訪ね、そこで初めてきし麺を食べました。\nI visited Nagoya last year, ( where / which ) I first ate kishimen.",
+      "answer": "where\n\n私は去年、名古屋を訪ね、そこで初めてきし麺を食べました。\nI visited Nagoya last year, ( where ) I first ate kishimen.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381715202,
+      "question": "私のいとこはカナダに住んでいて、出版社に勤めています。\nMy cousin, ( that / who ) lives in Canada, works for a publisher.",
+      "answer": "who\n\n私のいとこはカナダに住んでいて、出版社に勤めています。\nMy cousin, ( who ) lives in Canada, works for a publisher.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381748164,
+      "question": "部屋を最後に出る人は誰でも窓を閉めなければなりません。\n( Whoever / Everyone ) leaves the room last must close the windows.",
+      "answer": "Whoever\n\n部屋を最後に出る人は誰でも窓を閉めなければなりません。\n( Whoever ) leaves the room last must close the windows.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381807926,
+      "question": "彼女は先週、長野に行き、そこでたくさんの写真を撮りました。\nShe went to Nagano last week, ( where / there ) she took a lot of pictures.",
+      "answer": "where\n\n彼女は先週、長野に行き、そこでたくさんの写真を撮りました。\nShe went to Nagano last week, ( where ) she took a lot of pictures.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794381907312,
+      "question": "私の妹はサーフィンが大好きで、ハワイで暮らしています。\n[ lives / surfing / my sister / loves / who / , /, ] in Hawaii.",
+      "answer": "My sister, who loves surfing, lives\n\n私の妹はサーフィンが大好きで、ハワイで暮らしています。\n[My sister, who loves surfing, lives ] in Hawaii.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794382037598,
+      "question": "どこにいようとも、私はいつも家族のことを考えています。\n[ think / I / am / I / wherever / always / , ] of my family.",
+      "answer": "Wherever I am, I always think\n\nどこにいようとも、私はいつも家族のことを考えています。\n[  Wherever I am, I always think ] of my family.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794382186411,
+      "question": "彼らは公園に来て、そこで15分休憩しました。\nThey came to [ rested / they / where / for / a park / fifteen minutes / , ].",
+      "answer": "a park, where they rested for fifteen minutes \n\n彼らは公園に来て、そこで15分休憩しました。\nThey came to [ a park, where they rested for fifteen minutes ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794382283263,
+      "question": "私はジェイクに会いましたが、彼は私にあなたに会うように言いました。\nI saw [ who / to / me / Jake / told / see / ,  ] you.",
+      "answer": "to Jake, who told me see\n\n私はジェイクに会いましたが、彼は私にあなたに会うように言いました。\nI saw [ to Jake, who told me see ] you.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411136015,
+      "question": "旅行に必要なものは何でも買いなさい。\n[ the trip / whatever / you / for / buy / need ].",
+      "answer": "Buy whatever you need for the trip.\n\n旅行に必要なものは何でも買いなさい。\n[ Buy whatever you need for the trip ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411214695,
+      "question": "いつでもあなたが好きなときに、私の家に来てください。\n[ my house / like / to / you / whenever / come ].",
+      "answer": "Come to my house whenever you like\n\nいつでもあなたが好きなときに、私の家に来てください。\n[ Come to my house whenever you like ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411257905,
+      "question": "彼女は車を５台持っていると言いましたが、それは本当でした。\nShe said she had five cars, (　　) was true.",
+      "answer": "which\n\n彼女は車を５台持っていると言いましたが、それは本当でした。\nShe said she had five cars, ( which ) was true.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411299468,
+      "question": "好きな人を誰でも招待していいですよ。\nYou may invite (　　)(　　) like.",
+      "answer": "whoever you\n\n好きな人を誰でも招待していいですよ。\nYou may invite ( whoever )( you ) like",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411328705,
+      "question": "あれがそのサッカー選手が住んでいる家です。\nThat is the house (　　)(　　) the soccer player lives.",
+      "answer": "in which\n\nあれがそのサッカー選手が住んでいる家です。\nThat is the house ( in )( which ) the soccer player lives.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411377355,
+      "question": "車をどこでもあなたの好きなところに止めてください。\nYou can stop the car (　　)(　　) like.",
+      "answer": "wherever you\n\n車をどこでもあなたの好きなところに止めてください。\nYou can stop the car ( wherever )( you ) like.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411470283,
+      "question": "彼女はどこに住もうとも、ひとりで生きていけます。\nShe can live alone (　　)(　　)(　　).",
+      "answer": "wherever she lives\n\n彼女はどこに住もうとも、ひとりで生きていけます。\nShe can live alone ( wherever )( she )( lives ).",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411509923,
+      "question": "人類が地球上に住んでいなかった時代もありました。\nThere was a time (　　)(　　) humans didn't live on the earth.",
+      "answer": "in which\n\n人類が地球上に住んでいなかった時代もありました。\nThere was a time ( in )( which ) humans didn't live on the earth.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411548018,
+      "question": "誰がそう言おうとも、私は信じません。\n(　　)(　　) that, I won't believe it.",
+      "answer": "Whoever says\n\n誰がそう言おうとも、私は信じません。\n( Whoever )( says ) that, I won't believe it.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411788999,
+      "question": "My sister lives in New York. She is studying math. [ほぼ同じ意味の文に]\nMy sister, (　　) lives in New York, is studying math.",
+      "answer": "who\n\nMy sister, ( who ) lives in New York, is studying math.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411837383,
+      "question": "I went shopping in Shinjuku. I bought a wallet there. [ほぼ同じ意味の文に]\nI went shopping in Shinjuku, (　　) I bought a wallet.",
+      "answer": "where\n\nI went shopping in Shinjuku, ( where ) I bought a wallet.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411925993,
+      "question": "The town where I was born is beautiful. [ほぼ同じ意味の文に]\nThe town (　　)(　　) I was born is beautiful.",
+      "answer": "in which\n\nThe town (　　)(　　) I was born is beautiful.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794411971778,
+      "question": "You can use this room at any time you like. [ほぼ同じ意味の文に]\nYou can use this room (　　) you like.",
+      "answer": "whenever\n\nYou can use this room (　　) you like.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412009005,
+      "question": "The object was near the window, and it turned warm. [ほぼ同じ意味の文に]\nThe object, (　　) was near the window, turned warm.",
+      "answer": "which\n\nThe object, ( which ) was near the window, turned warm.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412043297,
+      "question": "何でも好きなことをしなさい。[ whatever ] (4語)",
+      "answer": "Do whatever you like.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412104991,
+      "question": "いつそれが来ようとも、私は巨大な台風への準備はしています。[ ready, a huge typhoon ] (9語)",
+      "answer": "I’m ready for a huge typhoon whenever it comes.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412158776,
+      "question": "ナンシーが６時に起きると、雨が激しく降り始めました。[ when, began ] (11語)",
+      "answer": "Nancy got up at six, when it began to rain hard.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412204021,
+      "question": "私のイヌは私の行くところにどこにでもついてきます。[ follows, wherever ] (7語)",
+      "answer": "My dog follows me wherever I go.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412260269,
+      "question": "何があろうとも、私は自分自身でその仕事をやります。[ by myself, happens ] (8語)",
+      "answer": "Whatever happens, I’ll do the job by myself.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412334184,
+      "question": "もし私に時間があれば、この本を読めるのに。\nIf I ( have / had ) time, I would read this book.",
+      "answer": "had\n\nもし私に時間があれば、この本を読めるのに。\nIf I ( had ) time, I would read this book.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412353952,
+      "question": "私に妹がいればなあ。\nI wish I ( have / had ) a sister.",
+      "answer": "had\n\n私に妹がいればなあ。\nI wish I ( had ) a sister.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412383205,
+      "question": "もし私が彼女のメールアドレスを知っていれば、彼女にメールを送るのですが。\nIf I ( know / knew ) her email address, I would send an email to her.",
+      "answer": "knew\n\nもし私が彼女のメールアドレスを知っていれば、彼女にメールを送るのですが。\nIf I ( knew ) her email address, I would send an email to her.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412414466,
+      "question": "もう少し早く私がそこにいたらなあ。\nI wish I ( were / had been ) there a little earlier.",
+      "answer": "had been\n\nもう少し早く私がそこにいたらなあ。\nI wish I ( had been ) there a little earlier.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412442055,
+      "question": "もし私が忙しくなかったら、その番組を見たのですが。\nIf I ( was not / had not been ) busy, I would have seen the program.",
+      "answer": "had not been\n\nもし私が忙しくなかったら、その番組を見たのですが。\nIf I ( had not been ) busy, I would have seen the program.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412504432,
+      "question": "もし私が今朝、朝食を食べていれば、今、こんなに空腹ではないのに。\nIf I had had breakfast this morning, I ( would not / had not ) be so hungry now.",
+      "answer": "would not\n\nもし私が今朝、朝食を食べていれば、今、こんなに空腹ではないのに。\nIf I had had breakfast this morning, I ( would not ) be so hungry now.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412666998,
+      "question": "私がそのとき、自転車を持っていたらなあ。\nI wish I ( had / had had ) a bike at that time.",
+      "answer": "had had\n\n私がそのとき、自転車を持っていたらなあ。\nI wish I ( had had ) a bike at that time.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412691636,
+      "question": "あなたがそのときコーヒーを飲んでいれば、今、眠くないかもしれません。\nIf you ( had / had had ) coffee then, you might not be sleepy now.",
+      "answer": "had had\n\nあなたがそのときコーヒーを飲んでいれば、今、眠くないかもしれません。\nIf you ( had had ) coffee then, you might not be sleepy now.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412761851,
+      "question": "私にもっとユーモアのセンスがあればなあ。\n[ sense of humor / I / I / had / wish / more ].",
+      "answer": "I wish I had more sense of humor. \n\n私にもっとユーモアのセンスがあればなあ。\n[ I wish I had more sense of humor ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412839389,
+      "question": "もし私があなたのお兄さんだったら、この申し出を受けるのですが。\n[ , / your brother / accept / if / this offer / were / would / I / I ].",
+      "answer": "If I were your brother, I would accept this offer. \n\nもし私があなたのお兄さんだったら、この申し出を受けるのですが。\n[ If I were your brother, I would accept this offer ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412901422,
+      "question": "もし私がもっとお金を持っていたら、そのシャツが買えたのに。\nIf I had [ more money / have / I / bought / could / , / had ] the shirt.",
+      "answer": "had more money, I could have bought \n\nもし私がもっとお金を持っていたら、そのシャツが買えたのに。\nIf I had [ had more money, I could have bought \n ] the shirt.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794412952349,
+      "question": "彼女が私たちのパーティーに参加できればなあ。\n[ wish / join / she / I / could / our party ].",
+      "answer": "I wish she could join our party\n\n彼女が私たちのパーティーに参加できればなあ。\n[ I wish she could join our party ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413112095,
+      "question": "もし私がその会議に参加していたなら、その情報を手に入れることができたのだが。\nIf I had [ could / have / the meeting / joined / I / gotten / , ] the information.",
+      "answer": "joined the meeting, I could have gotten \n\nもし私がその会議に参加していたなら、その情報を手に入れることができたのだが。\nIf I had [ joined the meeting, I could have gotten ] the information.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413171688,
+      "question": "私がその電車に乗っていたら、今その会議に出席しているのですが。\nIf I [ would / be / taken / I / the train / had / , ] present at the meeting now.",
+      "answer": "had taken the train, I would be\n\n私がその電車に乗っていたら、今その会議に出席しているのですが。\nIf I [ had taken the train, I would be ] present at the meeting now.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413243011,
+      "question": "その悩みについて、私に言ってくれればよかったのに。\n[ the trouble / I / had / wish / told / you / about / me ].",
+      "answer": "I wish you had told me about the trouble\n\nその悩みについて、私に言ってくれればよかったのに。\n[ I wish you had told me about the trouble ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413303919,
+      "question": "もし私が疲れていなければ、スキーをしに行けたのですが。\n[ , / tired / had / could / if / I / I / not / have / been ] gone skiing.",
+      "answer": "If I had not been tired, I could have\n\nもし私が疲れていなければ、スキーをしに行けたのですが。\n[ If I had not been tired, I could have ] gone skiing.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413348474,
+      "question": "もし私に十分な時間があれば、日本に行けるのに。\nIf I (　　) enough time, I (　　) go to Japan.",
+      "answer": "had , could\n\nもし私に十分な時間があれば、日本に行けるのに。\nIf I ( had ) enough time, I ( could ) go to Japan.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413377545,
+      "question": "彼女のようにテニスができればなあ。\nI wish I (　　)(　　) tennis like her.",
+      "answer": "could play\n\n彼女のようにテニスができればなあ。\nI wish I ( could )( play ) tennis like her.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413410630,
+      "question": "私がそのとき、あなたといっしょにいたならなあ。\nI wish I (　　)(　　) with you at that time.",
+      "answer": "had been\n\n私がそのとき、あなたといっしょにいたならなあ。\nI wish I ( had )( been ) with you at that time.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413439272,
+      "question": "もし医者がそこにいれば、彼はもっと長く生きていたかもしれません。\nIf a doctor had been there, he (　　)(　　) lived longer.",
+      "answer": "might have\n\nもし医者がそこにいれば、彼はもっと長く生きていたかもしれません。\nIf a doctor had been there, he ( might )( have ) lived longer.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413480427,
+      "question": "この国にもっと長く滞在できればなあ。\nI (　　) I (　　)(　　) in this country longer.",
+      "answer": "wish , could stay\n\nこの国にもっと長く滞在できればなあ。\nI ( wish ) I ( could )( stay ) in this country longer.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413514282,
+      "question": "昨日、もっと宿題をする時間があったらなあ。\nI (　　) I (　　)(　　) more time for homework yesterday.",
+      "answer": "wish , had had\n\n昨日、もっと宿題をする時間があったらなあ。\nI ( wish ) I ( had )( had ) more time for homework yesterday.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413572694,
+      "question": "Because I didn't get the ticket, I didn't go to Okinawa. [ほぼ同じ意味の文に]\nIf I (　　)(　　) the ticket, I would have gone to Okinawa.",
+      "answer": "had gotten[ got ] \n\nIf I ( had )( gotten ) the ticket, I would have gone to Okinawa.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413615184,
+      "question": "You should have gotten up earlier. [ほぼ同じ意味の文に]\nI (　　) you (　　)(　　) up earlier.",
+      "answer": "wish , had gotten[ got ]\n\nI ( wish ) you ( had )( gotten ) up earlier.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413711627,
+      "question": "My father didn't agree, so I didn't go abroad. [ほぼ同じ意味の文に]\nIf my father (　　)(　　), I (　　)(　　) gone abroad.",
+      "answer": "had agreed , would have\n\nIf my father ( had )( agreed ), I ( would )( have ) gone abroad.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413755595,
+      "question": "As the question was difficult, I couldn't answer it. [ほぼ同じ意味の文に]\nIf the question (　　)(　　) easy, I (　　)(　　) answered it.",
+      "answer": "had been , could have\n\nIf the question ( had )( been ) easy, I ( could )( have ) answered it.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413795478,
+      "question": "It is rainy, so we can't play outside. [ほぼ同じ意味の文に]\nIf it (　　)(　　) rainy, we (　　)(　　) outside.",
+      "answer": "were not , could play\n\nIf it ( were )( not ) rainy, we ( could )( play ) outside.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413823613,
+      "question": "I was able to get the gold medal because you helped me. [ほぼ同じ意味の文に]\nIf you (　　) not (　　) me, I couldn't have gotten the gold medal.",
+      "answer": "had , helped\n\nIf you ( had ) not ( helped ) me, I couldn't have gotten the gold medal.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413878230,
+      "question": "もし彼が家にいれば、私たちは彼を訪ねるのに。[ at, would ] (9語)",
+      "answer": "If he were at home, we would visit him.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413908685,
+      "question": "そのバッグを買えばよかったのになあ。[ wish ] (7語)",
+      "answer": "I wish I had bought the bag.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413953467,
+      "question": "私がパスワードを知っていれば、このコンピュータを使えるのですが。[ the password ] (10語)",
+      "answer": "If I knew the password, I could use this computer.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794413987310,
+      "question": "もし私にもっと時間があれば、料理を学ぶのですが。[ more, cooking ] (9語)",
+      "answer": "If I had more time, I would learn cooking.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794414034420,
+      "question": "もし彼が遅れなかったら、私たちは映画が見られたのですが。[ late, movie ] (11語)",
+      "answer": "If he hadn’t been late, we could have watched the movie.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794414065718,
+      "question": "もし私が若ければ、サッカーをするのですが。[ would ] (8語)",
+      "answer": "If I were young, I would play soccer.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794414100038,
+      "question": "彼女が私たちに会いに来ればよかったのに。[ wish ] (8語)",
+      "answer": "I wish she had come to see[ meet ] us.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794436937119,
+      "question": "彼女はまるで専門家のように説明します。\nShe explains as if she ( were / had been ) an expert.",
+      "answer": "were\n\n彼女はまるで専門家のように説明します。\nShe explains as if she ( were ) an expert.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794436966957,
+      "question": "万が一あなたが教師になったとしたら、何の教科を教えますか。\nIf you ( should / could ) become a teacher, what subject would you teach?",
+      "answer": "should\n\n万が一あなたが教師になったとしたら、何の教科を教えますか。\nIf you ( should ) become a teacher, what subject would you teach?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794436999285,
+      "question": "私は仕事に行かなければなりません。そうでなければ、あなたと買い物に行くのですが。\nI have to go to work. ( Otherwise / Without ), I would go shopping with you.",
+      "answer": "Otherwise\n\n私は仕事に行かなければなりません。そうでなければ、あなたと買い物に行くのですが。\nI have to go to work. ( Otherwise ), I would go shopping with you.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437408672,
+      "question": "仮に彼が日本を離れるとしたら、あなたはどうしますか。\nIf he ( were / will be ) to leave Japan, what would you do?",
+      "answer": "were\n\n仮に彼が日本を離れるとしたら、あなたはどうしますか。\nIf he ( were ) to leave Japan, what would you do?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437447727,
+      "question": "彼の勇気がなかったら、多くの人々が死んでいたかもしれません。\n( Without / But ) for his courage, a lot of people might have died.",
+      "answer": "But\n\n彼の勇気がなかったら、多くの人々が死んでいたかもしれません。\n( But ) for his courage, a lot of people might have died.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437479543,
+      "question": "彼は病気で寝ていました。そうでなければ、電話に出たでしょう。\nHe was sick in bed. ( Otherwise / But for ), he would have answered the phone.",
+      "answer": "Otherwise\n\n彼は病気で寝ていました。そうでなければ、電話に出たでしょう。\nHe was sick in bed. ( Otherwise ), he would have answered the phone.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437508849,
+      "question": "彼女との会話がなかったら、私は自分の欠点に気づかなかったでしょう。\n( Without / But ) the conversation with her, I would not have noticed my fault.",
+      "answer": "Without\n\n彼女との会話がなかったら、私は自分の欠点に気づかなかったでしょう。\n( Without ) the conversation with her, I would not have noticed my fault.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437531181,
+      "question": "彼女はまるで幽霊でも見たかのように見えました。\nShe looked as if she ( sees / had seen ) a ghost.",
+      "answer": "had seen\n\n彼女はまるで幽霊でも見たかのように見えました。\nShe looked as if she ( had seen ) a ghost.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437589824,
+      "question": "彼はまるで自分がテニスが得意であるかのように話します。\nHe talks [ were / good / as / he / if / at ] tennis.",
+      "answer": "as if he were good at\n\n彼はまるで自分がテニスが得意であるかのように話します。\nHe talks [ as if he were good at ] tennis.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437690251,
+      "question": "彼女の助言がなかったら、私はその計画をあきらめていたでしょう。\n[ I / but / have / her advice / would / for / , ] given up the plan.",
+      "answer": "But for her advice, I would have\n\n彼女の助言がなかったら、私はその計画をあきらめていたでしょう。\n[ But for her advice, I would have ] given up the plan.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437758143,
+      "question": "もし仮にあなたが無人島に住むとしたら、何を持っていきますか。\nIf [ a desert island / to / on / were / you / live ], what would you bring there?",
+      "answer": "you were to live on a desert island \n\nもし仮にあなたが無人島に住むとしたら、何を持っていきますか。\nIf [ you were to live on a desert island ], what would you bring there?",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437814107,
+      "question": "彼らはまるで自分の両親のような気がします。\n[ if / were / feel / I / they / as / my own parents ].",
+      "answer": "I feel as if they were my own parents\n\n彼らはまるで自分の両親のような気がします。\n[ I feel as if they were my own parents ].",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    },
+    {
+      "id": 1794437869241,
+      "question": "彼はまるで何日も何も食べていなかったように見えました。\n[ if / he / he / nothing / eaten / looked / as / had ] for days.",
+      "answer": "He looked as if he had eaten nothing\n\n彼はまるで何日も何も食べていなかったように見えました。\n[ He looked as if he had eaten nothing ] for days.",
+      "category": "英語表現BII - 後期中間ワーク",
+      "reviews": 0,
+      "archived": false
+    }
+  ],
+  "memos": [
+    "LOG.01 - 「古代世界樹植物学 考察」",
+    "LOG. - 「Terminal 作成」"
+  ],
+  "dailyTasks": [
+    {
+      "id": 1794318678698,
+      "text": "端末起動および定期メンテナンス",
+      "reward": 500,
+      "completed": true
+    },
+    {
+      "id": 1794318764342,
+      "text": "メンタルデトックス - 15分休憩",
+      "reward": 300,
+      "completed": false
+    },
+    {
+      "id": 1794318781033,
+      "text": "メンタルデトックス - 30分休憩",
+      "reward": 600,
+      "completed": false
+    },
+    {
+      "id": 1794318792434,
+      "text": "メンタルデトックス - 60分休憩",
+      "reward": 1200,
+      "completed": false
+    },
+    {
+      "id": 1794318834075,
+      "text": "指定範囲内でのアーカイブ活動",
+      "reward": 1200,
+      "completed": false
+    }
+  ],
+
+}
