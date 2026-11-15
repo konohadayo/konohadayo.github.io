@@ -1100,23 +1100,43 @@
     </div>
   </div>
 
-  <!-- タブ5: ARCHIVE -->
+    <!-- タブ5: ARCHIVE -->
   <div id="tab-archive" class="tab-content">
 
+    <!-- 1. LOG & MEMO（1行ショートメモ・5件折りたたみ・EDIT対応） -->
     <div class="section-panel">
-      <div class="section-title">LOG & MEMO (RESEARCH NOTES)</div>
+      <div class="section-title">
+        <span>LOG & MEMO (SHORT NOTES)</span>
+        <span id="memo-count-label" style="font-size:0.7rem; color:var(--text-muted);">0 MEMOS</span>
+      </div>
       <div class="input-group">
-        <input type="text" id="memo-input" class="ak-input" placeholder="新しい研究メモを追加...">
+        <input type="text" id="memo-input" class="ak-input" placeholder="1行ショートメモを追加...">
         <button class="ak-btn" onclick="addMemo()">RECORD</button>
       </div>
       <div class="item-list" id="memo-list"></div>
+      <button class="ak-btn" id="memo-toggle-btn" onclick="toggleMemoExpand()" style="display:none; font-size:0.72rem; padding:6px; margin-top:2px;">▼ すべて表示</button>
     </div>
 
+    <!-- 2. RESEARCH NOTEBOOK（羊皮紙ノート所持数連動・1000文字・[b]対応） -->
+    <div class="section-panel">
+      <div class="section-title">
+        <span>RESEARCH NOTEBOOK</span>
+        <span id="notebook-capacity-label" style="font-size:0.7rem; color:var(--ak-yellow);">0 / 0 VOLS</span>
+      </div>
+      <div style="font-size:0.72rem; color:var(--text-muted);">
+        ※ストアで「羊皮紙ノート」を購入すると、1冊につき1,000文字までのノートを作成できます。
+      </div>
+      <button class="ak-btn ak-btn-primary" id="create-note-btn" onclick="openNoteEditor(null)" style="font-size:0.78rem;">+ NEW NOTEBOOK ENTRY</button>
+      <div class="item-list" id="notebook-list"></div>
+    </div>
+
+    <!-- 3. STORAGE -->
     <div class="section-panel">
       <div class="section-title">STORAGE (COLLECTED ITEMS)</div>
       <div class="inventory-grid" id="inventory-container"></div>
     </div>
 
+    <!-- 4. ARCHIVE & DATABASE -->
     <div class="section-panel">
       <div class="section-title">ARCHIVE & DATABASE</div>
       <div style="font-size:0.72rem; color:var(--text-muted); margin-bottom:4px;">
@@ -1126,6 +1146,7 @@
     </div>
     
   </div>
+
 
   <!-- タブ6: 購買部 -->
   <div id="tab-shop" class="tab-content">
@@ -1190,14 +1211,15 @@
   </div>
 </div>
 
-<!-- アーカイブ閲覧用モーダル -->
+<!-- アーカイブ閲覧用モーダル（縦1.5倍・文字小さめ仕様） -->
 <div id="archive-modal" class="modal-overlay">
-  <div class="modal-box">
+  <div class="modal-box" style="max-width: 420px;">
     <div class="section-title" id="archive-modal-title">ARCHIVE DATA</div>
-    <div class="test-content" id="archive-modal-text" style="max-height:250px; overflow-y:auto; padding:6px; background:#000; border:1px solid var(--border-color);"></div>
+    <div class="test-content" id="archive-modal-text" style="max-height: 380px; min-height: 220px; font-size: 0.8rem; line-height: 1.65; overflow-y: auto; padding: 10px; background: #000; border: 1px solid var(--border-color);"></div>
     <button class="ak-btn" onclick="closeArchiveModal()">CLOSE</button>
   </div>
 </div>
+
 
 <!-- 共通編集モーダル -->
 <div id="card-modal" class="modal-overlay">
@@ -1219,6 +1241,40 @@
   </div>
 </div>
 
+  <!-- ノート閲覧用モーダル（ストーリーARCHIVEと同サイズの縦1.5倍・文字小さめ仕様） -->
+<div id="note-view-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 420px;">
+    <div class="section-title" id="note-view-title">NOTE.01</div>
+    <div class="test-content" id="note-view-body" style="max-height: 380px; min-height: 220px; font-size: 0.8rem; line-height: 1.65; overflow-y: auto; padding: 10px; background: #000; border: 1px solid var(--border-color);"></div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" id="note-view-edit-btn">EDIT</button>
+      <button class="ak-btn" onclick="closeNoteViewModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ノート作成・編集用モーダル -->
+<div id="note-edit-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 420px;">
+    <div class="section-title" id="note-edit-modal-title">NEW NOTEBOOK</div>
+    <div class="input-group">
+      <label style="font-size:0.7rem; color:var(--text-muted);">タイトル</label>
+      <input type="text" id="note-edit-title-input" class="ak-input" placeholder="ノートのタイトル...">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label style="font-size:0.7rem; color:var(--text-muted);">本文（[b]太字下線[/b] 使用可）</label>
+        <span id="note-char-counter" style="font-family:var(--font-tech); font-size:0.68rem; color:var(--ak-yellow);">0 / 1000</span>
+      </div>
+      <textarea id="note-edit-body-input" class="ak-textarea" rows="10" maxlength="1000" oninput="updateNoteCharCount()" style="font-size:0.8rem; line-height:1.6;" placeholder="研究内容や考察を記述（最大1000文字）..."></textarea>
+    </div>
+    <div class="ak-btn-group">
+      <button class="ak-btn ak-btn-primary" onclick="saveNoteEntry()">SAVE</button>
+      <button class="ak-btn ak-btn-danger" id="note-delete-btn" onclick="deleteNoteEntry()">DELETE</button>
+    </div>
+    <button class="ak-btn" onclick="closeNoteEditModal()">CANCEL</button>
+  </div>
+</div>
+
+
 <!-- トースト -->
 <div id="toast" class="toast">SYSTEM NOTIFICATION</div>
 
@@ -1227,10 +1283,10 @@
 
 <script>
   const shopItems = [
-    { id: 'item_note', name: '羊皮紙ノート', price: 500, type: 'item', desc: '古びた記録用ノート' },
+    { id: 'item_note', name: '羊皮紙ノート', price: 500, type: 'item', desc: '記録用ノート' },
     { id: 'item_tea', name: 'ハーブティーセット', price: 400, type: 'item', desc: '心を落ち着かせるお茶' },
-    { id: 'item_pen', name: 'タクティカル万年筆', price: 1200, type: 'item', desc: '特務仕様の高級万年筆' },
-    { id: 'item_tree_leaf', name: '世界樹の黄金の葉', price: 500000, type: 'item', desc: '極めて希少な世界樹の断片' },
+    { id: 'item_pen', name: '万年筆', price: 1200, type: 'item', desc: '高級万年筆' },
+    { id: 'item_tree_leaf', name: '？？？の黄金の葉', price: 500000, type: 'item', desc: '極めて希少な？？？の断片' },
     { id: 'theme_cyan', name: 'テーマ: シアン', price: 100000, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
     { id: 'theme_emerald', name: 'テーマ: エメラルドグリーン', price: 100000, type: 'theme', color: '#4caf50', desc: '端末のアクセントカラーを変更' },
     { id: 'theme_crimson', name: 'テーマ: カーマイン', price: 150000, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
@@ -1247,7 +1303,7 @@
     currentTheme: 'yellow',
     cards: [],
     testProblems: [],
-    memos: ['LOG.01 - 「古代世界樹植物学 考察」'],
+    memos: ['古代植物学 考察'],
     dailyTasks: [
       { id: 1, text: '端末起動および定期メンテナンス', reward: 500, completed: false },
       { id: 2, text: '返却データの整合性チェック', reward: 500, completed: false },
@@ -1256,6 +1312,10 @@
     unlockedStories: [],
     unlockedArchives: []
   };
+
+  let isMemoExpanded = false;
+  let editingNoteId = null;
+  let editingMemoIndex = null;
 
   //ジャンルの折りたたみ状態を保存するオブジェクト
   let foldedCategories = {};
@@ -1291,6 +1351,7 @@
     renderTests();
     renderMemos();
     renderStoryList();
+    renderNotebooks();
     renderArchiveList();
 
     // 初回起動チェック
@@ -1311,6 +1372,7 @@
         const parsed = JSON.parse(saved);
         state = { ...state, ...parsed };
         if (state.unlockedStories === undefined) state.unlockedStories = [];
+        if (state.notebooks === undefined) state.notebooks = [];
         if (state.unlockedArchives === undefined) state.unlockedArchives = [];
       }
     } catch (e) {
@@ -1390,7 +1452,11 @@
     document.getElementById(`tab-${tabId}`).classList.add('active');
 
     if (tabId === 'story') renderStoryList();
-    if (tabId === 'archive') renderArchiveList();
+    if (tabId === 'archive') {
+      renderMemos();
+      renderNotebooks();
+      renderArchiveList()
+    }
   }
 
   function applyTheme(themeKey) {
@@ -2125,6 +2191,7 @@
 
   // モーダル処理
   function openCardModal(cardId) {
+    resetCardModalFields();
     editingCardId = cardId; editingType = 'card';
     const c = state.cards.find(x => x.id === cardId);
     if (!c) return;
@@ -2135,6 +2202,7 @@
     document.getElementById('card-modal').classList.add('show');
   }
   function openTestModal(testId) {
+    resetCardModalFields();
     editingCardId = testId; editingType = 'test';
     const tp = state.testProblems.find(x => x.id === testId);
     if (!tp) return;
@@ -2153,6 +2221,12 @@
       const c = state.cards.find(x => x.id === editingCardId);
       if (c) { c.front = f; c.back = b; c.category = cat; }
       updateCategoryFilterDropdown(); renderCards();
+    }   // saveCardModal() 内の分岐に追加
+    } else if (editingType === 'memo') {
+      if (f && editingMemoIndex !== null) {
+        state.memos[editingMemoIndex] = f;
+        renderMemos();
+      }
     } else {
       const tp = state.testProblems.find(x => x.id === editingCardId);
       if (tp) { tp.question = f; tp.answer = b; tp.category = cat; }
@@ -2164,6 +2238,11 @@
     if (editingType === 'card') {
       state.cards = state.cards.filter(x => x.id !== editingCardId);
       updateCategoryFilterDropdown(); renderCards();
+    } else if (editingType === 'memo') {
+      if (editingMemoIndex !== null) {
+        state.memos.splice(editingMemoIndex, 1);
+        renderMemos();
+      }
     } else {
       state.testProblems = state.testProblems.filter(x => x.id !== editingCardId);
       updateTestCategoryFilterDropdown(); renderTests();
@@ -2172,16 +2251,258 @@
   }
 
   // メモ、ショップ、データバックアップ
+
+    // 💡 メモ編集モーダルを開く関数を追加
+  function openMemoModal(idx) {
+    editingMemoIndex = idx;
+    editingType = 'memo';
+    const rawMemo = state.memos[idx].replace(/^LOG\.\d*\s*-\s*「|」$/g, ''); // 旧形式データ対策
+    document.getElementById('modal-title-text').textContent = `EDIT MEMO.${String(idx + 1).padStart(2, '0')}`;
+    document.getElementById('modal-label-front').textContent = 'メモ内容 (1行)';
+    document.getElementById('modal-card-front').value = rawMemo;
+    
+    // 裏面とジャンル欄はメモ編集時は隠す
+    document.getElementById('modal-label-back').style.display = 'none';
+    document.getElementById('modal-card-back').style.display = 'none';
+    document.getElementById('modal-card-category').previousElementSibling.style.display = 'none';
+    document.getElementById('modal-card-category').style.display = 'none';
+
+    document.getElementById('card-modal').classList.add('show');
+  }
+
+  // 💡 openCardModal / openTestModal / closeCardModal では隠した要素を元に戻す
+  function resetCardModalFields() {
+    document.getElementById('modal-label-front').textContent = '表面 (FRONT)';
+    document.getElementById('modal-label-back').style.display = 'block';
+    document.getElementById('modal-card-back').style.display = 'block';
+    document.getElementById('modal-card-category').previousElementSibling.style.display = 'block';
+    document.getElementById('modal-card-category').style.display = 'block';
+  }
+
+    // --- LOG & MEMO（連番・5件折りたたみ・EDIT対応） ---
   function addMemo() {
     const text = document.getElementById('memo-input').value.trim();
-    if (text) { state.memos.push(`LOG. - 「${text}」`); document.getElementById('memo-input').value = ''; saveState(); renderMemos(); }
+    if (text) {
+      state.memos.push(text);
+      document.getElementById('memo-input').value = '';
+      saveState();
+      renderMemos();
+    }
   }
+
+  function toggleMemoExpand() {
+    isMemoExpanded = !isMemoExpanded;
+    renderMemos();
+  }
+
   function renderMemos() {
-    const list = document.getElementById('memo-list'); list.innerHTML = '';
-    state.memos.forEach((m, idx) => {
-      list.innerHTML += `<div class="list-item"><span class="item-text">${m}</span><button class="action-badge-btn" onclick="state.memos.splice(${idx},1);saveState();renderMemos();">DEL</button></div>`;
+    const list = document.getElementById('memo-list');
+    const countLabel = document.getElementById('memo-count-label');
+    const toggleBtn = document.getElementById('memo-toggle-btn');
+    list.innerHTML = '';
+
+    const total = state.memos.length;
+    if (countLabel) countLabel.textContent = `${total} MEMOS`;
+
+    if (total === 0) {
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:6px; text-align:center;">記録されたメモはありません。</div>';
+      if (toggleBtn) toggleBtn.style.display = 'none';
+      return;
+    }
+
+    // 折りたたみ時は最大5件まで表示
+    const displayLimit = isMemoExpanded ? total : Math.min(total, 5);
+
+    for (let i = 0; i < displayLimit; i++) {
+      // 古いデータ（"LOG.01 - 「〇〇」"）が残っていた場合も綺麗に表示する
+      const cleanText = state.memos[i].replace(/^LOG\.\d*\s*-\s*「|」$/g, '');
+      const numStr = String(i + 1).padStart(2, '0');
+
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <span class="item-text" style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+          <b style="color:var(--ak-yellow); font-family:var(--font-tech);">MEMO.${numStr}</b> - ${cleanText}
+        </span>
+        <button class="action-badge-btn" onclick="openMemoModal(${i})">EDIT</button>
+      `;
+      list.appendChild(item);
+    }
+
+    // 6件以上ある場合のみ開閉ボタンを表示
+    if (toggleBtn) {
+      if (total > 5) {
+        toggleBtn.style.display = 'flex';
+        toggleBtn.textContent = isMemoExpanded ? '▲ 閉じる (5件表示に戻す)' : `▼ すべて表示 (残り ${total - 5} 件)`;
+      } else {
+        toggleBtn.style.display = 'none';
+      }
+    }
+  }
+
+  // --- RESEARCH NOTEBOOK（羊皮紙ノート所持数連動・1000文字・[b]対応） ---
+  function getOwnedNoteCount() {
+    return state.inventory['羊皮紙ノート'] || 0;
+  }
+
+  function renderNotebooks() {
+    const list = document.getElementById('notebook-list');
+    const capLabel = document.getElementById('notebook-capacity-label');
+    const createBtn = document.getElementById('create-note-btn');
+    if (!list) return;
+
+    const ownedCount = getOwnedNoteCount();
+    const usedCount = state.notebooks.length;
+
+    if (capLabel) capLabel.textContent = `${usedCount} / ${ownedCount} VOLS`;
+
+    // 所持数に達している、または0冊の場合は新規作成ボタンをロック
+    if (createBtn) {
+      if (ownedCount === 0) {
+        createBtn.disabled = true;
+        createBtn.textContent = 'LOCKED (ストアで羊皮紙ノートを購入してください)';
+        createBtn.style.opacity = '0.5';
+      } else if (usedCount >= ownedCount) {
+        createBtn.disabled = true;
+        createBtn.textContent = 'CAPACITY FULL (追加するにはノートを購入)';
+        createBtn.style.opacity = '0.5';
+      } else {
+        createBtn.disabled = false;
+        createBtn.textContent = `+ NEW NOTEBOOK ENTRY (残り ${ownedCount - usedCount} 冊作成可能)`;
+        createBtn.style.opacity = '1';
+      }
+    }
+
+    list.innerHTML = '';
+    if (usedCount === 0) {
+      list.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; padding:8px; text-align:center;">作成されたノートはありません。</div>';
+      return;
+    }
+
+    state.notebooks.forEach((note, idx) => {
+      const numStr = String(idx + 1).padStart(2, '0');
+      const item = document.createElement('div');
+      item.className = 'list-item';
+      item.innerHTML = `
+        <div class="item-content-click" onclick="openNoteViewModal(${note.id})">
+          <span class="item-text">
+            <b style="color:var(--ak-yellow); font-family:var(--font-tech);">NOTE.${numStr}</b> - <b>${note.title}</b>
+          </span>
+        </div>
+        <button class="action-badge-btn" onclick="openNoteViewModal(${note.id})">READ</button>
+        <button class="action-badge-btn" onclick="openNoteEditor(${note.id})">EDIT</button>
+      `;
+      list.appendChild(item);
     });
   }
+
+  function openNoteViewModal(noteId) {
+    const idx = state.notebooks.findIndex(n => n.id === noteId);
+    if (idx === -1) return;
+    const note = state.notebooks[idx];
+    const numStr = String(idx + 1).padStart(2, '0');
+
+    document.getElementById('note-view-title').textContent = `NOTE.${numStr} — ${note.title}`;
+    // parseStoryText を使って [b]太字下線[/b] などを反映
+    document.getElementById('note-view-body').innerHTML = parseStoryText(note.content);
+
+    const editBtn = document.getElementById('note-view-edit-btn');
+    editBtn.onclick = () => {
+      closeNoteViewModal();
+      openNoteEditor(note.id);
+    };
+
+    document.getElementById('note-view-modal').classList.add('show');
+  }
+
+  function closeNoteViewModal() {
+    document.getElementById('note-view-modal').classList.remove('show');
+  }
+
+  function openNoteEditor(noteId) {
+    editingNoteId = noteId;
+    const titleInput = document.getElementById('note-edit-title-input');
+    const bodyInput = document.getElementById('note-edit-body-input');
+    const delBtn = document.getElementById('note-delete-btn');
+    const modalTitle = document.getElementById('note-edit-modal-title');
+
+    if (noteId === null) {
+      // 新規作成時：所持数チェック
+      if (state.notebooks.length >= getOwnedNoteCount()) {
+        showToast('ERROR: ノートの所持数が上限に達しています');
+        return;
+      }
+      const nextNum = String(state.notebooks.length + 1).padStart(2, '0');
+      modalTitle.textContent = `CREATE NOTE.${nextNum}`;
+      titleInput.value = '';
+      bodyInput.value = '';
+      delBtn.style.display = 'none';
+    } else {
+      // 編集時
+      const idx = state.notebooks.findIndex(n => n.id === noteId);
+      if (idx === -1) return;
+      const note = state.notebooks[idx];
+      const numStr = String(idx + 1).padStart(2, '0');
+      modalTitle.textContent = `EDIT NOTE.${numStr}`;
+      titleInput.value = note.title;
+      bodyInput.value = note.content;
+      delBtn.style.display = 'flex';
+    }
+
+    updateNoteCharCount();
+    document.getElementById('note-edit-modal').classList.add('show');
+  }
+
+  function closeNoteEditModal() {
+    document.getElementById('note-edit-modal').classList.remove('show');
+  }
+
+  function updateNoteCharCount() {
+    const len = document.getElementById('note-edit-body-input').value.length;
+    document.getElementById('note-char-counter').textContent = `${len} / 1000`;
+  }
+
+  function saveNoteEntry() {
+    const title = document.getElementById('note-edit-title-input').value.trim();
+    const content = document.getElementById('note-edit-body-input').value.trim();
+
+    if (!title || !content) {
+      showToast('ERROR: タイトルと本文の両方を入力してください');
+      return;
+    }
+
+    if (editingNoteId === null) {
+      state.notebooks.push({
+        id: Date.now(),
+        title: title,
+        content: content.slice(0, 1000)
+      });
+      showToast('NEW NOTEBOOK SAVED');
+    } else {
+      const note = state.notebooks.find(n => n.id === editingNoteId);
+      if (note) {
+        note.title = title;
+        note.content = content.slice(0, 1000);
+        showToast('NOTEBOOK UPDATED');
+      }
+    }
+
+    saveState();
+    renderNotebooks();
+    closeNoteEditModal();
+  }
+
+  function deleteNoteEntry() {
+    if (editingNoteId === null) return;
+    if (!confirm('このノートを削除しますか？（※購入した羊皮紙ノートの所持枠は空きます）')) return;
+
+    state.notebooks = state.notebooks.filter(n => n.id !== editingNoteId);
+    saveState();
+    renderNotebooks();
+    closeNoteEditModal();
+    showToast('NOTEBOOK DELETED');
+  }
+
   function renderShop() {
     const list = document.getElementById('shop-item-list'); list.innerHTML = '';
     shopItems.forEach(item => {
