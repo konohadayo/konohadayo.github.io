@@ -1304,6 +1304,7 @@
     cards: [],
     testProblems: [],
     memos: ['古代植物学 考察'],
+    notebooks: [],
     dailyTasks: [
       { id: 1, text: '端末起動および定期メンテナンス', reward: 500, completed: false },
       { id: 2, text: '返却データの整合性チェック', reward: 500, completed: false },
@@ -2221,7 +2222,6 @@
       const c = state.cards.find(x => x.id === editingCardId);
       if (c) { c.front = f; c.back = b; c.category = cat; }
       updateCategoryFilterDropdown(); renderCards();
-    }   // saveCardModal() 内の分岐に追加
     } else if (editingType === 'memo') {
       if (f && editingMemoIndex !== null) {
         state.memos[editingMemoIndex] = f;
@@ -2509,15 +2509,19 @@
       list.innerHTML += `<div class="list-item"><div class="item-content-click"><span class="item-text"><b>${item.name}</b><br><span style="font-size:0.7rem; color:var(--text-muted);">${item.desc}</span></span></div><span class="item-reward">${item.price.toLocaleString()} LEAF</span><button class="action-badge-btn" onclick="buyShopItem('${item.id}')">BUY</button></div>`;
     });
   }
-  function buyShopItem(id) {
+  
+    function buyShopItem(id) {
     const item = shopItems.find(i => i.id === id);
     if (!item) return;
     if (state.leaf >= item.price) {
       state.leaf -= item.price;
       if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
-      saveState(); showToast(`PURCHASED: ${item.name}`);
+      saveState();
+      renderNotebooks(); // 👈 購入直後にノート枠を即反映！
+      showToast(`PURCHASED: ${item.name}`);
     } else { showToast('ERROR: INSUFFICIENT LEAF'); }
   }
+
   function renderInventory() {
     const c = document.getElementById('inventory-container'); c.innerHTML = '';
     for (const [name, count] of Object.entries(state.inventory)) {
