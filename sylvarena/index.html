@@ -1282,14 +1282,24 @@
 <script src="story.js"></script>
 
 <script>
+    // 💡 1. アイテムマスター辞書（ここを書き換えるだけで全表示の名称が一瞬で変わります！）
+  const itemMaster = {
+    'item_note':      { name: '羊皮紙ノート',         price: 500,    type: 'item', desc: '記録用ノート' },
+    'item_tea':       { name: 'ハーブティーセット',   price: 400,    type: 'item', desc: '心を落ち着かせるお茶' },
+    'item_pen':       { name: 'タクティカル万年筆',   price: 1200,   type: 'item', desc: '特務仕様の高級万年筆' },
+    'item_tree_leaf': { name: '？？？の黄金の葉',     price: 500000, type: 'item', desc: '極めて希少な？？？の断片' }
+    // ※将来ストーリー解放で手に入る趣向品（priceなし）もここに追加できます！
+    // 例: 'item_bookmark': { name: '古い栞', type: 'story_item', desc: '通信記録の報酬' }
+  };
+
+  // 💡 2. ストアに並べる商品リスト（itemMaster から自動生成＋テーマ商品）
   const shopItems = [
-    { id: 'item_note', name: '羊皮紙ノート', price: 500, type: 'item', desc: '記録用ノート' },
-    { id: 'item_tea', name: 'ハーブティーセット', price: 400, type: 'item', desc: '心を落ち着かせるお茶' },
-    { id: 'item_pen', name: '万年筆', price: 1200, type: 'item', desc: '高級万年筆' },
-    { id: 'item_tree_leaf', name: '？？？の黄金の葉', price: 500000, type: 'item', desc: '極めて希少な？？？の断片' },
-    { id: 'theme_cyan', name: 'テーマ: シアン', price: 100000, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
+    ...Object.entries(itemMaster)
+      .filter(([id, item]) => item.price !== undefined) // priceがあるものだけストアに並べる
+      .map(([id, item]) => ({ id, ...item })),
+    { id: 'theme_cyan',    name: 'テーマ: シアン',             price: 100000, type: 'theme', color: '#00bcd4', desc: '端末のアクセントカラーを変更' },
     { id: 'theme_emerald', name: 'テーマ: エメラルドグリーン', price: 100000, type: 'theme', color: '#4caf50', desc: '端末のアクセントカラーを変更' },
-    { id: 'theme_crimson', name: 'テーマ: カーマイン', price: 150000, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
+    { id: 'theme_crimson', name: 'テーマ: カーマイン',         price: 150000, type: 'theme', color: '#ff5252', desc: '端末のアクセントカラーを変更' }
   ];
 
   let state = {
@@ -1298,7 +1308,7 @@
     totalLevel: 1,
     focusMinutes: 0,
     lastDate: new Date().toDateString(),
-    inventory: { 'ハーブティーセット': 1 },
+    inventory: { 'item_tea': 1 }, // 💡 IDで所持管理！
     unlockedThemes: ['yellow'],
     currentTheme: 'yellow',
     cards: [],
@@ -1313,6 +1323,7 @@
     unlockedStories: [],
     unlockedArchives: []
   };
+
 
   let isMemoExpanded = false;
   let editingNoteId = null;
@@ -1361,6 +1372,16 @@
     }
   };
 
+    // 💡 旧名称からIDへ変換するための対応表（過去に保存したデータ救済用）
+  const legacyNameToId = {
+    '羊皮紙ノート': 'item_note',
+    'ハーブティーセット': 'item_tea',
+    '万年筆': 'item_pen',
+    'タクティカル万年筆': 'item_pen',
+    '？？？の黄金の葉': 'item_tree_leaf',
+    '世界樹の黄金の葉': 'item_tree_leaf'
+  };
+
   function loadState() {
     try {
       let saved = localStorage.getItem('sylvarena_ak_state_v4');
@@ -1375,11 +1396,23 @@
         if (state.unlockedStories === undefined) state.unlockedStories = [];
         if (state.notebooks === undefined) state.notebooks = [];
         if (state.unlockedArchives === undefined) state.unlockedArchives = [];
+
+        // 💡 既存の日本語名インベントリをすべてID形式に自動変換・統合する
+        if (state.inventory) {
+          const migratedInventory = {};
+          for (const [key, count] of Object.entries(state.inventory)) {
+            // すでにID（itemMasterに存在）ならそのまま、旧名称ならIDに変換
+            const itemId = itemMaster[key] ? key : (legacyNameToId[key] || key);
+            migratedInventory[itemId] = (migratedInventory[itemId] || 0) + count;
+          }
+          state.inventory = migratedInventory;
+        }
       }
     } catch (e) {
       console.error('Data load error:', e);
     }
   }
+
 
   function saveState() {
     try {
@@ -2341,9 +2374,10 @@
   }
 
   // --- RESEARCH NOTEBOOK（羊皮紙ノート所持数連動・1000文字・[b]対応） ---
-  function getOwnedNoteCount() {
-    return state.inventory['羊皮紙ノート'] || 0;
+    function getOwnedNoteCount() {
+    return state.inventory['item_note'] || 0;
   }
+
 
   function renderNotebooks() {
     const list = document.getElementById('notebook-list');
@@ -2515,19 +2549,30 @@
     if (!item) return;
     if (state.leaf >= item.price) {
       state.leaf -= item.price;
-      if (item.type === 'item') state.inventory[item.name] = (state.inventory[item.name] || 0) + 1;
+      if (item.type === 'item') {
+        // 💡 名前ではなく「item.id」をキーにして保存！
+        state.inventory[item.id] = (state.inventory[item.id] || 0) + 1;
+      }
       saveState();
-      renderNotebooks(); // 👈 購入直後にノート枠を即反映！
+      renderNotebooks();
       showToast(`PURCHASED: ${item.name}`);
-    } else { showToast('ERROR: INSUFFICIENT LEAF'); }
+    } else {
+      showToast('ERROR: INSUFFICIENT LEAF');
+    }
   }
 
   function renderInventory() {
-    const c = document.getElementById('inventory-container'); c.innerHTML = '';
-    for (const [name, count] of Object.entries(state.inventory)) {
-      c.innerHTML += `<div class="inventory-chip">${name} x${count}</div>`;
+    const c = document.getElementById('inventory-container');
+    c.innerHTML = '';
+    for (const [itemId, count] of Object.entries(state.inventory)) {
+      if (count <= 0) continue;
+      // 💡 IDから最新のアイテム情報を取得（気分で名前を変えてもここが自動更新！）
+      const info = itemMaster[itemId];
+      const displayName = info ? info.name : itemId;
+      c.innerHTML += `<div class="inventory-chip">${displayName} x${count}</div>`;
     }
   }
+
   function exportData() {
     const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
