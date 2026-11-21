@@ -1159,7 +1159,7 @@
     </div>
   </div>
 
-  <!-- タブ7: システム設定 -->
+    <!-- タブ7: システム設定 -->
   <div id="tab-system" class="tab-content">
     <div class="section-panel">
       <div class="section-title">TERMINAL CUSTOMIZE</div>
@@ -1174,7 +1174,7 @@
       </div>
     </div>
 
-        <div class="section-panel">
+    <div class="section-panel">
       <div class="section-title">DATA MANAGEMENT</div>
       <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
         アプリの全データ、またはカード・テスト個別のデータを保存・復元できます。
@@ -1183,7 +1183,6 @@
         <button class="ak-btn ak-btn-primary" onclick="exportData()">EXPORT ALL DATA (JSON)</button>
         <button class="ak-btn" onclick="document.getElementById('import-file').click()">IMPORT ALL DATA (JSON)</button>
         
-        <!-- 💡 追加：SYSTEMタブからもカード・テストを個別インポート -->
         <div style="display:flex; gap:6px; margin-top:4px;">
           <button class="ak-btn" style="flex:1; font-size:0.75rem;" onclick="document.getElementById('import-cards-file').click()">IMPORT CARDS</button>
           <button class="ak-btn" style="flex:1; font-size:0.75rem;" onclick="document.getElementById('import-tests-file').click()">IMPORT TESTS</button>
@@ -1193,6 +1192,31 @@
       </div>
     </div>
 
+    <!-- 💡 【NEW】SYSTEMタブのいちばん下：端末稼働ログ ＆ 累計LEAF ＆ 今だけ調整欄 -->
+    <div class="section-panel" style="border-color: var(--ak-yellow); background: rgba(0,0,0,0.6);">
+      <div class="section-title">TERMINAL OPERATION LOG</div>
+      
+      <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font-tech); font-size: 0.8rem;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;">
+          <span style="color: var(--text-muted);">SYSTEM BOOT DATE:</span>
+          <span id="system-boot-date" style="color: var(--text-main);">----/--/--</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;">
+          <span style="color: var(--text-muted);">TOTAL EARNED LEAF:</span>
+          <span id="total-earned-leaf-display" style="color: var(--ak-yellow); font-weight: bold;">0 LEAF</span>
+        </div>
+      </div>
+
+      <!-- 今だけ反映できるお助け入力欄 -->
+      <div class="input-group" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+        <label style="font-size: 0.7rem; color: var(--text-muted);">[一時調整] 現在の累計LEAFを手動で同期・上書き</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="sync-total-leaf-input" class="ak-input" placeholder="これまでの総獲得額を入力..." style="font-size: 0.8rem;">
+          <button class="ak-btn ak-btn-primary" onclick="syncTotalLeaf()" style="font-size: 0.75rem; white-space: nowrap;">SYNC</button>
+        </div>
+      </div>
+      
+    </div>
   </div>
 
 </div>
@@ -1304,6 +1328,8 @@
 
   let state = {
     leaf: 1200,
+    totalEarnedLeaf: 1200,
+    createdAt: new Date().toISOString(), 
     xp: 0,
     totalLevel: 1,
     focusMinutes: 0,
@@ -1393,6 +1419,9 @@
       if (saved) {
         const parsed = JSON.parse(saved);
         state = { ...state, ...parsed };
+        // 💡 もし過去データに無ければ、自動で補完
+        if (!state.createdAt) state.createdAt = new Date().toISOString();
+        if (state.totalEarnedLeaf === undefined) state.totalEarnedLeaf = state.leaf;
         if (state.unlockedStories === undefined) state.unlockedStories = [];
         if (state.notebooks === undefined) state.notebooks = [];
         if (state.unlockedArchives === undefined) state.unlockedArchives = [];
@@ -1469,7 +1498,43 @@
 
     renderInventory();
     renderShop();
+    renderTerminalLog();
   }
+
+    // 💡 累計LEAFと開始日を画面に反映する関数
+  function renderTerminalLog() {
+    const bootDateEl = document.getElementById('system-boot-date');
+    const totalLeafEl = document.getElementById('total-earned-leaf-display');
+
+    if (bootDateEl && state.createdAt) {
+      const d = new Date(state.createdAt);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      bootDateEl.textContent = `${yyyy}/${mm}/${dd}`;
+    }
+
+    if (totalLeafEl) {
+      // 念のため未定義なら今の所持LEAFを代入
+      if (state.totalEarnedLeaf === undefined) state.totalEarnedLeaf = state.leaf;
+      totalLeafEl.textContent = `${state.totalEarnedLeaf.toLocaleString()} LEAF`;
+    }
+  }
+
+  // 💡 今だけ手動で累計LEAFを合わせるお助け関数の実行用
+  function syncTotalLeaf() {
+    const val = parseInt(document.getElementById('sync-total-leaf-input').value);
+    if (isNaN(val) || val < 0) {
+      showToast('ERROR: 有効な数値を入力してください');
+      return;
+    }
+    state.totalEarnedLeaf = val;
+    saveState();
+    renderTerminalLog();
+    showToast(`SUCCESS: 累計LEAFを ${val.toLocaleString()} に更新しました`);
+    document.getElementById('sync-total-leaf-input').value = '';
+  }
+
 
   function showToast(msg) {
     const toast = document.getElementById('toast');
@@ -1584,7 +1649,11 @@
     document.getElementById('timer-display').textContent = `${m}:${s}`;
   }
 
-  function addLeaf(amt) { state.leaf += amt; saveState(); }
+  function addLeaf(amt) {
+    state.leaf += amt;
+    state.totalEarnedLeaf = (state.totalEarnedLeaf || state.leaf) + amt;
+    saveState();
+  }
   function addXP(amt) {
     state.xp += amt;
     while (state.xp >= 100) {
