@@ -1192,7 +1192,7 @@
       </div>
     </div>
 
-    <!-- 💡 【NEW】SYSTEMタブのいちばん下：端末稼働ログ ＆ 累計LEAF ＆ 今だけ調整欄 -->
+        <!-- 💡 【NEW】SYSTEMタブのいちばん下：端末稼働ログ ＆ 累計LEAF ＆ 開始日の手動調整欄 -->
     <div class="section-panel" style="border-color: var(--ak-yellow); background: rgba(0,0,0,0.6);">
       <div class="section-title">TERMINAL OPERATION LOG</div>
       
@@ -1207,16 +1207,22 @@
         </div>
       </div>
 
-      <!-- 今だけ反映できるお助け入力欄 -->
-      <div class="input-group" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
-        <label style="font-size: 0.7rem; color: var(--text-muted);">[一時調整] 現在の累計LEAFを手動で同期・上書き</label>
+      <!-- 今だけ手動で累計LEAFと開始日を同期できるお助け入力欄 -->
+      <div class="input-group" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px; gap: 8px;">
+        <label style="font-size: 0.7rem; color: var(--text-muted);">[一時調整] 累計LEAFの手動同期</label>
         <div style="display: flex; gap: 6px;">
           <input type="number" id="sync-total-leaf-input" class="ak-input" placeholder="これまでの総獲得額を入力..." style="font-size: 0.8rem;">
-          <button class="ak-btn ak-btn-primary" onclick="syncTotalLeaf()" style="font-size: 0.75rem; white-space: nowrap;">SYNC</button>
+          <button class="ak-btn ak-btn-primary" onclick="syncTotalLeaf()" style="font-size: 0.75rem; white-space: nowrap;">SYNC LEAF</button>
+        </div>
+
+        <label style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">[一時調整] 開始日（Boot Date）の手動設定</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="date" id="sync-boot-date-input" class="ak-input" style="font-size: 0.8rem; color-scheme: dark;">
+          <button class="ak-btn ak-btn-primary" onclick="syncBootDate()" style="font-size: 0.75rem; white-space: nowrap;">SYNC DATE</button>
         </div>
       </div>
-      
     </div>
+
   </div>
 
 </div>
@@ -1534,6 +1540,56 @@
     showToast(`SUCCESS: 累計LEAFを ${val.toLocaleString()} に更新しました`);
     document.getElementById('sync-total-leaf-input').value = '';
   }
+
+    // 💡 累計LEAFを手動同期する関数
+  function syncTotalLeaf() {
+    const val = parseInt(document.getElementById('sync-total-leaf-input').value);
+    if (isNaN(val) || val < 0) {
+      showToast('ERROR: 有効な数値を入力してください');
+      return;
+    }
+    state.totalEarnedLeaf = val;
+    saveState();
+    renderTerminalLog();
+    showToast(`SUCCESS: 累計LEAFを ${val.toLocaleString()} に更新しました`);
+    document.getElementById('sync-total-leaf-input').value = '';
+  }
+
+  // 💡 アプリ開始日（Boot Date）を手動同期する関数
+  function syncBootDate() {
+    const dateVal = document.getElementById('sync-boot-date-input').value;
+    if (!dateVal) {
+      showToast('ERROR: 日付を選択してください');
+      return;
+    }
+    // 選ばれた日付をISO形式（または安全な日時文字列）として保存
+    state.createdAt = new Date(dateVal).toISOString();
+    saveState();
+    renderTerminalLog();
+    showToast(`SUCCESS: システム開始日を ${dateVal} に設定しました`);
+    document.getElementById('sync-boot-date-input').value = '';
+  }
+
+  // 💡 画面に開始日と累計LEAFを反映する関数
+  function renderTerminalLog() {
+    const bootDateEl = document.getElementById('system-boot-date');
+    const totalLeafEl = document.getElementById('total-earned-leaf-display');
+
+    if (bootDateEl) {
+      if (!state.createdAt) state.createdAt = new Date().toISOString();
+      const d = new Date(state.createdAt);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      bootDateEl.textContent = `${yyyy}/${mm}/${dd}`;
+    }
+
+    if (totalLeafEl) {
+      if (state.totalEarnedLeaf === undefined) state.totalEarnedLeaf = state.leaf;
+      totalLeafEl.textContent = `${state.totalEarnedLeaf.toLocaleString()} LEAF`;
+    }
+  }
+
 
 
   function showToast(msg) {
