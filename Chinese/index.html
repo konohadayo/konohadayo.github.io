@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中国語リスニング練習</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f1;--ink:#14262b;--seal:#b8322a;--jade:#1f6b5e;--line:#c3d0cc;--card:#fff;--ok:#1f6b5e;--ng:#b8322a}
+@media(prefers-color-scheme:dark){:root{--bg:#10191b;--ink:#e6efed;--seal:#d8493f;--jade:#2f8f7e;--line:#2c3d40;--card:#172326;--ok:#5fc2ae;--ng:#ef7d74}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'Zen Maru Gothic',system-ui,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:560px;margin:0 auto;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:baseline}
+h1{font-size:1.15rem;margin:0}
+#sc{font-variant-numeric:tabular-nums}
+.set{display:flex;gap:8px;align-items:center;margin:10px 0;font-size:.85rem}
+.set select{flex:1;min-width:0;width:auto}
+.set input{width:90px;padding:0;border:0;background:none}
+#warn{font-size:.85rem;color:var(--ng);margin:0 0 8px}
+select,input,textarea{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;width:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--jade);outline-offset:2px}
+#tabs{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.tab{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px}
+.tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#q{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px}
+.hd{margin:0;font-weight:700}
+.seal{width:88px;height:88px;border-radius:50%;border:0;background:var(--seal);color:#fff;font-size:2rem;font-weight:700;justify-self:center;box-shadow:inset 0 0 0 4px rgba(255,255,255,.25)}
+.seal:active{transform:scale(.95)}
+.seal.sm{width:52px;height:52px;font-size:1.1rem;justify-self:auto;flex:none}
+.row{display:flex;gap:10px;align-items:center}
+.opt,.main{border:1.5px solid var(--ink);background:transparent;border-radius:12px;padding:12px;font-size:1.05rem;width:100%}
+.main{background:var(--ink);color:var(--bg)}
+.row .opt{flex:1}
+.opt:active{background:var(--line)}
+.ok,.ng{font-weight:700;margin:0}
+.ok{color:var(--ok)}.ng{color:var(--ng)}
+#fb{line-height:1.8}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;border:1px solid var(--line);background:transparent;border-radius:10px;padding:6px}
+.seg .on{background:var(--jade);color:#fff;border-color:var(--jade)}
+.syl{display:flex;align-items:center;gap:10px}
+.syl b{width:5.5em;font-size:1.2rem}
+.tg{display:flex;gap:4px;flex:1}
+.tg button{flex:1;border:1px solid var(--line);background:transparent;border-radius:8px;padding:8px 0}
+.tg .on{background:var(--jade);color:#fff;border-color:var(--jade)}
+.done .opt,.done .tg button{pointer-events:none;opacity:.7}
+small{opacity:.75}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><h1>中国語リスニング練習</h1><span id="sc">○0 ×0</span></div>
+  <div class="set">
+    <select id="vo" aria-label="音声"></select>
+    <label>速さ <input id="rt" type="range" min="0.5" max="1.1" step="0.05" value="0.85"></label>
+  </div>
+  <p id="warn" hidden>この端末で中国語の音声が見つかりません。スマホの設定で中国語（簡体字）の音声を入れるか、ChromeやSafariで開いてね。</p>
+  <nav id="tabs"></nav>
+  <section id="q"></section>
+</main>
+<script>
+const $=s=>document.querySelector(s), Q=$('#q');
+const rnd=n=>Math.floor(Math.random()*n), pick=a=>a[rnd(a.length)];
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+let sc=[0,0], V=[], voice=null, rate=.85, locked=false, mi=0, nt=0, sub='q';
+
+/* ---------- 音声（ブラウザの中国語TTS） ---------- */
+function say(t){
+  if(!('speechSynthesis' in window))return;
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang='zh-CN';u.rate=rate;if(voice)u.voice=voice;
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+}
+function loadVoices(){
+  V=speechSynthesis.getVoices().filter(v=>/^zh/i.test(v.lang))
+    .sort((a,b)=>(b.lang.replace('_','-')=='zh-CN')-(a.lang.replace('_','-')=='zh-CN'));
+  $('#vo').innerHTML=V.map((v,i)=>`<option value="${i}">${v.name} (${v.lang})</option>`).join('')||'<option>中国語音声なし</option>';
+  voice=V[0]||null;$('#warn').hidden=!!V.length;
+}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+$('#vo').onchange=e=>{voice=V[+e.target.value]||null};
+$('#rt').oninput=e=>{rate=+e.target.value};
+Q.addEventListener('click',e=>{const s=e.target.closest('[data-say]');if(s)say(s.dataset.say)});
+
+/* ---------- ピンイン処理 ---------- */
+const TM={a:'āáǎà',e:'ēéěè',o:'ōóǒò',i:'īíǐì',u:'ūúǔù',ü:'ǖǘǚǜ'};
+function mark(s){ // "ni3" -> "nǐ"
+  const m=s.match(/^([a-züv]+)([0-5])$/i);if(!m)return s;
+  const b=m[1].replace(/v/g,'ü'),t=+m[2];if(!t||t==5)return b;
+  let i=b.search(/[ae]/);
+  if(i<0&&b.includes('ou'))i=b.indexOf('o');
+  if(i<0)for(let k=b.length-1;k>=0;k--)if(TM[b[k]]){i=k;break}
+  return b.slice(0,i)+TM[b[i]][t-1]+b.slice(i+1);
+}
+const pinStr=s=>s.split(' ').map(mark).join(' ');
+const norm=s=>s.toLowerCase().replace(/v/g,'ü').replace(/([a-zü]+)([0-5])/g,(m,a,b)=>mark(a+b)).replace(/[\s'’-]/g,'');
+const SW={zh:'z',z:'zh',ch:'c',c:'ch',sh:'s',s:'sh',j:'q',q:'j',x:'q',b:'p',p:'b',d:'t',t:'d',g:'k',k:'g',l:'n',n:'l',r:'l'};
+function swapInit(s){const m=s.match(/^(zh|ch|sh|[bpdtgkjqxlnrzcs])(.+)$/);return m&&SW[m[1]]?SW[m[1]]+m[2]:s}
+function retone(s){const t=+s.slice(-1);return s.slice(0,-1)+pick([1,2,3,4,0].filter(x=>x!=t))}
+
+/* ---------- 単語データ（2音節） ---------- */
+const W=`你好 ni3 hao3
+谢谢 xie4 xie0
+老师 lao3 shi1
+学生 xue2 sheng1
+朋友 peng2 you0
+中国 zhong1 guo2
+日本 ri4 ben3
+学习 xue2 xi2
+汉语 han4 yu3
+今天 jin1 tian1
+明天 ming2 tian1
+昨天 zuo2 tian1
+现在 xian4 zai4
+再见 zai4 jian4
+电话 dian4 hua4
+电脑 dian4 nao3
+苹果 ping2 guo3
+水果 shui3 guo3
+喝茶 he1 cha2
+吃饭 chi1 fan4
+医院 yi1 yuan4
+学校 xue2 xiao4
+同学 tong2 xue2
+名字 ming2 zi0
+先生 xian1 sheng1
+小姐 xiao3 jie3
+哥哥 ge1 ge0
+妈妈 ma1 ma0
+爸爸 ba4 ba0
+漂亮 piao4 liang0
+喜欢 xi3 huan0
+认识 ren4 shi0
+星期 xing1 qi1
+上午 shang4 wu3
+下午 xia4 wu3
+早上 zao3 shang0
+回家 hui2 jia1
+开始 kai1 shi3
+北京 bei3 jing1
+米饭 mi3 fan4
+手机 shou3 ji1
+咖啡 ka1 fei1
+飞机 fei1 ji1
+银行 yin2 hang2
+火车 huo3 che1
+公司 gong1 si1
+工作 gong1 zuo4
+大学 da4 xue2
+起床 qi3 chuang2
+睡觉 shui4 jiao4
+看书 kan4 shu1
+啤酒 pi2 jiu3
+牛奶 niu2 nai3
+鸡蛋 ji1 dan4`.split('\n').map(l=>{const [h,...syl]=l.split(' ');return{h,syl}});
+const tn=w=>w.syl.map(s=>s.slice(-1)).join('');
+const pin=w=>w.syl.map(mark).join(' ');
+
+/* ---------- 共通UI ---------- */
+const tail='<div id="fb"></div><button id="nx" class="main" hidden>つぎの問題</button>';
+function frame(html){
+  locked=false;Q.classList.remove('done');Q.onclick=null;
+  Q.innerHTML=html+tail;$('#nx').onclick=()=>modes[mi].go();
+}
+function fin(ok,html){
+  locked=true;sc[ok?0:1]++;$('#sc').textContent=`○${sc[0]} ×${sc[1]}`;
+  $('#fb').innerHTML=`<p class="${ok?'ok':'ng'}">${ok?'せいかい！':'ちがうよ'}</p>${html}`;
+  $('#nx').hidden=false;Q.classList.add('done');
+}
+const play=(t,c='')=>`<button class="seal ${c}" data-say="${t}" aria-label="再生">聴</button>`;
+
+/* ① 声調の組み合わせが違うもの */
+function m1(){
+  const g={};W.forEach(w=>(g[tn(w)]??=[]).push(w));
+  const ka=pick(Object.keys(g).filter(k=>g[k].length>1)), kb=pick(Object.keys(g).filter(k=>k!=ka));
+  const odd=pick(g[kb]), it=shuffle([...shuffle(g[ka]).slice(0,2),odd]);
+  frame('<p class="hd">3つのうち、声調の組み合わせが違うものは？</p>'+
+    it.map((w,i)=>`<div class="row">${play(w.h,'sm').replace('聴','ABC'[i])}<button class="opt" data-i="${i}">これが違う</button></div>`).join(''));
+  Q.onclick=e=>{const b=e.target.closest('.opt');if(!b||locked)return;
+    fin(it[+b.dataset.i]===odd,it.map((w,i)=>`${'ABC'[i]}: ${w.h} ${pin(w)} <small>(${tn(w).replace(/0/g,'軽')})</small>`).join('<br>'))};
+}
+
+/* ② 正しいピンイン */
+function m2(){
+  const w=pick(W), ans=w.syl.join(' '), set=new Set([ans]);
+  for(let n=0;set.size<4&&n<80;n++){
+    const s=[...w.syl],i=rnd(s.length);
+    s[i]=Math.random()<.5?swapInit(s[i]):retone(s[i]);set.add(s.join(' '));
+  }
+  frame('<p class="hd">聞こえたのは？</p>'+play(w.h)+
+    shuffle([...set]).map(o=>`<button class="opt" data-v="${o}">${pinStr(o)}</button>`).join(''));
+  Q.onclick=e=>{const b=e.target.closest('.opt');if(!b||locked)return;
+    fin(b.dataset.v==ans,`${w.h}　${pin(w)}`)};
+}
+
+/* ③ 数字 */
+const D='零一二三四五六七八九';
+function zh(n){if(n<10)return D[n];if(n<20)return '十'+(n%10?D[n%10]:'');return D[n/10|0]+'十'+(n%10?D[n%10]:'')}
+function m3(){
+  let a,t;
+  if(nt==0){const n=rnd(100);a=''+n;t=zh(n)}
+  else{a=Array.from({length:4},()=>rnd(10)).join('');t=[...a].map(d=>D[d]).join('，')}
+  frame(`<div class="seg"><button data-nt="0" class="${nt==0?'on':''}">0〜99</button><button data-nt="1" class="${nt==1?'on':''}">数字4つ</button></div>
+    <p class="hd">聞こえた数字を書こう</p>${play(t)}
+    <input id="ans" inputmode="numeric" autocomplete="off" placeholder="数字を入力">
+    <button class="main" id="ck">答え合わせ</button>`);
+  Q.onclick=e=>{
+    const s=e.target.closest('[data-nt]');if(s){nt=+s.dataset.nt;return m3()}
+    if(e.target.id=='ck'&&!locked){const v=$('#ans').value.trim();if(!v)return;fin(v==a,`答え：${a}（${t}）`)}
+  };
+}
+
+/* ④ 聞き分け（le / re など） */
+const PR=[[['走了','le0'],['很热','re4']],[['是','shi4'],['四','si4']],[['知','zhi1'],['资','zi1']],[['迟','chi2'],['词','ci2']],
+[['七','qi1'],['鸡','ji1']],[['小','xiao3'],['少','shao3']],[['不','bu4'],['怕','pa4']],[['打','da3'],['塔','ta3']],
+[['哥','ge1'],['科','ke1']],[['买','mai3'],['卖','mai4']],[['睡','shui4'],['说','shuo1']],[['有','you3'],['又','you4']]];
+function m4(){
+  const p=pick(PR),t=pick(p);
+  frame('<p class="hd">聞こえたのはどっち？</p>'+play(t[0])+
+    '<div class="row">'+shuffle(p).map(o=>`<button class="opt" data-v="${o[1]}">${mark(o[1])}</button>`).join('')+'</div>');
+  Q.onclick=e=>{const b=e.target.closest('.opt');if(!b||locked)return;
+    fin(b.dataset.v==t[1],p.map(o=>`${o[0]}　${mark(o[1])}`).join('　/　'))};
+}
+
+/* ⑤ 声調をつける */
+function m5(){
+  const w=pick(W),sel=w.syl.map(()=>null),L=['ˉ','ˊ','ˇ','ˋ','軽'];
+  frame('<p class="hd">声調をつけよう</p>'+play(w.h)+w.syl.map((s,i)=>
+    `<div class="syl"><b>${s.slice(0,-1)}</b><span class="tg" data-i="${i}">`+
+    [1,2,3,4,0].map(t=>`<button data-t="${t}">${L[t?t-1:4]}</button>`).join('')+'</span></div>').join('')+
+    '<button class="main" id="ck">答え合わせ</button>');
+  Q.onclick=e=>{
+    const b=e.target.closest('[data-t]');
+    if(b&&!locked){const g=b.parentNode;g.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');sel[+g.dataset.i]=+b.dataset.t;return}
+    if(e.target.id=='ck'&&!locked){if(sel.includes(null))return;
+      fin(sel.every((t,i)=>t==+w.syl[i].slice(-1)),`${w.h}　${pin(w)}`)}
+  };
+}
+
+/* ⑥ リスニング（質問・名前）— 内容は自分で編集できる */
+const LS=(k,d)=>{try{return localStorage.getItem(k)??d}catch{return d}};
+const SV=(k,v)=>{try{localStorage.setItem(k,v)}catch{}};
+const DQ=`你叫什么名字？|我叫王丽。
+你今年多大？|我今年二十岁。
+你是哪国人？|我是日本人。
+你住在哪儿？|我住在东京。
+你喜欢吃什么？|我喜欢吃面条。
+今天几月几号？|今天十一月二十一号。`;
+const DN=`王丽|wang2 li4
+李明|li3 ming2
+张伟|zhang1 wei3
+刘芳|liu2 fang1`;
+const parse=t=>t.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>l.split('|').map(x=>x.trim()));
+const seg=()=>`<div class="seg">${[['q','質問'],['n','名前'],['e','編集']].map(([k,n])=>`<button data-sub="${k}" class="${sub==k?'on':''}">${n}</button>`).join('')}</div>`;
+function m6(){
+  if(sub=='e'){
+    frame(seg()+`<p class="hd">質問と答え（1行に「中国語の質問|答え」）</p>
+      <textarea id="eq" rows="6">${LS('cl_q',DQ)}</textarea>
+      <p class="hd">名前（1行に「漢字|ピンイン数字」例：王丽|wang2 li4）</p>
+      <textarea id="en" rows="4">${LS('cl_n',DN)}</textarea>
+      <button class="main" id="sv">保存</button>`);
+    $('#nx').remove();
+    Q.onclick=e=>{
+      const s=e.target.closest('[data-sub]');if(s){sub=s.dataset.sub;return m6()}
+      if(e.target.id=='sv'){SV('cl_q',$('#eq').value);SV('cl_n',$('#en').value);$('#fb').innerHTML='<p class="ok">保存したよ（この端末のブラウザに残ります）</p>'}
+    };return;
+  }
+  if(sub=='q'){
+    const [q,a]=pick(parse(LS('cl_q',DQ)));
+    frame(seg()+'<p class="hd">質問を聞いて、答えを書いてみよう</p>'+play(q)+
+      '<textarea id="ans" rows="2" placeholder="自分の答え（ピンインでも漢字でも）"></textarea><button class="main" id="sh">答えを見る</button>');
+    Q.onclick=e=>{
+      const s=e.target.closest('[data-sub]');if(s){sub=s.dataset.sub;return m6()}
+      if(e.target.id=='sh'){$('#fb').innerHTML=`質問：${q}<br>答えの例：${a||'（未設定）'}`;$('#nx').hidden=false}
+    };
+  }else{
+    const [h,p]=pick(parse(LS('cl_n',DN)));
+    frame(seg()+'<p class="hd">名前を聞いて、ピンインを書こう</p>'+play(h)+
+      '<input id="ans" autocomplete="off" autocapitalize="off" placeholder="例：wang2 li4 または wáng lì"><button class="main" id="ck">答え合わせ</button>');
+    Q.onclick=e=>{
+      const s=e.target.closest('[data-sub]');if(s){sub=s.dataset.sub;return m6()}
+      if(e.target.id=='ck'&&!locked){const v=$('#ans').value.trim();if(!v)return;
+        fin(norm(v)==norm(p||''),`${h}　${pinStr(p||'')}`)}
+    };
+  }
+}
+
+/* ---------- メニュー ---------- */
+const modes=[{n:'声調違い',go:m1},{n:'ピンイン',go:m2},{n:'数字',go:m3},{n:'聞き分け',go:m4},{n:'声調つけ',go:m5},{n:'会話',go:m6}];
+function nav(){$('#tabs').innerHTML=modes.map((m,i)=>`<button class="tab${i==mi?' on':''}" data-i="${i}">${'①②③④⑤⑥'[i]}${m.n}</button>`).join('')}
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(!b)return;mi=+b.dataset.i;nav();modes[mi].go()};
+nav();m1();
+</script>
+</body>
+</html>
