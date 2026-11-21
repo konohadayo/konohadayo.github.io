@@ -1328,7 +1328,7 @@
   const itemMaster = {
     'item_note':      { name: '羊皮紙ノート',         price: 500,    type: 'item', desc: '記録用ノート' },
     'item_tea':       { name: 'ハーブティーセット',   price: 400,    type: 'item', desc: '心を落ち着かせるお茶' },
-    'item_pen':       { name: 'タクティカル万年筆',   price: 1200,   type: 'item', desc: '特務仕様の高級万年筆' },
+    'item_pen':       { name: '特務用万年筆',   price: 1200,   type: 'item', desc: '特務仕様の高級万年筆' },
     'item_tree_leaf': { name: '？？？の黄金の葉',     price: 500000, type: 'item', desc: '極めて希少な？？？の断片' }
     // ※将来ストーリー解放で手に入る趣向品（priceなし）もここに追加できます！
     // 例: 'item_bookmark': { name: '古い栞', type: 'story_item', desc: '通信記録の報酬' }
@@ -1453,6 +1453,12 @@
             migratedInventory[itemId] = (migratedInventory[itemId] || 0) + count;
           }
           state.inventory = migratedInventory;
+                  // 💡 もしXPが100以上溢れていたら、起動時に自動でレベルへ変換する
+        while (state.xp >= 100) {
+          state.xp -= 100;
+          state.totalLevel += 1;
+        }
+
         }
       }
     } catch (e) {
@@ -1722,23 +1728,31 @@
       return;
     }
 
-    // フォーカス時間に加算（または減算）、0未満にはならないようにガード
+    // フォーカス時間に加算（または減算）
     state.focusMinutes = Math.max(0, state.focusMinutes + mins);
 
     const earnedXp = Math.floor(mins * 2);
     const earnedLeaf = mins * 20;
 
-    state.xp = Math.max(0, state.xp + earnedXp);
-    state.leaf = Math.max(0, state.leaf + earnedLeaf);
-    if (state.totalEarnedLeaf !== undefined) {
-      state.totalEarnedLeaf = Math.max(0, state.totalEarnedLeaf + earnedLeaf);
+    if (mins > 0) {
+      // 💡 プラスのときは addXP() と addLeaf() を使って正しくレベルアップ＆累計加算！
+      addXP(earnedXp);
+      addLeaf(earnedLeaf);
+    } else {
+      // 💡 マイナスのときは減算調整（XPが100以上残っていた場合も整理）
+      state.xp = Math.max(0, state.xp + earnedXp);
+      state.leaf = Math.max(0, state.leaf + earnedLeaf);
+      if (state.totalEarnedLeaf !== undefined) {
+        state.totalEarnedLeaf = Math.max(0, state.totalEarnedLeaf + earnedLeaf);
+      }
+      saveState();
     }
 
     inputEl.value = '';
     const sign = mins > 0 ? `+${mins}` : `${mins}`;
     showToast(`MANUAL LOG: ${sign}分反映しました (${mins > 0 ? '+' : ''}${earnedLeaf} LEAF / ${mins > 0 ? '+' : ''}${earnedXp} XP)`);
-    saveState();
   }
+
 
   function updateTimerDisplay() {
     const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
