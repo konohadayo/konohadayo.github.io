@@ -1226,6 +1226,12 @@
           <input type="date" id="sync-boot-date-input" class="ak-input" style="font-size: 0.8rem; color-scheme: dark;">
           <button class="ak-btn ak-btn-primary" onclick="syncBootDate()" style="font-size: 0.75rem; white-space: nowrap;">SYNC DATE</button>
         </div>
+        <label style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">[一時調整] 累計LEVEL（totalLevel）の直接設定</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="sync-level-input" class="ak-input" placeholder="元の累計Lvを入力 (例: 1)..." style="font-size: 0.8rem;">
+          <button class="ak-btn ak-btn-primary" onclick="syncTotalLevel()" style="font-size: 0.75rem; white-space: nowrap;">SYNC LV</button>
+        </div>
+
       </div>
     </div>
 
@@ -1588,6 +1594,19 @@
     showToast(`SUCCESS: FOCUS TIMEを ${val}m に更新しました`);
     document.getElementById('sync-focus-min-input').value = '';
   }
+    // 💡 累計LEVEL（totalLevel）を手動で直接合わせる関数
+  function syncTotalLevel() {
+    const val = parseInt(document.getElementById('sync-level-input').value);
+    if (isNaN(val) || val < 1) {
+      showToast('ERROR: 1以上の有効なレベルを入力してください');
+      return;
+    }
+    state.totalLevel = val;
+    saveState();
+    showToast(`SUCCESS: LEVELを累計Lv.${val} に更新しました`);
+    document.getElementById('sync-level-input').value = '';
+  }
+
 
 
   // 💡 画面に開始日と累計LEAFを反映する関数
