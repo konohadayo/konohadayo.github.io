@@ -1205,6 +1205,12 @@
           <span style="color: var(--text-muted);">TOTAL EARNED LEAF:</span>
           <span id="total-earned-leaf-display" style="color: var(--ak-yellow); font-weight: bold;">0 LEAF</span>
         </div>
+        <label style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">[一時調整] 合計FOCUS TIME（分）の直接設定</label>
+        <div style="display: flex; gap: 6px;">
+          <input type="number" id="sync-focus-min-input" class="ak-input" placeholder="正しい合計分数を入力..." style="font-size: 0.8rem;">
+          <button class="ak-btn ak-btn-primary" onclick="syncFocusMinutes()" style="font-size: 0.75rem; white-space: nowrap;">SYNC TIME</button>
+        </div>
+
       </div>
 
       <!-- 今だけ手動で累計LEAFと開始日を同期できるお助け入力欄 -->
@@ -1570,6 +1576,20 @@
     document.getElementById('sync-boot-date-input').value = '';
   }
 
+    // 💡 合計FOCUS TIME（分）を手動で直接合わせる関数
+  function syncFocusMinutes() {
+    const val = parseInt(document.getElementById('sync-focus-min-input').value);
+    if (isNaN(val) || val < 0) {
+      showToast('ERROR: 0以上の有効な分数を入力してください');
+      return;
+    }
+    state.focusMinutes = val;
+    saveState();
+    showToast(`SUCCESS: FOCUS TIMEを ${val}m に更新しました`);
+    document.getElementById('sync-focus-min-input').value = '';
+  }
+
+
   // 💡 画面に開始日と累計LEAFを反映する関数
   function renderTerminalLog() {
     const bootDateEl = document.getElementById('system-boot-date');
@@ -1673,31 +1693,33 @@
     updateTimerDisplay();
   }
 
-    // 💡 外部で測っていた時間を手動で追加する関数
+    // 💡 プラスもマイナス（取り消し・微調整）もできる手動時間追加関数
   function addManualTime() {
     const inputEl = document.getElementById('manual-min-input');
     const mins = parseInt(inputEl.value);
 
-    if (isNaN(mins) || mins <= 0) {
-      showToast('ERROR: 有効な分数を入力してください');
+    if (isNaN(mins) || mins === 0) {
+      showToast('ERROR: 0以外の有効な分数を入力してください（例: 30, -900）');
       return;
     }
 
-    // フォーカス時間に加算
-    state.focusMinutes += mins;
+    // フォーカス時間に加算（または減算）、0未満にはならないようにガード
+    state.focusMinutes = Math.max(0, state.focusMinutes + mins);
 
-    // 1分あたり換算でXPとLEAFも少しボーナス付与（25分で50XP/500LEAFの比率に合わせる場合）
     const earnedXp = Math.floor(mins * 2);
     const earnedLeaf = mins * 20;
 
-    addXP(earnedXp);
-    addLeaf(earnedLeaf);
+    state.xp = Math.max(0, state.xp + earnedXp);
+    state.leaf = Math.max(0, state.leaf + earnedLeaf);
+    if (state.totalEarnedLeaf !== undefined) {
+      state.totalEarnedLeaf = Math.max(0, state.totalEarnedLeaf + earnedLeaf);
+    }
 
-    inputEl.value = ''; // 入力欄をクリア
-    showToast(`MANUAL LOG: +${mins}分記録しました (+${earnedLeaf} LEAF / +${earnedXp} XP)`);
+    inputEl.value = '';
+    const sign = mins > 0 ? `+${mins}` : `${mins}`;
+    showToast(`MANUAL LOG: ${sign}分反映しました (${mins > 0 ? '+' : ''}${earnedLeaf} LEAF / ${mins > 0 ? '+' : ''}${earnedXp} XP)`);
     saveState();
   }
-
 
   function updateTimerDisplay() {
     const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
